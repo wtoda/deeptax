@@ -155,6 +155,24 @@ export function LeadForm({
     [sentName],
   );
 
+  /**
+   * Handoff de segurança: se a API não puder registrar o lead (indisponibilidade
+   * ou ausência de destino durável), o contato é encaminhado pelo WhatsApp com
+   * todos os dados já preenchidos. O lead não se perde.
+   */
+  const whatsappFallback = useMemo(() => {
+    const linhas = [
+      `Olá! Meu nome é ${form.name.trim() || "(nome não informado)"}.`,
+      form.company.trim() ? `Empresa: ${form.company.trim()}` : "",
+      form.phone.trim() ? `Telefone: ${form.phone.trim()}` : "",
+      form.email.trim() ? `E-mail: ${form.email.trim()}` : "",
+      form.service ? `Assunto: ${form.service}` : "",
+      form.message.trim() ? `\n${form.message.trim()}` : "",
+      "\n(Tentei enviar pelo site de vocês e o formulário não respondeu.)",
+    ].filter(Boolean);
+    return whatsappLink(linhas.join("\n"));
+  }, [form]);
+
   /* ------------------------------------------------------------- SUCESSO -- */
   if (status === "success") {
     return (
@@ -388,10 +406,22 @@ export function LeadForm({
       {status === "error" && feedback && (
         <div
           role="alert"
-          className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          className="rounded-xl border border-red-200 bg-red-50 px-4 py-4"
         >
-          <IconAlert className="mt-0.5 size-4 shrink-0" />
-          <span>{feedback}</span>
+          <p className="flex items-start gap-2.5 text-sm text-red-700">
+            <IconAlert className="mt-0.5 size-4 shrink-0" />
+            <span>{feedback}</span>
+          </p>
+
+          <a
+            href={whatsappFallback}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-sm font-semibold text-[#04331b] shadow-soft transition-all hover:brightness-105 sm:w-auto"
+          >
+            <IconWhatsApp className="size-4" />
+            Enviar pelo WhatsApp
+          </a>
         </div>
       )}
 

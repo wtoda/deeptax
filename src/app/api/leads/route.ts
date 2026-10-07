@@ -61,7 +61,22 @@ export async function POST(request: Request) {
   }
 
   /* -------------------------------------------------------- persistência --- */
-  const { stored, forwarded } = await saveLead(result.lead);
+  const { stored, forwarded, durable } = await saveLead(result.lead);
+
+  // Sem destino durável (ex.: Vercel sem LEAD_WEBHOOK_URL) não podemos afirmar
+  // que o lead foi recebido. Melhor avisar do que perder o contato em silêncio:
+  // o formulário então oferece o envio pelo WhatsApp já preenchido.
+  if (!durable) {
+    console.error("[leads] lead descartado por ausência de destino durável:", result.lead.id);
+    return NextResponse.json(
+      {
+        ok: false,
+        message:
+          "Nosso formulário está temporariamente indisponível. Toque em “Enviar pelo WhatsApp” abaixo para falar com a gente agora — seus dados já estarão preenchidos.",
+      },
+      { status: 503 },
+    );
+  }
 
   if (!stored && !forwarded) {
     console.error("[leads] lead não pôde ser persistido:", result.lead.id);
@@ -69,7 +84,7 @@ export async function POST(request: Request) {
       {
         ok: false,
         message:
-          "Não conseguimos registrar sua solicitação agora. Fale com a gente pelo WhatsApp para não perder o contato.",
+          "Não conseguimos registrar sua solicitação agora. Toque em “Enviar pelo WhatsApp” abaixo para não perder o contato.",
       },
       { status: 500 },
     );

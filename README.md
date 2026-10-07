@@ -66,29 +66,82 @@ endereço `/servicos/<slug>`).
 
 ---
 
-## 4. Como os leads são capturados
+## 4. Deploy na Vercel
+
+### ⚠️ Leia isto antes de publicar
+
+**Na Vercel o formulário só grava leads se `LEAD_WEBHOOK_URL` estiver configurada.**
+
+O sistema de arquivos das funções serverless é somente leitura e `/tmp` é
+descartado entre execuções — não existe persistência local possível. O código
+detecta esse cenário e, sem a variável:
+
+- a API responde **503** (não finge sucesso);
+- grava um erro explícito no log da função explicando a causa;
+- o formulário mostra o botão **“Enviar pelo WhatsApp”** com todos os dados já
+  preenchidos — o lead é preservado, mas não fica registrado no sistema.
+
+Com `LEAD_WEBHOOK_URL` configurada, o lead é enviado por POST em JSON para o
+destino escolhido (Slack, n8n, Make, Zapier, Google Apps Script, CRM).
+
+### Passo a passo
+
+1. **Importe o repositório** em https://vercel.com/new — o projeto é Next.js e a
+   Vercel detecta tudo automaticamente (sem build command customizado).
+2. **Configure a variável de ambiente** em *Settings → Environment Variables*:
+   - `LEAD_WEBHOOK_URL` = URL do seu webhook de destino (obrigatória)
+3. **Deploy.** A partir daí, cada `git push` na branch `main` gera um deploy
+   automático.
+
+### Alternativa por linha de comando
+
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+vercel env add LEAD_WEBHOOK_URL production
+```
+
+### Depois do deploy
+
+- Aponte o domínio em *Settings → Domains* e atualize `site.url` em
+  `src/lib/site.ts` para o domínio final (afeta canonical, sitemap e Open Graph).
+- Teste o formulário publicado e confirme que o lead chegou no destino.
+
+---
+
+## 5. Como os leads são capturados
 
 Fluxo:
 
 1. O visitante preenche o formulário (`src/components/LeadForm.tsx`).
 2. Validação no navegador → `POST /api/leads` (`src/app/api/leads/route.ts`).
 3. Validação no servidor (`src/lib/leads.ts`) e descarte de bots por honeypot.
-4. Persistência: grava em `data/leads.jsonl` **e/ou** envia para
-   `LEAD_WEBHOOK_URL`, se configurada.
+4. Persistência: envia para `LEAD_WEBHOOK_URL` (destino durável em serverless)
+   e/ou grava em `data/leads.jsonl` (durável em VPS/container).
 5. A tela de sucesso oferece um botão de WhatsApp já com a mensagem preenchida.
+6. **Se nenhum destino durável estiver disponível**, a API responde 503 e a tela
+   de erro oferece o botão “Enviar pelo WhatsApp” com os dados já preenchidos —
+   o lead é encaminhado em vez de ser perdido em silêncio.
 
 ### Onde ficam armazenados
 
+- **Webhook:** defina `LEAD_WEBHOOK_URL`. É o **único** destino durável na
+  Vercel. Aceita qualquer endpoint que receba `POST` com JSON (Slack, n8n, Make,
+  Zapier, Apps Script, CRM).
 - **Arquivo local:** `data/leads.jsonl` — um JSON por linha. Funciona em VPS ou
-  container com disco persistente.
-- **Webhook:** defina `LEAD_WEBHOOK_URL` no `.env.local`. Recomendado para
-  Vercel/Netlify, onde o disco é efêmero. Aceita qualquer destino que receba
-  `POST` com JSON (Slack, n8n, Make, Zapier, Apps Script, CRM).
+  container com disco persistente. Ignorado pelo Git (contém dados de clientes).
 
 Proteções já incluídas: honeypot anti-spam, limite de 5 envios por IP a cada 10
-minutos e validação de todos os campos também no servidor.
+minutos (configurável por `LEAD_RATE_LIMIT_MAX`) e validação de todos os campos
+também no servidor.
 
-Para ler os leads gravaos no arquivo:
+O campo **e-mail é opcional** de propósito: o formulário do hero coleta apenas
+nome, empresa e telefone/WhatsApp — se o servidor exigisse e-mail, esse
+formulário seria rejeitado em um campo que nem aparece na tela. O telefone é
+obrigatório e é o canal primário de contato.
+
+Para ler os leads gravados no arquivo:
 
 ```bash
 wc -l data/leads.jsonl                       # quantos leads
@@ -97,7 +150,7 @@ tail -n 5 data/leads.jsonl | jq .            # últimos 5, formatados
 
 ---
 
-## 5. Estrutura de páginas
+## 6. Estrutura de páginas
 
 | Rota | Arquivo | Conteúdo |
 | --- | --- | --- |
@@ -118,7 +171,7 @@ estruturados (`AccountingService`, `Service` e `FAQPage`), `sitemap.xml` e
 
 ---
 
-## 5.1 Scripts de verificação (opcional)
+## 7. Scripts de verificação (opcional)
 
 A pasta `scripts/` traz três utilitários de QA usados para validar o site. Eles
 dependem de `playwright-core` (já instalado como dependência de desenvolvimento)
@@ -131,6 +184,16 @@ node scripts/screenshot.mjs http://localhost:3000
 # verifica rolagem horizontal, h1 único, ids duplicados, imagens sem alt e
 # links sem texto acessível em 4 larguras de tela
 node scripts/check-layout.mjs http://localhost:3000
+
+# testa a captura de lead de ponta a ponta nos DOIS formulários da home,
+# no navegador real (sucesso + validação de e-mail)
+LEAD_RATE_LIMIT_MAX=1000 npx next start -p 3200 &
+node scripts/test-forms.mjs http://localhost:3200
+
+# testa o caminho de FALHA: a API não registra e o formulário precisa oferecer
+# o envio pelo WhatsApp com os dados preenchidos
+VERCEL=1 npx next start -p 3201 &
+node scripts/test-form-fallback.mjs http://localhost:3201
 
 # investiga a causa raiz de um overflow horizontal em uma rota específica
 node scripts/diagnose-overflow.mjs /servicos/auditoria
@@ -150,7 +213,7 @@ npm uninstall playwright-core && rm -rf scripts
 
 ---
 
-## 6. Design system
+## 8. Design system
 
 - **Cores:** definidas em `src/app/globals.css` no bloco `@theme`
   (`brand` = azul institucional, `accent` = verde de conversão, `gold` = detalhe).

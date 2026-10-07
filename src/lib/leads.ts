@@ -1,4 +1,5 @@
 import { appendFile, mkdir } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 /* ============================================================================
@@ -59,7 +60,12 @@ export function validateLead(input: LeadInput): ValidationResult {
     errors.name = "Informe nome e sobrenome.";
   }
 
-  if (!EMAIL_RE.test(email)) {
+  // O e-mail é OPCIONAL de propósito: o formulário do hero (modo compacto)
+  // coleta apenas nome, empresa e telefone/WhatsApp, que é o canal primário de
+  // contato do escritório. Validamos o formato sempre que vier preenchido, mas
+  // não o exigimos — do contrário o formulário do hero seria rejeitado com erro
+  // em um campo que sequer é exibido na tela.
+  if (email && !EMAIL_RE.test(email)) {
     errors.email = "Informe um e-mail válido.";
   }
 
@@ -106,15 +112,32 @@ export function looksLikeBot(input: LeadInput): boolean {
 /* ============================================================================
  *  PERSISTÊNCIA
  * ----------------------------------------------------------------------------
- *  1) Sempre grava em arquivo local (`data/leads.jsonl`) — funciona em VPS,
- *     container próprio ou execução local.
- *  2) Se LEAD_WEBHOOK_URL estiver definida, também envia o lead por POST para
- *     o destino configurado (Slack, n8n, Make, Zapier, Google Apps Script...).
- *     Use isso em ambientes serverless (Vercel/Netlify), onde o sistema de
- *     arquivos é efêmero.
+ *  Um destino é considerado DURÁVEL quando o lead sobrevive à requisição:
+ *
+ *  1) LEAD_WEBHOOK_URL — destino externo (Slack, n8n, Make, Zapier, Google Apps
+ *     Script, CRM). É o ÚNICO destino durável em serverless. Obrigatório na
+ *     Vercel.
+ *  2) Arquivo local (`data/leads.jsonl`) — durável em VPS, container com disco
+ *     persistente ou execução local. NÃO é durável na Vercel: o sistema de
+ *     arquivos da função é somente leitura fora de /tmp, e /tmp é descartado
+ *     entre execuções.
+ *
+ *  Sem nenhum destino durável a API responde 503 e o formulário oferece o envio
+ *  pelo WhatsApp já preenchido — assim o lead é preservado de qualquer forma,
+ *  em vez de aceitar o envio e perder o contato em silêncio.
  * ========================================================================== */
 
-const LEADS_FILE = path.join(process.cwd(), "data", "leads.jsonl");
+/** True quando rodando em ambiente serverless com disco efêmero. */
+export const IS_EPHEMERAL_FS = Boolean(
+  process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME,
+);
+
+export const hasDurableDestination = () =>
+  Boolean(process.env.LEAD_WEBHOOK_URL) || !IS_EPHEMERAL_FS;
+
+const LEADS_FILE = IS_EPHEMERAL_FS
+  ? path.join(tmpdir(), "deeptax-leads.jsonl")
+  : path.join(process.cwd(), "data", "leads.jsonl");
 
 async function persistToFile(lead: Lead): Promise<boolean> {
   try {
@@ -151,20 +174,35 @@ async function forwardToWebhook(lead: Lead): Promise<boolean> {
 }
 
 export async function saveLead(lead: Lead) {
-  const [stored, forwarded] = await Promise.all([
-    persistToFile(lead),
-    forwardToWebhook(lead),
-  ]);
-  return { stored, forwarded };
+  // O webhook é o destino durável em serverless; o arquivo é o durável fora
+  // dele. Tentamos os dois quando fazem sentido e reportamos o que funcionou.
+  const forwarded = await forwardToWebhook(lead);
+  const stored = IS_EPHEMERAL_FS && forwarded ? false : await persistToFile(lead);
+
+  if (IS_EPHEMERAL_FS && !forwarded) {
+    console.error(
+      "[leads] ATENÇÃO: rodando em ambiente serverless sem LEAD_WEBHOOK_URL. " +
+        "Os leads NÃO estão sendo persistidos de forma durável. " +
+        "Configure a variável LEAD_WEBHOOK_URL no painel da Vercel.",
+    );
+  }
+
+  return { stored, forwarded, durable: forwarded || (!IS_EPHEMERAL_FS && stored) };
 }
 
 /* ============================================================================
  *  LIMITAÇÃO DE TAXA (em memória, por instância)
+ * ----------------------------------------------------------------------------
+ *  Em serverless cada instância tem seu próprio contador, então isto é uma
+ *  barreira contra abuso trivial, não uma proteção distribuída. Para algo
+ *  robusto em escala, use um rate limit no edge (Vercel Firewall, Cloudflare)
+ *  ou um store compartilhado (Upstash Redis).
  * ========================================================================== */
 
 const hits = new Map<string, { count: number; resetAt: number }>();
-const WINDOW_MS = 10 * 60 * 1000;
-const MAX_PER_WINDOW = 5;
+const WINDOW_MS = Number(process.env.LEAD_RATE_LIMIT_WINDOW_MS ?? 10 * 60 * 1000);
+// Configurável para permitir testes automatizados sem esbarrar no limite.
+const MAX_PER_WINDOW = Number(process.env.LEAD_RATE_LIMIT_MAX ?? 5);
 
 export function rateLimit(key: string) {
   const now = Date.now();
