@@ -241,8 +241,12 @@ renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 - [ ] **Complemento** (sala/conjunto/andar), se houver.
 - [ ] **Registro no CRC** (`crc`) — enquanto vazio, some do topo e do rodapé.
 - [ ] **Razão social completa** (`legalName`) — hoje exibe apenas "Deeptax".
-- [ ] **Domínio final** (`url`) — hoje `https://www.deeptax.com.br`, inferido do
-      e-mail; precisa bater com o domínio real (afeta canonical, sitemap e OG).
+- [ ] **Domínio final** — controlado por `NEXT_PUBLIC_SITE_URL` na Vercel. Sem a
+      variável, o padrão é `https://deeptax.vercel.app` (o endereço real de
+      publicação). **Atenção:** existe hoje um site WordPress em
+      `deeptax.com.br`; enquanto o domínio não apontar para a Vercel, definir
+      `NEXT_PUBLIC_SITE_URL=https://www.deeptax.com.br` faria o site novo
+      declarar o site antigo como versão oficial.
 - [ ] **Números reais** (`stats`) — a faixa de números está **oculta** até você
       informar dados verificáveis. Formato no comentário do arquivo.
 - [ ] **Depoimentos reais autorizados** (`testimonials`) — a seção está

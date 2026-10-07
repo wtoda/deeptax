@@ -5,6 +5,9 @@ node_modules/
 # Config local do npm (aponta para um caminho absoluto deste ambiente)
 .npmrc
 
+# Vínculo local com a Vercel (gerado por `vercel link`)
+.vercel
+
 # Build do Next.js
 .next/
 out/
