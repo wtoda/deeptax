@@ -22,7 +22,7 @@ import {
 export const metadata: Metadata = {
   title: "Contato e proposta",
   description:
-    "Fale com a Deeptax por WhatsApp, telefone ou e-mail, ou solicite uma proposta com diagnóstico gratuito. Atendimento remoto em todo o Brasil.",
+    "Fale com a Deeptax pelo WhatsApp, o canal de atendimento do escritório, ou consulte telefone, e-mail e endereço. Atendimento remoto em todo o Brasil.",
   alternates: { canonical: "/contato" },
 };
 
@@ -50,7 +50,7 @@ const channels = [
     value: site.contact.email,
     href: `mailto:${site.contact.email}`,
     external: false,
-    note: "Resposta em até 1 dia útil",
+    note: "Canal institucional — prefira o WhatsApp",
   },
   {
     icon: IconMapPin,

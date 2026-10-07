@@ -124,6 +124,18 @@ Fluxo:
 O número de destino vem de `contact.whatsappNumber` em `src/lib/site.ts`
 (somente dígitos, com `55` + DDD).
 
+### O e-mail no site é apenas informativo
+
+O e-mail do escritório aparece no topo, no rodapé, na página de contato, na
+chamada final e na Política de Privacidade — sempre como `mailto:`, ou seja,
+abrindo o programa de e-mail do visitante. **O site nunca envia e-mail**: não
+há disparo automático, notificação nem resposta por e-mail em nenhum fluxo.
+
+A comunicação do escritório é feita pelo WhatsApp. Se algum dia for necessário
+voltar a receber leads por e-mail, o caminho é reintroduzir um destino no
+servidor — e nesse caso vale reler a observação sobre MX e registro A na
+seção de deploy, porque o e-mail do domínio depende disso.
+
 ## 6. Estrutura de páginas
 
 | Rota | Arquivo | Conteúdo |
@@ -205,11 +217,13 @@ npm uninstall playwright-core && rm -rf scripts
 Campos sem dado real ficam como `""` em `src/lib/site.ts` e **não são
 renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 
-- [ ] **CEP** do endereço (`contact.address.zip`) — hoje o CEP não aparece e é
-      omitido do schema JSON-LD.
+- [x] **CRC e CEP** — decisão de não publicar por ora. Ficam vazios em
+      `src/lib/site.ts` e a interface simplesmente não os exibe.
 - [ ] **Complemento** (sala/conjunto/andar), se houver.
-- [ ] **Registro no CRC** (`crc`) — enquanto vazio, some do topo e do rodapé.
-- [ ] **Razão social completa** (`legalName`) — hoje exibe apenas "Deeptax".
+- [ ] **E-mail do domínio fora do ar** — o MX de `deeptax.com.br` aponta para o
+      próprio domínio e depende do registro A, que agora aponta para a Vercel.
+      Não afeta o site (a comunicação é por WhatsApp), mas afeta quem escreve
+      para `atendimento@deeptax.com.br`. Ver o alerta na seção de deploy.
 - [ ] **Domínio** — `deeptax.com.br` já aponta para a Vercel (A `216.198.79.1`)
       e o apex redireciona 308 para `https://www.deeptax.com.br`, que é o
       canônico definido em `src/lib/site.ts`. Para trocar o canônico sem mexer

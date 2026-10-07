@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Section } from "@/components/ui";
-import { fullAddress, site } from "@/lib/site";
+import { fullAddress, site, whatsappLink } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Política de Privacidade e LGPD",
@@ -162,14 +162,26 @@ export default function PoliticaPage() {
                 Dúvidas sobre privacidade?
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-brand-900/70">
-                Fale com o nosso encarregado de dados pelo e-mail{" "}
+                Para exercer seus direitos, fale com o nosso encarregado de dados
+                pelo WhatsApp{" "}
+                <a
+                  href={whatsappLink(
+                    "Olá! Gostaria de falar sobre privacidade e proteção de dados (LGPD).",
+                  )}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-accent-600 underline decoration-accent-300 underline-offset-2"
+                >
+                  {site.contact.whatsapp}
+                </a>{" "}
+                ou, se preferir por escrito, pelo e-mail{" "}
                 <a
                   href={`mailto:${site.contact.email}`}
                   className="font-semibold text-accent-600 underline decoration-accent-300 underline-offset-2"
                 >
                   {site.contact.email}
                 </a>
-                .
+                . Responderemos em até 15 dias.
               </p>
               <Link
                 href="/contato"
