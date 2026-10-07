@@ -27,11 +27,9 @@ export const site = {
     "Escritório contábil que une rigor técnico e leitura estratégica para dar clareza, segurança e crescimento à sua empresa.",
   // Domínio canônico do site. Controla canonical, sitemap, robots e Open Graph.
   //
-  // Defina NEXT_PUBLIC_SITE_URL na Vercel apontando para o domínio final. Sem
-  // essa variável o valor abaixo é usado — e ele PRECISA corresponder ao
-  // endereço real onde o site está publicado, senão os buscadores são instruídos
-  // a considerar outra página como a versão oficial.
-  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://deeptax.vercel.app").replace(
+  // O apex deeptax.com.br responde 308 e redireciona para www, então o endereço
+  // oficial é o com www. NEXT_PUBLIC_SITE_URL pode sobrescrever este valor.
+  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://www.deeptax.com.br").replace(
     /\/+$/,
     "",
   ),
