@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   DEEPTAX — DESIGN SYSTEM
+   ======================================================================== */
+
+@theme {
+  /* Azul institucional profundo */
+  --color-brand-50: #eef4fb;
+  --color-brand-100: #d9e6f5;
+  --color-brand-200: #b3cdeb;
+  --color-brand-300: #7fa9da;
+  --color-brand-400: #4a80c4;
+  --color-brand-500: #2a5fa5;
+  --color-brand-600: #1e4880;
+  --color-brand-700: #17386a;
+  --color-brand-800: #122b52;
+  --color-brand-900: #0d1f3c;
+  --color-brand-950: #071427;
+
+  /* Verde de destaque / conversão */
+  --color-accent-50: #e9fbf4;
+  --color-accent-100: #c9f5e4;
+  --color-accent-200: #96eacb;
+  --color-accent-300: #5dd8ae;
+  --color-accent-400: #2bbf8e;
+  --color-accent-500: #12a374;
+  --color-accent-600: #0b825c;
+  --color-accent-700: #0a684b;
+  --color-accent-800: #0a523c;
+  --color-accent-900: #094333;
+  --color-accent-950: #032620;
+
+  /* Detalhe dourado */
+  --color-gold-400: #d9b558;
+  --color-gold-500: #c9a227;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, system-ui,
+    sans-serif;
+
+  --shadow-soft: 0 1px 2px rgb(7 20 39 / 0.04), 0 8px 24px -8px rgb(7 20 39 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(7 20 39 / 0.05), 0 20px 48px -16px rgb(7 20 39 / 0.22);
+
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-float: float 7s ease-in-out infinite;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+/* --------------------------------------------------------------- BASE ---- */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-white text-brand-900 font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    @apply bg-accent-500/25 text-brand-950;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent-500 rounded-sm;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ---------------------------------------------------------- UTILITÁRIOS --- */
+
+@utility container-x {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 80rem;
+  padding-inline: 1.25rem;
+
+  @media (min-width: 640px) {
+    padding-inline: 2rem;
+  }
+  @media (min-width: 1024px) {
+    padding-inline: 2.5rem;
+  }
+}
+
+/* Texto com gradiente da marca */
+@utility text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-accent-400) 0%,
+    var(--color-accent-200) 45%,
+    #ffffff 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Fundo escuro com brilho sutil da marca */
+@utility bg-ink {
+  background-color: var(--color-brand-950);
+  background-image:
+    radial-gradient(
+      55rem 30rem at 12% -8%,
+      rgb(18 163 116 / 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      45rem 28rem at 92% 8%,
+      rgb(42 95 165 / 0.32),
+      transparent 62%
+    );
+}
+
+/* Grade sutil para seções escuras */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 3.5rem 3.5rem;
+}
+
+/* Cartão com efeito de vidro sobre fundo escuro */
+@utility glass {
+  background-color: rgb(255 255 255 / 0.05);
+  border: 1px solid rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(12px);
+}
