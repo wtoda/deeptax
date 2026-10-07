@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/Logo";
 import {
   IconChevronDown,
+  IconExternal,
   IconMail,
   IconMenu,
   IconPhone,
@@ -14,7 +15,7 @@ import {
   serviceIcons,
 } from "@/components/Icons";
 import { services } from "@/lib/services";
-import { defaultWhatsappMessage, site, whatsappLink } from "@/lib/site";
+import { blogUrl, defaultWhatsappMessage, site, whatsappLink } from "@/lib/site";
 
 export function Header() {
   const pathname = usePathname();
@@ -189,6 +190,20 @@ export function Header() {
             <NavLink href="/sobre" active={isActive("/sobre")}>
               Sobre
             </NavLink>
+
+            {/* Link externo: abre o blog em nova aba e sinaliza isso ao
+                visitante com o ícone e com o texto para leitor de tela. */}
+            <a
+              href={blogUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium text-brand-900/75 transition-colors hover:text-brand-950"
+            >
+              Blog
+              <IconExternal className="size-3.5 text-brand-900/40" />
+              <span className="sr-only">(abre em nova aba)</span>
+            </a>
+
             <NavLink href="/contato" active={isActive("/contato")}>
               Contato
             </NavLink>
@@ -260,6 +275,16 @@ export function Header() {
                 <MobileNavLink href="/sobre" active={isActive("/sobre")}>
                   Sobre o escritório
                 </MobileNavLink>
+                <a
+                  href={blogUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between rounded-xl px-3.5 py-3 text-sm font-semibold text-brand-900 transition-colors hover:bg-brand-50"
+                >
+                  Blog
+                  <IconExternal className="size-4 text-brand-900/40" />
+                  <span className="sr-only">(abre em nova aba)</span>
+                </a>
                 <MobileNavLink href="/contato" active={isActive("/contato")}>
                   Contato
                 </MobileNavLink>

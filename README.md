@@ -151,6 +151,11 @@ seção de deploy, porque o e-mail do domínio depende disso.
 | `/politica-de-privacidade` | `src/app/politica-de-privacidade/page.tsx` | LGPD |
 | `/api/version` | `src/app/api/version/route.ts` | Identifica o commit publicado (verificação de deploy) |
 
+O menu do topo traz, entre "Sobre" e "Contato", o link **Blog** para
+`https://blog.deeptax.com.br` — link externo, aberto em nova aba com
+`rel="noopener noreferrer"` e sinalizado ao leitor de tela. A URL fica em
+`blogUrl` (`src/lib/site.ts`).
+
 SEO já configurado: metadados por página, Open Graph, Twitter Card, dados
 estruturados (`AccountingService`, `Service` e `FAQPage`), `sitemap.xml` e
 `robots.txt` gerados automaticamente.

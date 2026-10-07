@@ -27,6 +27,15 @@ export const IconReceipt = (p: IconProps) => (
   </svg>
 );
 
+/** Indica que o link leva para fora do site, em nova aba. */
+export const IconExternal = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <path d="M14 4h6v6" />
+    <path d="M20 4l-8.5 8.5" />
+    <path d="M18 14.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h4.5" />
+  </svg>
+);
+
 export const IconSearch = (p: IconProps) => (
   <svg {...base} {...p}>
     <circle cx="11" cy="11" r="7" />

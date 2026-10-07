@@ -224,9 +224,5 @@ export const whatsappLink = (message?: string) =>
 export const defaultWhatsappMessage =
   `Olá! Vim pelo site da ${site.name} e gostaria de falar sobre os serviços contábeis.`;
 
-export const navigation = [
-  { label: "Início", href: "/" },
-  { label: "Serviços", href: "/servicos" },
-  { label: "Sobre", href: "/sobre" },
-  { label: "Contato", href: "/contato" },
-] as const;
+/** Blog do escritório — link externo, exibido no menu. */
+export const blogUrl = "https://blog.deeptax.com.br";
