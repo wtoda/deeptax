@@ -132,8 +132,19 @@ export const IS_EPHEMERAL_FS = Boolean(
   process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME,
 );
 
-export const hasDurableDestination = () =>
-  Boolean(process.env.LEAD_WEBHOOK_URL) || !IS_EPHEMERAL_FS;
+/**
+ * Endereço que recebe os leads por e-mail quando LEAD_WEBHOOK_URL não está
+ * definida. O FormSubmit entrega o conteúdo do POST por e-mail e não exige
+ * conta nem servidor — apenas a ativação do endereço, feita uma única vez
+ * clicando no link que ele envia no primeiro envio.
+ */
+const LEAD_EMAIL_TO = process.env.LEAD_EMAIL_TO ?? "atendimento@deeptax.com.br";
+const FORMSUBMIT_URL = `https://formsubmit.co/ajax/${LEAD_EMAIL_TO}`;
+
+/** Destino efetivo dos leads: webhook explícito ou o relé de e-mail. */
+export const webhookUrl = () => process.env.LEAD_WEBHOOK_URL || FORMSUBMIT_URL;
+
+export const hasDurableDestination = () => Boolean(webhookUrl()) || !IS_EPHEMERAL_FS;
 
 const LEADS_FILE = IS_EPHEMERAL_FS
   ? path.join(tmpdir(), "deeptax-leads.jsonl")
@@ -150,15 +161,70 @@ async function persistToFile(lead: Lead): Promise<boolean> {
   }
 }
 
+/**
+ * Decide se o destino realmente aceitou o lead.
+ *
+ * Não basta olhar o status HTTP: o FormSubmit responde **HTTP 200 mesmo quando
+ * falha**, sinalizando o erro apenas no corpo (`{"success":"false"}`). Confiar
+ * no `response.ok` faria uma falha passar por sucesso e o lead se perder sem
+ * aviso. Quando o corpo traz um indicador explícito, ele é quem decide.
+ */
+async function destinoAceitou(
+  response: Response,
+): Promise<{ aceitou: boolean; corpo: string }> {
+  // O corpo só pode ser lido uma vez — lemos aqui e devolvemos para o log.
+  const corpo = await response.text().catch(() => "");
+
+  if (!response.ok) return { aceitou: false, corpo };
+  if (!corpo) return { aceitou: true, corpo };
+
+  try {
+    const dados = JSON.parse(corpo) as Record<string, unknown>;
+    if (dados && typeof dados === "object") {
+      for (const chave of ["success", "ok", "sucesso"]) {
+        if (chave in dados) {
+          const valor = dados[chave];
+          return { aceitou: valor === true || valor === "true", corpo };
+        }
+      }
+    }
+  } catch {
+    // Corpo não-JSON (ex.: Google Apps Script): o status HTTP já basta.
+  }
+  return { aceitou: true, corpo };
+}
+
 async function forwardToWebhook(lead: Lead): Promise<boolean> {
-  const url = process.env.LEAD_WEBHOOK_URL;
+  const url = webhookUrl();
   if (!url) return false;
+
+  const ehFormSubmit = url.includes("formsubmit.co");
 
   try {
     const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        // O FormSubmit recusa POST de servidor sem estes cabeçalhos e exige
+        // que a requisição pareça vir de uma página do próprio site.
+        ...(ehFormSubmit
+          ? {
+              Origin: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.deeptax.com.br",
+              Referer: `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.deeptax.com.br"}/contato`,
+            }
+          : {}),
+      },
       body: JSON.stringify({
+        // Campos específicos do FormSubmit. São ignorados pelo Google Apps
+        // Script, então o mesmo payload serve para os dois destinos.
+        ...(ehFormSubmit
+          ? {
+              _subject: `Novo lead pelo site — ${lead.name}${lead.company ? ` (${lead.company})` : ""}`,
+              _template: "table",
+              _captcha: "false",
+            }
+          : {}),
         type: "novo_lead",
         site: process.env.NEXT_PUBLIC_SITE_NAME ?? "Deeptax",
         ...lead,
@@ -170,9 +236,16 @@ async function forwardToWebhook(lead: Lead): Promise<boolean> {
         Number(process.env.LEAD_WEBHOOK_TIMEOUT_MS ?? 10000),
       ),
     });
-    return response.ok;
+
+    const { aceitou, corpo } = await destinoAceitou(response);
+    if (!aceitou) {
+      console.error(
+        `[leads] destino recusou o lead ${lead.id} (HTTP ${response.status}): ${corpo.slice(0, 300)}`,
+      );
+    }
+    return aceitou;
   } catch (error) {
-    console.error("[leads] falha ao encaminhar para o webhook:", error);
+    console.error("[leads] falha ao encaminhar para o destino:", error);
     return false;
   }
 }

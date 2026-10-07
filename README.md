@@ -124,13 +124,32 @@ Fluxo:
    de erro oferece o botão “Enviar pelo WhatsApp” com os dados já preenchidos —
    o lead é encaminhado em vez de ser perdido em silêncio.
 
+### Destino dos leads (padrão: e-mail via FormSubmit)
+
+Sem nenhuma variável configurada, os leads são entregues **por e-mail** em
+`atendimento@deeptax.com.br` (ou no endereço de `LEAD_EMAIL_TO`), usando o
+[FormSubmit](https://formsubmit.co). Não exige conta, servidor nem planilha —
+apenas **ativar o endereço uma vez**, clicando no link que o FormSubmit envia no
+primeiro envio. Sem essa ativação nenhum lead é entregue, e nesse caso o
+formulário avisa o visitante e oferece o WhatsApp (não há perda silenciosa).
+
+Para usar um destino próprio (planilha do Google, Slack, n8n, Zapier, CRM),
+defina `LEAD_WEBHOOK_URL` — ela tem precedência sobre o FormSubmit. O guia da
+planilha está em `docs/LEADS-GOOGLE-SHEETS.md`.
+
+> **Cuidado ao integrar destinos novos:** eles precisam sinalizar falha no
+> **status HTTP**. Serviços que respondem `HTTP 200` com um erro no corpo
+> quebram a detecção de sucesso. O FormSubmit é exatamente assim, por isso
+> `destinoAceitou()` inspeciona o corpo (`success`/`ok`/`sucesso`) em vez de
+> confiar no `response.ok`. Sem isso, um lead recusado passaria por entregue.
+
 ### Onde ficam armazenados
 
-- **Webhook:** defina `LEAD_WEBHOOK_URL`. É o **único** destino durável na
-  Vercel. Aceita qualquer endpoint que receba `POST` com JSON (Slack, n8n, Make,
-  Zapier, Apps Script, CRM).
+- **E-mail (padrão):** entregue pelo FormSubmit em `LEAD_EMAIL_TO`.
+- **Webhook (`LEAD_WEBHOOK_URL`):** qualquer endpoint que receba `POST` JSON.
 - **Arquivo local:** `data/leads.jsonl` — um JSON por linha. Funciona em VPS ou
   container com disco persistente. Ignorado pelo Git (contém dados de clientes).
+  Na Vercel não existe: o disco da função é somente leitura.
 
 Proteções já incluídas: honeypot anti-spam, limite de 5 envios por IP a cada 10
 minutos (configurável por `LEAD_RATE_LIMIT_MAX`) e validação de todos os campos
