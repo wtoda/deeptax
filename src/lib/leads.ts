@@ -163,8 +163,12 @@ async function forwardToWebhook(lead: Lead): Promise<boolean> {
         site: process.env.NEXT_PUBLIC_SITE_NAME ?? "Deeptax",
         ...lead,
       }),
-      // Não deixa o usuário esperando por um destino externo lento.
-      signal: AbortSignal.timeout(6000),
+      // Destinos como o Google Apps Script podem levar alguns segundos na
+      // primeira execução (cold start). O padrão de 10s evita devolver erro ao
+      // visitante por causa de uma resposta lenta do destino.
+      signal: AbortSignal.timeout(
+        Number(process.env.LEAD_WEBHOOK_TIMEOUT_MS ?? 10000),
+      ),
     });
     return response.ok;
   } catch (error) {
