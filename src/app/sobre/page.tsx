@@ -257,7 +257,6 @@ export default function SobrePage() {
                     {[
                       { label: "Razão social", value: site.legalName },
                       { label: "Nome fantasia", value: site.tradeName },
-                      { label: "Marca", value: site.name },
                       { label: "CNPJ", value: site.cnpj },
                       { label: "Registro profissional", value: site.crc },
                       { label: "Endereço", value: fullAddress },

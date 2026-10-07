@@ -17,15 +17,16 @@ export const site = {
   /* ---------------------------------------------------------------- MARCA */
   name: "Deeptax",
   /**
-   * Razão social conforme o registro no CRC/CNPJ.
+   * Razão social exibida no site. Por decisão do escritório, a marca DeepTax
+   * passa a ser também o nome apresentado — antes constava o registro
+   * "FORTY FIVE CONSULTORIA FISCAL CONTABILIDADE TECNOLOGIA LTDA".
    *
-   * ATENÇÃO — divergência a confirmar: antes foi informado "DeepTax Estratégia
-   * Contabilidade Tecnologia Ltda"; o registro oficial do CNPJ
-   * 45.691.496/0001-25 traz FORTY FIVE CONSULTORIA FISCAL CONTABILIDADE
-   * TECNOLOGIA LTDA. Adotamos o dado do registro. O registro original está em
-   * caixa alta; aqui usamos caixa mista apenas para leitura.
+   * CONFERIR: se a nova razão social registrada (Junta Comercial / CRC) for a
+   * forma completa, no padrão do CNPJ — "Deeptax Consultoria Fiscal
+   * Contabilidade Tecnologia Ltda" —, basta trocar o valor abaixo. Hoje exibe
+   * apenas "Deeptax", que também alimenta a linha de copyright do rodapé.
    */
-  legalName: "Forty Five Consultoria Fiscal Contabilidade Tecnologia Ltda",
+  legalName: "Deeptax",
   // CONFERIR: nome fantasia informado antes pelo escritório. Não consta no
   // registro consultado — confirmar se deve mesmo ser exibido.
   tradeName: "DeepAdvisory Estratégia Empresarial",

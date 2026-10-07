@@ -74,7 +74,9 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "AccountingService",
   name: site.name,
-  legalName: site.legalName,
+  // Só declaramos legalName quando difere do nome apresentado — repetir o
+  // mesmo valor duas vezes não acrescenta nada ao schema.
+  ...(site.legalName !== site.name ? { legalName: site.legalName } : {}),
   description: site.shortDescription,
   url: site.url,
   telephone: site.contact.phone,

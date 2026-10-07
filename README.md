@@ -222,12 +222,15 @@ renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 - [x] **CEP** — 01310-200, exibido no endereço completo e no `postalCode` do
       JSON-LD.
 - [x] **Complemento e bairro** — Conjunto 1504, Bela Vista.
-- [ ] **CONFERIR a razão social** — o registro oficial do CNPJ traz FORTY FIVE
-      CONSULTORIA FISCAL CONTABILIDADE TECNOLOGIA LTDA, diferente do que havia
-      sido informado antes. Adotamos o dado do registro.
+- [x] **Razão social** — exibida como "Deeptax", por decisão do escritório.
+      Antes constava o registro "FORTY FIVE CONSULTORIA FISCAL CONTABILIDADE
+      TECNOLOGIA LTDA". O copyright do rodapé usa o mesmo campo, então também
+      lê "Deeptax". Se a nova razão social registrada for a forma completa no
+      padrão do CNPJ ("Deeptax Consultoria Fiscal Contabilidade Tecnologia
+      Ltda"), basta trocar `legalName`.
 - [ ] **CONFERIR o nome fantasia** — "DeepAdvisory Estratégia Empresarial" não
       consta no registro consultado; confirmar se deve ser exibido, já que a
-      marca apresentada no site é "Deeptax".
+      marca e a razão social agora são "Deeptax".
 - [ ] **Complemento** (sala/conjunto/andar), se houver.
 - [ ] **E-mail do domínio fora do ar** — o MX de `deeptax.com.br` aponta para o
       próprio domínio e depende do registro A, que agora aponta para a Vercel.
