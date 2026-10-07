@@ -68,114 +68,61 @@ endereço `/servicos/<slug>`).
 
 ## 4. Deploy na Vercel
 
-### ⚠️ Leia isto antes de publicar
+O deploy é direto: a Vercel detecta Next.js automaticamente, sem build command
+customizado e **sem nenhuma variável de ambiente obrigatória**. Cada `git push`
+na branch `main` gera um deploy automático (leva ~50 segundos).
 
-**Na Vercel o formulário só grava leads se `LEAD_WEBHOOK_URL` estiver configurada.**
-
-O sistema de arquivos das funções serverless é somente leitura e `/tmp` é
-descartado entre execuções — não existe persistência local possível. O código
-detecta esse cenário e, sem a variável:
-
-- a API responde **503** (não finge sucesso);
-- grava um erro explícito no log da função explicando a causa;
-- o formulário mostra o botão **“Enviar pelo WhatsApp”** com todos os dados já
-  preenchidos — o lead é preservado, mas não fica registrado no sistema.
-
-Com `LEAD_WEBHOOK_URL` configurada, o lead é enviado por POST em JSON para o
-destino escolhido (Slack, n8n, Make, Zapier, Google Apps Script, CRM).
-
-### Passo a passo
-
-1. **Importe o repositório** em https://vercel.com/new — o projeto é Next.js e a
-   Vercel detecta tudo automaticamente (sem build command customizado).
-2. **Configure a variável de ambiente** em *Settings → Environment Variables*:
-   - `LEAD_WEBHOOK_URL` = URL do seu webhook de destino (obrigatória)
-3. **Deploy.** A partir daí, cada `git push` na branch `main` gera um deploy
-   automático.
-
-### Alternativa por linha de comando
+### Confirmar qual build está no ar
 
 ```bash
-npm i -g vercel
-vercel login
-vercel --prod
-vercel env add LEAD_WEBHOOK_URL production
+curl -s https://www.deeptax.com.br/api/version | jq .
 ```
+
+Responde o commit publicado, a branch, o ambiente e a região. Existe porque
+verificar deploy por comportamento engana: alterações só no servidor não mudam
+o HTML, e mensagens de erro podem ser idênticas entre builds diferentes.
 
 ### Depois do deploy
 
-- Aponte o domínio em *Settings → Domains* e atualize `site.url` em
-  `src/lib/site.ts` para o domínio final (afeta canonical, sitemap e Open Graph).
-- Teste o formulário publicado e confirme que o lead chegou no destino.
+- O domínio `deeptax.com.br` aponta para a Vercel (A `216.198.79.1`) e o apex
+  redireciona 308 para `https://www.deeptax.com.br`.
+- Para trocar o domínio canônico sem mexer em código, defina
+  `NEXT_PUBLIC_SITE_URL` em *Settings → Environment Variables*.
 
----
+> **⚠️ Cuidado com e-mail ao apontar o domínio.** O registro MX da
+> `deeptax.com.br` aponta para o próprio domínio, então ele depende do registro
+> **A**. Ao apontar o A para a Vercel, o e-mail para de funcionar, porque a
+> Vercel não recebe SMTP. Mantenha um hostname dedicado de e-mail (por exemplo
+> `mail.deeptax.com.br` com A para o servidor de e-mail) e aponte o MX para ele.
 
 ## 5. Como os leads são capturados
+
+**Tudo pelo WhatsApp, sem backend.** O formulário não envia nada para o nosso
+servidor: ele monta a mensagem no navegador do visitante e abre a conversa no
+WhatsApp do escritório já preenchida.
 
 Fluxo:
 
 1. O visitante preenche o formulário (`src/components/LeadForm.tsx`).
-2. Validação no navegador → `POST /api/leads` (`src/app/api/leads/route.ts`).
-3. Validação no servidor (`src/lib/leads.ts`) e descarte de bots por honeypot.
-4. Persistência: envia para `LEAD_WEBHOOK_URL` (destino durável em serverless)
-   e/ou grava em `data/leads.jsonl` (durável em VPS/container).
-5. A tela de sucesso oferece um botão de WhatsApp já com a mensagem preenchida.
-6. **Se nenhum destino durável estiver disponível**, a API responde 503 e a tela
-   de erro oferece o botão “Enviar pelo WhatsApp” com os dados já preenchidos —
-   o lead é encaminhado em vez de ser perdido em silêncio.
+2. Validação no próprio navegador (`src/lib/lead-whatsapp.ts` monta o texto).
+3. Ao enviar, abre o WhatsApp com nome, empresa, telefone, e-mail (opcional),
+   serviço de interesse e a mensagem — mais a origem (qual página).
+4. A tela de confirmação oferece o link novamente, caso o navegador bloqueie a
+   abertura automática.
 
-### Destino dos leads (padrão: e-mail via FormSubmit)
+### O que isso implica
 
-Sem nenhuma variável configurada, os leads são entregues **por e-mail** em
-`atendimento@deeptax.com.br` (ou no endereço de `LEAD_EMAIL_TO`), usando o
-[FormSubmit](https://formsubmit.co). Não exige conta, servidor nem planilha —
-apenas **ativar o endereço uma vez**, clicando no link que o FormSubmit envia no
-primeiro envio. Sem essa ativação nenhum lead é entregue, e nesse caso o
-formulário avisa o visitante e oferece o WhatsApp (não há perda silenciosa).
+- **Não existe** banco de dados, API de contato, webhook, e-mail automático,
+  planilha ou arquivo de leads. Não há nada para configurar nem para monitorar.
+- Nenhum dado é gravado durante o preenchimento. O lead existe apenas na
+  conversa de WhatsApp, depois que o visitante decide enviar.
+- Não há falha de servidor possível no envio: o visitante sempre sai do
+  formulário com um canal aberto.
+- A Política de Privacidade reflete exatamente isso — inclusive a ausência de
+  registro de IP e de cookies de rastreamento.
 
-Para usar um destino próprio (planilha do Google, Slack, n8n, Zapier, CRM),
-defina `LEAD_WEBHOOK_URL` — ela tem precedência sobre o FormSubmit. O guia da
-planilha está em `docs/LEADS-GOOGLE-SHEETS.md`.
-
-> **Cuidado ao integrar destinos novos:** eles precisam sinalizar falha no
-> **status HTTP**. Serviços que respondem `HTTP 200` com um erro no corpo
-> quebram a detecção de sucesso. O FormSubmit é exatamente assim, por isso
-> `destinoAceitou()` inspeciona o corpo (`success`/`ok`/`sucesso`) em vez de
-> confiar no `response.ok`. Sem isso, um lead recusado passaria por entregue.
-
-### Onde ficam armazenados
-
-- **E-mail (padrão):** entregue pelo FormSubmit em `LEAD_EMAIL_TO`.
-- **Webhook (`LEAD_WEBHOOK_URL`):** qualquer endpoint que receba `POST` JSON.
-- **Arquivo local:** `data/leads.jsonl` — um JSON por linha. Funciona em VPS ou
-  container com disco persistente. Ignorado pelo Git (contém dados de clientes).
-  Na Vercel não existe: o disco da função é somente leitura.
-
-Proteções já incluídas: honeypot anti-spam, limite de 5 envios por IP a cada 10
-minutos (configurável por `LEAD_RATE_LIMIT_MAX`) e validação de todos os campos
-também no servidor.
-
-> **Por que não usamos o FormSubmit.** Ele foi testado e descartado: exige um
-> cabeçalho `Origin` de página web (não aceita POST de servidor sem ele), pede
-> ativação manual por endereço de e-mail e — o motivo decisivo — **responde HTTP
-> 200 mesmo quando falha**, com `"success":"false"` no corpo. Como `saveLead`
-> considera sucesso pelo `response.ok`, uma falha do FormSubmit seria lida como
-> sucesso e o lead se perderia sem qualquer aviso. Qualquer destino novo precisa
-> sinalizar falha com status HTTP de erro.
-
-O campo **e-mail é opcional** de propósito: o formulário do hero coleta apenas
-nome, empresa e telefone/WhatsApp — se o servidor exigisse e-mail, esse
-formulário seria rejeitado em um campo que nem aparece na tela. O telefone é
-obrigatório e é o canal primário de contato.
-
-Para ler os leads gravados no arquivo:
-
-```bash
-wc -l data/leads.jsonl                       # quantos leads
-tail -n 5 data/leads.jsonl | jq .            # últimos 5, formatados
-```
-
----
+O número de destino vem de `contact.whatsappNumber` em `src/lib/site.ts`
+(somente dígitos, com `55` + DDD).
 
 ## 6. Estrutura de páginas
 
@@ -190,7 +137,7 @@ tail -n 5 data/leads.jsonl | jq .            # últimos 5, formatados
 | `/sobre` | `src/app/sobre/page.tsx` | História, valores, time, dados do escritório |
 | `/contato` | `src/app/contato/page.tsx` | Canais de contato, formulário completo e FAQ |
 | `/politica-de-privacidade` | `src/app/politica-de-privacidade/page.tsx` | LGPD |
-| `/api/leads` | `src/app/api/leads/route.ts` | Endpoint de captura de leads |
+| `/api/version` | `src/app/api/version/route.ts` | Identifica o commit publicado (verificação de deploy) |
 
 SEO já configurado: metadados por página, Open Graph, Twitter Card, dados
 estruturados (`AccountingService`, `Service` e `FAQPage`), `sitemap.xml` e
@@ -212,15 +159,10 @@ node scripts/screenshot.mjs http://localhost:3000
 # links sem texto acessível em 4 larguras de tela
 node scripts/check-layout.mjs http://localhost:3000
 
-# testa a captura de lead de ponta a ponta nos DOIS formulários da home,
-# no navegador real (sucesso + validação de e-mail)
-LEAD_RATE_LIMIT_MAX=1000 npx next start -p 3200 &
+# testa a captura de lead nos DOIS formulários da home, no navegador real:
+# valida os campos e confere que o WhatsApp abre com a mensagem montada
+npx next start -p 3200 &
 node scripts/test-forms.mjs http://localhost:3200
-
-# testa o caminho de FALHA: a API não registra e o formulário precisa oferecer
-# o envio pelo WhatsApp com os dados preenchidos
-VERCEL=1 npx next start -p 3201 &
-node scripts/test-form-fallback.mjs http://localhost:3201
 
 # investiga a causa raiz de um overflow horizontal em uma rota específica
 node scripts/diagnose-overflow.mjs /servicos/auditoria
@@ -279,6 +221,5 @@ renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 - [ ] **LinkedIn / Instagram** (`social`) — ícones ocultos enquanto vazios.
 - [ ] Inserir a **logo oficial** (a atual é uma marca provisória em
       `src/components/Logo.tsx`) e uma imagem de Open Graph.
-- [ ] Configurar `LEAD_WEBHOOK_URL` em produção.
 - [ ] Revisar a **Política de Privacidade** com o responsável jurídico e datar.
 

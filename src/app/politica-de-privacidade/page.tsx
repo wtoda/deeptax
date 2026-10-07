@@ -20,41 +20,44 @@ const blocks = [
     ],
   },
   {
-    title: "2. Quais dados coletamos",
+    title: "2. O site não coleta nem armazena dados de formulário",
     paragraphs: [
-      "Coletamos apenas os dados necessários para responder à sua solicitação e prestar serviços contábeis:",
+      "Este site não possui banco de dados, API de contato, webhook, e-mail automático ou arquivo de leads. Quando você preenche o formulário, as informações são usadas apenas no seu próprio navegador para montar uma mensagem — nada é transmitido para nós nem gravado durante esse preenchimento.",
+      "Ao tocar em “Enviar pelo WhatsApp”, o seu aparelho abre o WhatsApp com a mensagem já preenchida. É você quem decide enviá-la. Só a partir do envio é que passamos a ter acesso ao conteúdo, e ele chega até nós como uma conversa comum de WhatsApp.",
+      "Não registramos endereço IP, data e hora de envio nem qualquer dado técnico de navegação do formulário.",
     ],
     list: [
-      "Dados de identificação e contato: nome completo, nome da empresa, e-mail e telefone/WhatsApp.",
-      "Dados da solicitação: serviço de interesse e a mensagem que você escreve livremente.",
-      "Dados técnicos de navegação: endereço IP e data/hora do envio, utilizados para segurança e prevenção de abuso do formulário.",
+      "O que o formulário monta na sua tela: nome, nome da empresa, telefone/WhatsApp, e-mail (opcional), serviço de interesse e a mensagem que você escrever.",
+      "O que o site faz com isso: apenas monta o texto da mensagem no seu navegador. Não envia, não salva, não compartilha.",
+      "O que acontece depois: se você enviar a mensagem, ela chega pelo WhatsApp e passa a ser tratada como descrito nos itens 3 a 6.",
     ],
   },
   {
-    title: "3. Para que usamos os dados",
+    title: "3. Para que usamos os dados que você envia pelo WhatsApp",
     paragraphs: [
-      "Utilizamos os dados exclusivamente para: (i) entrar em contato e responder à sua solicitação; (ii) elaborar proposta comercial de escopo e honorários; (iii) cumprir obrigações legais e regulatórias aplicáveis à atividade contábil; e (iv) proteger o site contra envios automatizados e fraudulentos.",
+      "Utilizamos as informações recebidas exclusivamente para: (i) responder à sua solicitação; (ii) elaborar proposta comercial de escopo e honorários; e (iii) cumprir obrigações legais e regulatórias aplicáveis à atividade contábil.",
       "Não utilizamos seus dados para publicidade de terceiros e não vendemos, alugamos ou cedemos dados pessoais a terceiros.",
     ],
   },
   {
     title: "4. Base legal do tratamento",
     paragraphs: [
-      "O tratamento se fundamenta no consentimento do titular (art. 7º, I, da LGPD), manifestado no momento do envio do formulário, e no legítimo interesse (art. 7º, IX) para fins de segurança da informação e prevenção de fraudes.",
-      "Para dados necessários à execução de contrato de prestação de serviços contábeis, a base legal é a execução de contrato (art. 7º, V).",
+      "O tratamento se fundamenta no consentimento do titular (art. 7º, I, da LGPD), manifestado quando você decide enviar a mensagem, e em procedimentos preliminares à execução de contrato (art. 7º, V) quando o contato tem por objeto a contratação de serviços.",
+      "Não tratamos dados com base em legítimo interesse para fins de segurança do formulário, porque o site não realiza esse processamento.",
     ],
   },
   {
     title: "5. Compartilhamento de dados",
     paragraphs: [
-      "Seus dados podem ser armazenados em serviços de infraestrutura em nuvem e ferramentas de gestão utilizadas pelo escritório, sempre com cláusulas de confidencialidade e em ambiente controlado.",
+      "Ao usar o WhatsApp para falar conosco, a mensagem é transmitida pelo serviço do WhatsApp, que possui política de privacidade própria e é o controlador dos dados tratados naquela plataforma. Recomendamos ler a política do WhatsApp antes de enviar informações sensíveis.",
+      "Internamente, dados necessários à prestação de serviços contábeis podem ser armazenados em ferramentas de gestão e infraestrutura em nuvem utilizadas pelo escritório, sempre com cláusulas de confidencialidade e em ambiente controlado.",
       "Não compartilhamos dados pessoais com terceiros para finalidades próprias destes.",
     ],
   },
   {
     title: "6. Por quanto tempo guardamos",
     paragraphs: [
-      "Dados de contato de potenciais clientes que não se tornam clientes são mantidos por até 24 meses, prazo após o qual são eliminados.",
+      "Mensagens de contato de potenciais clientes que não se tornam clientes são mantidas por até 24 meses, prazo após o qual são eliminadas.",
       "Dados de clientes são mantidos pelo prazo legal exigido para guarda de documentos contábeis e fiscais, que pode chegar a 5 anos após o encerramento do contrato, ou por prazo superior em caso de obrigação legal ou processo em curso.",
     ],
   },
@@ -68,14 +71,15 @@ const blocks = [
   {
     title: "8. Segurança da informação",
     paragraphs: [
-      "Adotamos medidas técnicas e administrativas para proteger os dados contra acesso não autorizado, perda, alteração ou destruição, incluindo controle de acesso, transmissão criptografada (HTTPS) e política interna de sigilo profissional.",
+      "Como o site não coleta nem armazena dados de formulário, não existe base de dados de leads para ser vazada. O que você digita permanece no seu aparelho até o momento em que decide enviar a mensagem.",
+      "Para as informações que chegam até nós por WhatsApp, e-mail ou durante a prestação de serviços, adotamos medidas técnicas e administrativas de proteção, incluindo controle de acesso, transmissão criptografada (HTTPS) e política interna de sigilo profissional.",
       "Nenhum sistema é absolutamente invulnerável. Em caso de incidente de segurança com risco relevante aos titulares, comunicaremos os afetados e a Autoridade Nacional de Proteção de Dados, conforme a lei.",
     ],
   },
   {
     title: "9. Cookies",
     paragraphs: [
-      "Este site não utiliza cookies de publicidade ou de rastreamento de terceiros. Eventuais cookies estritamente necessários ao funcionamento da página são utilizados apenas para a operação técnica do site.",
+      "Este site não utiliza cookies de publicidade, de rastreamento ou de análise de terceiros, e não registra sua navegação para fins de marketing.",
     ],
   },
   {

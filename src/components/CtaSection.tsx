@@ -2,7 +2,6 @@ import { LeadForm } from "@/components/LeadForm";
 import { Reveal } from "@/components/Reveal";
 import {
   IconCheck,
-  IconClock,
   IconLock,
   IconMail,
   IconPhone,
@@ -11,16 +10,16 @@ import {
 import { defaultWhatsappMessage, site, whatsappLink } from "@/lib/site";
 
 const assurances = [
-  { icon: IconClock, text: "Resposta em até 1 dia útil" },
+  { icon: IconWhatsApp, text: "Atendimento direto no WhatsApp" },
   { icon: IconCheck, text: "Diagnóstico inicial sem custo" },
-  { icon: IconLock, text: "Sigilo total sobre suas informações" },
+  { icon: IconLock, text: "Você envia só o que quiser compartilhar" },
 ];
 
 export function CtaSection({
   id = "proposta",
   eyebrow = "Fale com um especialista",
   title = "Vamos entender o seu cenário antes de falar em honorário",
-  description = "Preencha o formulário e nossa equipe entra em contato para um diagnóstico gratuito. Sem compromisso, sem venda agressiva — só uma conversa técnica sobre o que sua empresa precisa.",
+  description = "Preencha os campos e envie pelo WhatsApp. Sua mensagem chega até nós já organizada, com empresa, telefone e o assunto de interesse — e você conversa direto com um contador.",
   defaultService = "",
   source = "cta-section",
 }: {
@@ -113,7 +112,7 @@ export function CtaSection({
                 Solicitar diagnóstico gratuito
               </h3>
               <p className="mt-1.5 text-sm text-brand-900/60">
-                Leva menos de um minuto para preencher.
+                Você será levado ao WhatsApp com a mensagem já pronta.
               </p>
               <div className="mt-6">
                 <LeadForm defaultService={defaultService} source={source} />

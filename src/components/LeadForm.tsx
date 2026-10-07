@@ -5,11 +5,11 @@ import {
   IconAlert,
   IconArrowRight,
   IconCheck,
-  IconSpinner,
   IconWhatsApp,
 } from "@/components/Icons";
+import { buildLeadWhatsappUrl } from "@/lib/lead-whatsapp";
 import { services } from "@/lib/services";
-import { site, whatsappLink } from "@/lib/site";
+import { site } from "@/lib/site";
 
 type FormState = {
   name: string;
@@ -19,7 +19,6 @@ type FormState = {
   service: string;
   message: string;
   consent: boolean;
-  website: string; // honeypot
 };
 
 const initialState: FormState = {
@@ -30,7 +29,6 @@ const initialState: FormState = {
   service: "",
   message: "",
   consent: false,
-  website: "",
 };
 
 /** Máscara progressiva para telefone brasileiro. */
@@ -42,6 +40,14 @@ function maskPhone(value: string) {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
+/**
+ * Formulário de contato que envia tudo pelo WhatsApp.
+ *
+ * Não existe backend: os dados são organizados no navegador e a conversa é
+ * aberta no WhatsApp do escritório já com o texto preenchido. Nada é gravado,
+ * enviado por e-mail ou armazenado — por isso não há falha de servidor possível
+ * e o visitante sempre sai daqui com um canal aberto.
+ */
 export function LeadForm({
   defaultService = "",
   source = "site",
@@ -51,20 +57,21 @@ export function LeadForm({
   defaultService?: string;
   source?: string;
   tone?: "light" | "dark";
-  /** Versão reduzida (nome, empresa, WhatsApp e serviço) para uso no hero. */
+  /** Versão reduzida (nome, empresa, telefone e serviço) para uso no hero. */
   compact?: boolean;
 }) {
-  const [form, setForm] = useState<FormState>({ ...initialState, service: defaultService });
+  const [form, setForm] = useState<FormState>({
+    ...initialState,
+    service: defaultService,
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
-  const [feedback, setFeedback] = useState("");
-  const [sentName, setSentName] = useState("");
+  const [enviado, setEnviado] = useState(false);
+  const [popupBloqueado, setPopupBloqueado] = useState(false);
 
   const isDark = tone === "dark";
 
-  // Cada instância do formulário precisa de IDs próprios: a home, por exemplo,
-  // renderiza dois formulários na mesma página, e IDs duplicados quebrariam a
-  // associação entre <label> e campo.
+  // Cada instância precisa de IDs próprios: a home renderiza dois formulários
+  // na mesma página e IDs duplicados quebrariam a associação <label>/campo.
   const uid = useId().replace(/:/g, "");
   const fieldId = (field: string) => `lead-${field}-${uid}`;
   const errorId = (field: string) => `lead-${field}-error-${uid}`;
@@ -84,12 +91,10 @@ export function LeadForm({
     const next: Record<string, string> = {};
     if (form.name.trim().length < 3) next.name = "Informe seu nome completo.";
     else if (!form.name.trim().includes(" ")) next.name = "Informe nome e sobrenome.";
-    if (!compact && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(form.email.trim()))
-      next.email = "Informe um e-mail válido.";
     if (form.phone.replace(/\D/g, "").length < 10)
       next.phone = "Informe um telefone com DDD.";
     if (form.company.trim().length < 2) next.company = "Informe o nome da empresa.";
-    if (!form.consent) next.consent = "Autorize o contato para enviar.";
+    if (!form.consent) next.consent = "Autorize o contato para continuar.";
     return next;
   };
 
@@ -104,77 +109,25 @@ export function LeadForm({
     }
   };
 
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const whatsappUrl = useMemo(
+    () => buildLeadWhatsappUrl({ ...form, source }),
+    [form, source],
+  );
+
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const found = validate();
     setErrors(found);
-    if (Object.keys(found).length > 0) {
-      setStatus("error");
-      setFeedback("Confira os campos destacados antes de enviar.");
-      return;
-    }
+    if (Object.keys(found).length > 0) return;
 
-    setStatus("sending");
-    setFeedback("");
-
-    try {
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, source }),
-      });
-      const data = (await response.json()) as {
-        ok: boolean;
-        message?: string;
-        errors?: Record<string, string>;
-      };
-
-      if (!response.ok || !data.ok) {
-        setErrors(data.errors ?? {});
-        setStatus("error");
-        setFeedback(data.message ?? "Não foi possível enviar agora. Tente novamente.");
-        return;
-      }
-
-      setSentName(form.name.split(" ")[0]);
-      setStatus("success");
-      setForm({ ...initialState, service: defaultService });
-    } catch {
-      setStatus("error");
-      setFeedback(
-        "Falha de conexão. Verifique sua internet ou fale com a gente pelo WhatsApp.",
-      );
-    }
+    // Abrimos dentro do gesto do usuário para o navegador não bloquear.
+    const janela = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    setPopupBloqueado(!janela);
+    setEnviado(true);
   };
 
-  const whatsappAfterSend = useMemo(
-    () =>
-      whatsappLink(
-        `Olá! Sou ${sentName || "cliente"} e acabei de enviar uma solicitação pelo site da ${site.name}. Gostaria de adiantar meu atendimento.`,
-      ),
-    [sentName],
-  );
-
-  /**
-   * Handoff de segurança: se a API não puder registrar o lead (indisponibilidade
-   * ou ausência de destino durável), o contato é encaminhado pelo WhatsApp com
-   * todos os dados já preenchidos. O lead não se perde.
-   */
-  const whatsappFallback = useMemo(() => {
-    const linhas = [
-      `Olá! Meu nome é ${form.name.trim() || "(nome não informado)"}.`,
-      form.company.trim() ? `Empresa: ${form.company.trim()}` : "",
-      form.phone.trim() ? `Telefone: ${form.phone.trim()}` : "",
-      form.email.trim() ? `E-mail: ${form.email.trim()}` : "",
-      form.service ? `Assunto: ${form.service}` : "",
-      form.message.trim() ? `\n${form.message.trim()}` : "",
-      "\n(Tentei enviar pelo site de vocês e o formulário não respondeu.)",
-    ].filter(Boolean);
-    return whatsappLink(linhas.join("\n"));
-  }, [form]);
-
-  /* ------------------------------------------------------------- SUCESSO -- */
-  if (status === "success") {
+  /* ----------------------------------------------------- PRONTO PARA ENVIAR */
+  if (enviado) {
     return (
       <div
         className={`rounded-2xl border p-8 text-center ${
@@ -182,43 +135,53 @@ export function LeadForm({
         }`}
         role="status"
       >
-        <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-accent-500 text-white shadow-lift">
-          <IconCheck className="size-7" />
+        <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#25D366] text-white shadow-lift">
+          <IconWhatsApp className="size-7" />
         </span>
+
         <h3
           className={`mt-5 font-display text-xl font-bold ${
             isDark ? "text-white" : "text-brand-950"
           }`}
         >
-          Solicitação enviada{sentName ? `, ${sentName}` : ""}!
+          {popupBloqueado
+            ? "Falta um toque para enviar"
+            : "Sua conversa foi aberta no WhatsApp"}
         </h3>
+
         <p
           className={`mx-auto mt-3 max-w-md text-sm leading-relaxed ${
             isDark ? "text-brand-100/75" : "text-brand-900/65"
           }`}
         >
-          Nossa equipe analisa as informações e entra em contato em até{" "}
-          <strong className={isDark ? "text-white" : "text-brand-950"}>
-            1 dia útil
-          </strong>
-          . Se preferir adiantar, chame no WhatsApp agora mesmo.
+          {popupBloqueado ? (
+            <>
+              O navegador bloqueou a abertura automática. Toque no botão abaixo
+              para abrir o WhatsApp com sua mensagem já pronta.
+            </>
+          ) : (
+            <>
+              Abrimos o WhatsApp com sua mensagem já preenchida. É só conferir e
+              tocar em enviar — respondemos no horário comercial.
+            </>
+          )}
         </p>
 
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <a
-            href={whatsappAfterSend}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-sm font-semibold text-[#04331b] shadow-soft transition-all hover:brightness-105 sm:w-auto"
           >
             <IconWhatsApp className="size-4" />
-            Falar no WhatsApp agora
+            {popupBloqueado ? "Abrir o WhatsApp" : "Abrir novamente"}
           </a>
           <button
             type="button"
             onClick={() => {
-              setStatus("idle");
-              setFeedback("");
+              setEnviado(false);
+              setPopupBloqueado(false);
             }}
             className={`inline-flex w-full items-center justify-center rounded-xl border px-5 py-3 text-sm font-semibold transition-colors sm:w-auto ${
               isDark
@@ -226,7 +189,7 @@ export function LeadForm({
                 : "border-brand-200 text-brand-900 hover:bg-white"
             }`}
           >
-            Enviar outra solicitação
+            Editar meus dados
           </button>
         </div>
       </div>
@@ -278,7 +241,10 @@ export function LeadForm({
         {!compact && (
           <div>
             <label htmlFor={fieldId("email")} className={labelClass}>
-              E-mail <span className="text-accent-500">*</span>
+              E-mail{" "}
+              <span className={isDark ? "text-brand-100/40" : "text-brand-900/40"}>
+                (opcional)
+              </span>
             </label>
             <input
               id={fieldId("email")}
@@ -288,11 +254,8 @@ export function LeadForm({
               placeholder="voce@empresa.com.br"
               value={form.email}
               onChange={(e) => update("email", e.target.value)}
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? errorId("email") : undefined}
-              className={fieldClass(Boolean(errors.email))}
+              className={fieldClass(false)}
             />
-            <FieldError id={errorId("email")} message={errors.email} />
           </div>
         )}
 
@@ -359,20 +322,6 @@ export function LeadForm({
         </div>
       )}
 
-      {/* Honeypot anti-spam: invisível para humanos */}
-      <div className="absolute h-0 w-0 overflow-hidden opacity-0" aria-hidden="true">
-        <label htmlFor={fieldId("website")}>Não preencha este campo</label>
-        <input
-          id={fieldId("website")}
-          name="website"
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          value={form.website}
-          onChange={(e) => update("website", e.target.value)}
-        />
-      </div>
-
       <div>
         <label className="flex cursor-pointer items-start gap-3">
           <input
@@ -403,52 +352,31 @@ export function LeadForm({
         <FieldError id={errorId("consent")} message={errors.consent} />
       </div>
 
-      {status === "error" && feedback && (
+      {Object.keys(errors).length > 0 && (
         <div
           role="alert"
-          className="rounded-xl border border-red-200 bg-red-50 px-4 py-4"
+          className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm text-red-700"
         >
-          <p className="flex items-start gap-2.5 text-sm text-red-700">
-            <IconAlert className="mt-0.5 size-4 shrink-0" />
-            <span>{feedback}</span>
-          </p>
-
-          <a
-            href={whatsappFallback}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-sm font-semibold text-[#04331b] shadow-soft transition-all hover:brightness-105 sm:w-auto"
-          >
-            <IconWhatsApp className="size-4" />
-            Enviar pelo WhatsApp
-          </a>
+          <IconAlert className="mt-0.5 size-4 shrink-0" />
+          <span>Confira os campos destacados antes de continuar.</span>
         </div>
       )}
 
       <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center">
         <button
           type="submit"
-          disabled={status === "sending"}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent-500 px-6 py-3.5 text-sm font-semibold text-white shadow-soft transition-all hover:bg-accent-600 hover:shadow-lift active:scale-[0.985] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+          className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3.5 text-sm font-semibold text-[#04331b] shadow-soft transition-all hover:brightness-105 hover:shadow-lift active:scale-[0.985] sm:w-auto"
         >
-          {status === "sending" ? (
-            <>
-              <IconSpinner className="size-4" />
-              Enviando...
-            </>
-          ) : (
-            <>
-              Solicitar diagnóstico gratuito
-              <IconArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
-            </>
-          )}
+          <IconWhatsApp className="size-4" />
+          Enviar pelo WhatsApp
+          <IconArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
         </button>
         <p
           className={`text-xs leading-relaxed ${
             isDark ? "text-brand-100/55" : "text-brand-900/50"
           }`}
         >
-          Resposta em até 1 dia útil. Seus dados ficam sob sigilo.
+          Sua mensagem abre no WhatsApp já preenchida. Nada é gravado neste site.
         </p>
       </div>
     </form>

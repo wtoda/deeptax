@@ -1,9 +1,8 @@
-// Testa o caminho de SUCESSO dos dois formulários da home, no navegador real.
-// Este é o teste que pega quebra de captura de lead de ponta a ponta.
+// Testa a captura de lead nos DOIS formulários da home, no navegador real.
 //
-// IMPORTANTE: o endpoint /api/leads limita 5 envios por IP a cada 10 minutos.
-// Para rodar este teste, suba o servidor com o limite alto:
-//   LEAD_RATE_LIMIT_MAX=1000 npx next start -p 3200
+// Com o envio via WhatsApp não existe backend: o teste verifica (1) que a
+// validação bloqueia dados incompletos e (2) que o envio abre o wa.me com a
+// mensagem montada contendo todos os campos digitados.
 import { chromium } from "playwright-core";
 
 const BASE = process.argv[2] ?? "http://127.0.0.1:3200";
@@ -15,12 +14,11 @@ const browser = await chromium.launch({
   executablePath: EXECUTABLE,
   args: ["--no-sandbox", "--disable-dev-shm-usage"],
 });
-const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-
-let apiStatus = [];
-page.on("response", (r) => {
-  if (r.url().includes("/api/leads")) apiStatus.push(r.status());
+const context = await browser.newContext({
+  viewport: { width: 1440, height: 1000 },
+  locale: "pt-BR",
 });
+const page = await context.newPage();
 
 const falhas = [];
 const check = (nome, cond, detalhe = "") => {
@@ -28,29 +26,67 @@ const check = (nome, cond, detalhe = "") => {
   if (!cond) falhas.push(nome);
 };
 
+/** Captura a URL do wa.me aberta em nova aba. */
+async function capturarWhatsapp(acao) {
+  const popupPromise = context.waitForEvent("page", { timeout: 15000 }).catch(() => null);
+  await acao();
+  const popup = await popupPromise;
+  if (!popup) return null;
+  const url = popup.url();
+  await popup.close();
+  return url;
+}
+
+const decodificar = (url) => {
+  const m = url.match(/[?&]text=([^&]*)/);
+  if (!m) return "";
+  // O WhatsApp redireciona wa.me -> api.whatsapp.com/send e reescreve os
+  // espaços como "+" (application/x-www-form-urlencoded). decodeURIComponent
+  // sozinho não converte "+" em espaço, por isso a troca vem antes.
+  return decodeURIComponent(m[1].replace(/\+/g, " "));
+};
+
+/** O telefone pode aparecer no caminho (wa.me/55...) ou na query (phone=55...). */
+const destinoCorreto = (url) =>
+  url.includes("wa.me/5511932362770") || url.includes("phone=5511932362770");
+
 await page.goto(BASE, { waitUntil: "networkidle" });
 
-/* ------------------------------------------------ 1. formulário do hero --- */
-console.log("=== 1. Formulário do hero (compacto: nome, empresa, telefone) ===");
+/* ------------------------------------------------- 1. validação bloqueia --- */
+console.log("=== 1. Validação: dados incompletos não devem abrir o WhatsApp ===");
+const nenhumaAba = await capturarWhatsapp(async () => {
+  await page.click("#conteudo form button[type='submit']");
+  await page.waitForTimeout(1200);
+});
+check("não abriu o WhatsApp com o formulário vazio", nenhumaAba === null);
+check("mostrou o alerta de validação", (await page.locator("[role='alert']").count()) > 0);
+
+/* ------------------------------------------- 2. hero (compacto) envia ----- */
+console.log("\n=== 2. Formulário do hero: envio abre o WhatsApp montado ===");
 await page.fill("#conteudo input[name='name']", "Joana Ribeiro");
 await page.fill("#conteudo input[name='company']", "Ribeiro Logística LTDA");
 await page.fill("#conteudo input[name='phone']", "(11) 98888-7777");
 await page.check("#conteudo input[name='consent']");
 
-apiStatus = [];
-await page.click("#conteudo form button[type='submit']");
-await page.waitForTimeout(2500);
-
-check("API respondeu 200", apiStatus.includes(200), `status: ${apiStatus.join(", ") || "nenhum"}`);
-if (apiStatus.includes(429)) {
-  console.log("  ! limite de taxa atingido — rode com LEAD_RATE_LIMIT_MAX=1000");
+const urlHero = await capturarWhatsapp(async () => {
+  await page.click("#conteudo form button[type='submit']");
+});
+check("abriu uma conversa no WhatsApp", Boolean(urlHero), urlHero ? urlHero.split("?")[0] : "nenhuma");
+if (urlHero) {
+  const texto = decodificar(urlHero);
+  console.log(`    URL final: ${urlHero}`);
+  console.log("    mensagem montada:");
+  texto.split("\n").forEach((l) => console.log("      " + l));
+  check("destino é o WhatsApp do escritório", destinoCorreto(urlHero));
+  check("contém o nome", texto.includes("Joana Ribeiro"));
+  check("contém a empresa", texto.includes("Ribeiro Logística LTDA"));
+  check("contém o telefone", texto.includes("98888-7777"));
 }
-check("tela de sucesso exibida", (await page.locator("text=Solicitação enviada").count()) > 0);
+check("exibiu a tela de confirmação", (await page.locator("text=WhatsApp").count()) > 0);
 
-/* --------------------------------------- 2. formulário completo do rodapé -- */
-console.log("\n=== 2. Formulário completo (CTA do fim da página) ===");
+/* ------------------------------------- 3. formulário completo do rodapé ---- */
+console.log("\n=== 3. Formulário completo (CTA do fim da página) ===");
 await page.reload({ waitUntil: "networkidle" });
-
 const cta = page.locator("#proposta form");
 await cta.locator("input[name='name']").fill("Marcos Alves");
 await cta.locator("input[name='company']").fill("Alves Comércio ME");
@@ -60,27 +96,40 @@ await cta.locator("select[name='service']").selectOption("Perícia Contábil");
 await cta.locator("textarea[name='message']").fill("Preciso de laudo para processo trabalhista.");
 await cta.locator("input[name='consent']").check();
 
-apiStatus = [];
-await cta.locator("button[type='submit']").click();
-await page.waitForTimeout(2500);
+const urlCta = await capturarWhatsapp(async () => {
+  await cta.locator("button[type='submit']").click();
+});
+check("abriu uma conversa no WhatsApp", Boolean(urlCta));
+if (urlCta) {
+  console.log(`    URL final: ${urlCta}`);
+  const texto = decodificar(urlCta);
+  console.log(`    URL final: ${urlHero}`);
+  console.log("    mensagem montada:");
+  texto.split("\n").forEach((l) => console.log("      " + l));
+  check("contém e-mail", texto.includes("marcos@alves.com.br"));
+  check("contém o serviço", texto.includes("Perícia Contábil"));
+  check("contém a mensagem", texto.includes("processo trabalhista"));
+  check("identifica a origem (rodapé da home)", texto.includes("final da página inicial"));
+}
 
-check("API respondeu 200", apiStatus.includes(200), `status: ${apiStatus.join(", ") || "nenhum"}`);
-check("tela de sucesso exibida", (await page.locator("#proposta >> text=Solicitação enviada").count()) > 0);
-
-/* ------------------------------------------ 3. e-mail inválido é rejeitado -- */
-console.log("\n=== 3. Validação: e-mail inválido deve ser barrado antes do envio ===");
+/* ------------------------------------------------- 4. nenhuma chamada API -- */
+console.log("\n=== 4. O site não faz chamada de rede ao enviar ===");
+const chamadas = [];
+page.on("request", (r) => {
+  const u = r.url();
+  if (u.includes("/api/") && !u.includes("/api/version")) chamadas.push(u);
+});
 await page.reload({ waitUntil: "networkidle" });
 const cta2 = page.locator("#proposta form");
-await cta2.locator("input[name='name']").fill("Teste Email Ruim");
+await cta2.locator("input[name='name']").fill("Teste Sem API");
 await cta2.locator("input[name='company']").fill("Empresa Teste");
-await cta2.locator("input[name='email']").fill("isso-nao-e-email");
 await cta2.locator("input[name='phone']").fill("(11) 96666-5555");
 await cta2.locator("input[name='consent']").check();
-apiStatus = [];
-await cta2.locator("button[type='submit']").click();
-await page.waitForTimeout(2000);
-check("e-mail inválido barrado no cliente", (await page.locator("text=Informe um e-mail válido").count()) > 0);
-check("nenhuma chamada à API", apiStatus.length === 0, `status: ${apiStatus.join(", ") || "nenhum"}`);
+await capturarWhatsapp(async () => {
+  await cta2.locator("button[type='submit']").click();
+});
+await page.waitForTimeout(1000);
+check("nenhuma requisição para API de leads", chamadas.length === 0, chamadas.join(", "));
 
 await browser.close();
 
