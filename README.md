@@ -136,6 +136,14 @@ Proteções já incluídas: honeypot anti-spam, limite de 5 envios por IP a cada
 minutos (configurável por `LEAD_RATE_LIMIT_MAX`) e validação de todos os campos
 também no servidor.
 
+> **Por que não usamos o FormSubmit.** Ele foi testado e descartado: exige um
+> cabeçalho `Origin` de página web (não aceita POST de servidor sem ele), pede
+> ativação manual por endereço de e-mail e — o motivo decisivo — **responde HTTP
+> 200 mesmo quando falha**, com `"success":"false"` no corpo. Como `saveLead`
+> considera sucesso pelo `response.ok`, uma falha do FormSubmit seria lida como
+> sucesso e o lead se perderia sem qualquer aviso. Qualquer destino novo precisa
+> sinalizar falha com status HTTP de erro.
+
 O campo **e-mail é opcional** de propósito: o formulário do hero coleta apenas
 nome, empresa e telefone/WhatsApp — se o servidor exigisse e-mail, esse
 formulário seria rejeitado em um campo que nem aparece na tela. O telefone é
