@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import {
+  IconExternal,
   IconInstagram,
   IconLinkedIn,
   IconMail,
@@ -10,6 +11,7 @@ import {
 } from "@/components/Icons";
 import { services } from "@/lib/services";
 import {
+  blogUrl,
   defaultWhatsappMessage,
   fullAddress,
   site,
@@ -107,6 +109,18 @@ export function Footer() {
                 >
                   Sobre nós
                 </Link>
+              </li>
+              <li>
+                <a
+                  href={blogUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-brand-100/70 transition-colors hover:text-accent-300"
+                >
+                  Blog
+                  <IconExternal className="size-3.5 opacity-60" />
+                  <span className="sr-only">(abre em nova aba)</span>
+                </a>
               </li>
               <li>
                 <Link
