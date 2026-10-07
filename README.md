@@ -217,11 +217,17 @@ npm uninstall playwright-core && rm -rf scripts
 Campos sem dado real ficam como `""` em `src/lib/site.ts` e **não são
 renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 
-- [x] **CRC** — CRC-SP 2SP045819, exibido no topo, no rodapé e no bloco de
-      dados do escritório. Conferir se o registro oficial de organização
-      contábil traz o sufixo `/O-n` (ex.: `2SP 023880/O-7`).
+- [x] **CRC** — CRC-SP 2SP045819/O-4, exibido no topo, no rodapé e no bloco de
+      dados do escritório.
 - [x] **CEP** — 01310-200, exibido no endereço completo e no `postalCode` do
       JSON-LD.
+- [x] **Complemento e bairro** — Conjunto 1504, Bela Vista.
+- [ ] **CONFERIR a razão social** — o registro oficial do CNPJ traz FORTY FIVE
+      CONSULTORIA FISCAL CONTABILIDADE TECNOLOGIA LTDA, diferente do que havia
+      sido informado antes. Adotamos o dado do registro.
+- [ ] **CONFERIR o nome fantasia** — "DeepAdvisory Estratégia Empresarial" não
+      consta no registro consultado; confirmar se deve ser exibido, já que a
+      marca apresentada no site é "Deeptax".
 - [ ] **Complemento** (sala/conjunto/andar), se houver.
 - [ ] **E-mail do domínio fora do ar** — o MX de `deeptax.com.br` aponta para o
       próprio domínio e depende do registro A, que agora aponta para a Vercel.

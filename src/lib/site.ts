@@ -16,17 +16,21 @@ export type Testimonial = { quote: string; author: string; company: string };
 export const site = {
   /* ---------------------------------------------------------------- MARCA */
   name: "Deeptax",
-  // Razão social conforme registro no CNPJ 45.691.496/0001-25.
-  legalName: "DeepTax Estratégia Contabilidade Tecnologia Ltda",
-  // Nome fantasia registrado. Atenção: é diferente da marca usada no site
-  // ("Deeptax"), que segue sendo o nome comercial apresentado ao público.
+  /**
+   * Razão social conforme o registro no CRC/CNPJ.
+   *
+   * ATENÇÃO — divergência a confirmar: antes foi informado "DeepTax Estratégia
+   * Contabilidade Tecnologia Ltda"; o registro oficial do CNPJ
+   * 45.691.496/0001-25 traz FORTY FIVE CONSULTORIA FISCAL CONTABILIDADE
+   * TECNOLOGIA LTDA. Adotamos o dado do registro. O registro original está em
+   * caixa alta; aqui usamos caixa mista apenas para leitura.
+   */
+  legalName: "Forty Five Consultoria Fiscal Contabilidade Tecnologia Ltda",
+  // CONFERIR: nome fantasia informado antes pelo escritório. Não consta no
+  // registro consultado — confirmar se deve mesmo ser exibido.
   tradeName: "DeepAdvisory Estratégia Empresarial",
   cnpj: "45.691.496/0001-25",
-  // Registro da organização contábil no CRC de São Paulo.
-  // CONFERIR: citações oficiais de registro de organização costumam trazer um
-  // sufixo "/O-n" (ex.: "2SP 023880/O-7"). Informado sem o sufixo, exibimos
-  // exatamente como recebido — não inventamos o dígito.
-  crc: "CRC-SP 2SP045819",
+  crc: "CRC-SP 2SP045819/O-4",
   tagline: "Contabilidade, tributos e tecnologia com visão de negócio",
   shortDescription:
     "Escritório que reúne contabilidade, especialistas em tributos, tecnologia fiscal, perícia contábil, consultoria e compliance em um só lugar — com rigor técnico e leitura estratégica.",
@@ -50,8 +54,8 @@ export const site = {
     commercialEmail: "atendimento@deeptax.com.br",
     address: {
       street: "Avenida Paulista, 1636",
-      // PENDENTE: complemento (sala/conjunto/andar), se houver.
-      complement: "",
+      complement: "Conjunto 1504",
+      district: "Bela Vista",
       city: "São Paulo",
       state: "SP",
       zip: "01310-200",
@@ -187,15 +191,21 @@ export const site = {
  * Monta o endereço completo ignorando as partes ainda não preenchidas.
  * O CEP entra após a cidade/UF separado por vírgula — usar outro travessão
  * aqui deixaria a linha com duas quebras e leitura confusa.
- * Resultado: "Avenida Paulista, 1636 — São Paulo/SP, 01310-200"
+ * Resultado: "Avenida Paulista, 1636, Conjunto 1504 — Bela Vista,
+ * São Paulo/SP, 01310-200"
  */
 export const fullAddress = [
   [site.contact.address.street, site.contact.address.complement]
     .filter(Boolean)
     .join(", "),
-  `${site.contact.address.city}/${site.contact.address.state}${
-    site.contact.address.zip ? `, ${site.contact.address.zip}` : ""
-  }`,
+  [
+    site.contact.address.district,
+    `${site.contact.address.city}/${site.contact.address.state}${
+      site.contact.address.zip ? `, ${site.contact.address.zip}` : ""
+    }`,
+  ]
+    .filter(Boolean)
+    .join(", "),
 ]
   .filter(Boolean)
   .join(" — ");

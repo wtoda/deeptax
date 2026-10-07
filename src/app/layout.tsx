@@ -81,7 +81,13 @@ const organizationSchema = {
   email: site.contact.email,
   address: {
     "@type": "PostalAddress",
-    streetAddress: [site.contact.address.street, site.contact.address.complement]
+    // O schema.org não tem campo para bairro; no Brasil ele costuma ser
+    // anexado ao fim do logradouro para não se perder na informação.
+    streetAddress: [
+      site.contact.address.street,
+      site.contact.address.complement,
+      site.contact.address.district,
+    ]
       .filter(Boolean)
       .join(", "),
     addressLocality: site.contact.address.city,
