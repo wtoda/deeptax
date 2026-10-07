@@ -220,8 +220,8 @@ renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 - [x] **CRC** — CRC-SP 2SP045819, exibido no topo, no rodapé e no bloco de
       dados do escritório. Conferir se o registro oficial de organização
       contábil traz o sufixo `/O-n` (ex.: `2SP 023880/O-7`).
-- [x] **CEP** — decisão de não publicar por ora. Fica vazio em
-      `src/lib/site.ts` e a interface simplesmente não o exibe.
+- [x] **CEP** — 01310-200, exibido no endereço completo e no `postalCode` do
+      JSON-LD.
 - [ ] **Complemento** (sala/conjunto/andar), se houver.
 - [ ] **E-mail do domínio fora do ar** — o MX de `deeptax.com.br` aponta para o
       próprio domínio e depende do registro A, que agora aponta para a Vercel.

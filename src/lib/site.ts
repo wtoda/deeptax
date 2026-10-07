@@ -54,8 +54,7 @@ export const site = {
       complement: "",
       city: "São Paulo",
       state: "SP",
-      // PENDENTE: CEP do número 1636 da Avenida Paulista.
-      zip: "",
+      zip: "01310-200",
       country: "Brasil",
     },
     hours: "Segunda a sexta, das 9h às 18h",
@@ -184,13 +183,19 @@ export const site = {
 
 /* --------------------------------------------------------------- DERIVADOS */
 
-/** Monta o endereço completo ignorando as partes ainda não preenchidas. */
+/**
+ * Monta o endereço completo ignorando as partes ainda não preenchidas.
+ * O CEP entra após a cidade/UF separado por vírgula — usar outro travessão
+ * aqui deixaria a linha com duas quebras e leitura confusa.
+ * Resultado: "Avenida Paulista, 1636 — São Paulo/SP, 01310-200"
+ */
 export const fullAddress = [
   [site.contact.address.street, site.contact.address.complement]
     .filter(Boolean)
     .join(", "),
-  `${site.contact.address.city}/${site.contact.address.state}`,
-  site.contact.address.zip,
+  `${site.contact.address.city}/${site.contact.address.state}${
+    site.contact.address.zip ? `, ${site.contact.address.zip}` : ""
+  }`,
 ]
   .filter(Boolean)
   .join(" — ");
