@@ -22,9 +22,11 @@ export const site = {
   // ("Deeptax"), que segue sendo o nome comercial apresentado ao público.
   tradeName: "DeepAdvisory Estratégia Empresarial",
   cnpj: "45.691.496/0001-25",
-  // PENDENTE: registro no CRC (ex.: "CRC-SP 123456/O-0"). Enquanto vazio, o
-  // CRC não aparece no topo nem no rodapé.
-  crc: "",
+  // Registro da organização contábil no CRC de São Paulo.
+  // CONFERIR: citações oficiais de registro de organização costumam trazer um
+  // sufixo "/O-n" (ex.: "2SP 023880/O-7"). Informado sem o sufixo, exibimos
+  // exatamente como recebido — não inventamos o dígito.
+  crc: "CRC-SP 2SP045819",
   tagline: "Contabilidade, tributos e tecnologia com visão de negócio",
   shortDescription:
     "Escritório que reúne contabilidade, especialistas em tributos, tecnologia fiscal, perícia contábil, consultoria e compliance em um só lugar — com rigor técnico e leitura estratégica.",
