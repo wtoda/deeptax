@@ -182,7 +182,7 @@ export function Footer() {
         {/* Barra final */}
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 text-xs text-brand-100/50 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {year} {site.legalName}. Todos os direitos reservados.
+            © {year} {site.name}. Todos os direitos reservados.
           </p>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <span>CNPJ {site.cnpj}</span>

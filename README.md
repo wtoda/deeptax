@@ -222,12 +222,16 @@ renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 - [x] **CEP** — 01310-200, exibido no endereço completo e no `postalCode` do
       JSON-LD.
 - [x] **Complemento e bairro** — Conjunto 1504, Bela Vista.
-- [x] **Razão social** — exibida como "Deeptax", por decisão do escritório.
-      Antes constava o registro "FORTY FIVE CONSULTORIA FISCAL CONTABILIDADE
-      TECNOLOGIA LTDA". O copyright do rodapé usa o mesmo campo, então também
-      lê "Deeptax". Se a nova razão social registrada for a forma completa no
-      padrão do CNPJ ("Deeptax Consultoria Fiscal Contabilidade Tecnologia
-      Ltda"), basta trocar `legalName`.
+- [x] **Razão social** — o site exibe o registro **vigente**
+      ("Forty Five Consultoria Fiscal Contabilidade Tecnologia Ltda"), porque
+      o contrato social ainda será alterado. O escritório adotará
+      "DeepTax Estratégia Contabilidade Tecnologia Ltda" — quando a alteração
+      estiver averbada na Junta Comercial e refletida no CNPJ e no CRC, trocar
+      apenas `legalName` em `src/lib/site.ts`.
+- [x] **Copyright do rodapé** — usa a marca (`site.name`), não a razão social:
+      "© 2026 Deeptax. Todos os direitos reservados." Os dois campos são
+      independentes de propósito, para o copyright não acompanhar uma troca de
+      razão social.
 - [ ] **CONFERIR o nome fantasia** — "DeepAdvisory Estratégia Empresarial" não
       consta no registro consultado; confirmar se deve ser exibido, já que a
       marca e a razão social agora são "Deeptax".
