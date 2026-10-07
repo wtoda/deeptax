@@ -92,7 +92,7 @@ await cta.locator("input[name='name']").fill("Marcos Alves");
 await cta.locator("input[name='company']").fill("Alves Comércio ME");
 await cta.locator("input[name='email']").fill("marcos@alves.com.br");
 await cta.locator("input[name='phone']").fill("(11) 97777-6666");
-await cta.locator("select[name='service']").selectOption("Perícia Contábil");
+await cta.locator("select[name='service']").selectOption("DeepPericia");
 await cta.locator("textarea[name='message']").fill("Preciso de laudo para processo trabalhista.");
 await cta.locator("input[name='consent']").check();
 
@@ -107,7 +107,7 @@ if (urlCta) {
   console.log("    mensagem montada:");
   texto.split("\n").forEach((l) => console.log("      " + l));
   check("contém e-mail", texto.includes("marcos@alves.com.br"));
-  check("contém o serviço", texto.includes("Perícia Contábil"));
+  check("contém o serviço", texto.includes("DeepPericia"));
   check("contém a mensagem", texto.includes("processo trabalhista"));
   check("identifica a origem (rodapé da home)", texto.includes("final da página inicial"));
 }

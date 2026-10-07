@@ -11,6 +11,22 @@ const base = {
   viewBox: "0 0 24 24",
 };
 
+export const IconCpu = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <rect x="7" y="7" width="10" height="10" rx="2" />
+    <path d="M10.5 10.5h3v3h-3z" />
+    <path d="M4 10h3M4 14h3M17 10h3M17 14h3M10 4v3M14 4v3M10 17v3M14 17v3" />
+  </svg>
+);
+
+export const IconReceipt = (p: IconProps) => (
+  <svg {...base} {...p}>
+    <path d="M6 3h12v18l-3-1.5-3 1.5-3-1.5L6 21z" />
+    <path d="M9.5 8h5M9.5 11.5h5" />
+    <path d="M10 15h3" />
+  </svg>
+);
+
 export const IconSearch = (p: IconProps) => (
   <svg {...base} {...p}>
     <circle cx="11" cy="11" r="7" />
@@ -208,10 +224,12 @@ export const IconAlert = (p: IconProps) => (
 /* -------------------------------------------------------------------------- */
 
 export const serviceIcons = {
-  search: IconSearch,
-  compass: IconCompass,
+  cpu: IconCpu,
+  receipt: IconReceipt,
   ledger: IconLedger,
   gavel: IconGavel,
+  compass: IconCompass,
+  shield: IconShield,
 } as const;
 
 export const featureIcons = {

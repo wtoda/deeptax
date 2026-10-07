@@ -54,9 +54,10 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-7 max-w-xl text-base leading-relaxed text-brand-100/75 sm:text-lg">
-                {site.name} é o escritório que une contabilidade, auditoria,
-                consultoria e perícia contábil em um só lugar. Rigor técnico no
-                que a lei exige, visão estratégica no que o seu negócio precisa.
+                {site.name} reúne contabilidade, especialistas em tributos,
+                tecnologia fiscal, perícia contábil, consultoria e compliance em
+                um só lugar. Rigor técnico no que a lei exige, visão estratégica
+                no que o seu negócio precisa.
               </p>
 
               <ul className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -163,11 +164,11 @@ export default function HomePage() {
         <div className="container-x">
           <SectionHeading
             eyebrow="Nossos serviços"
-            title="Quatro frentes, uma visão completa do seu negócio"
-            description="Cada serviço resolve um problema diferente — e todos conversam entre si. É assim que a contabilidade deixa de ser obrigação e passa a ser ferramenta de gestão."
+            title="Seis áreas, uma visão completa do seu negócio"
+            description="Cada área resolve um problema diferente — e todas conversam entre si. É assim que a contabilidade deixa de ser obrigação e passa a ser ferramenta de gestão."
           />
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service, index) => (
               <Reveal key={service.slug} delay={index * 90}>
                 <ServiceCard service={service} index={index} />
@@ -285,7 +286,7 @@ export default function HomePage() {
             <SectionHeading
               eyebrow="Depoimentos"
               title="Resultados que os nossos clientes descrevem"
-              description="Trechos de avaliações de clientes das frentes de contabilidade, auditoria e perícia."
+              description="Trechos de avaliações de clientes das áreas de contabilidade, tributos, consultoria e perícia."
             />
 
             <div className="mt-14 grid gap-6 lg:grid-cols-3">

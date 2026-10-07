@@ -16,15 +16,18 @@ export type Testimonial = { quote: string; author: string; company: string };
 export const site = {
   /* ---------------------------------------------------------------- MARCA */
   name: "Deeptax",
-  // PENDENTE: razão social completa (como consta no CNPJ 45.691.496/0001-25).
-  legalName: "Deeptax",
+  // Razão social conforme registro no CNPJ 45.691.496/0001-25.
+  legalName: "DeepTax Estratégia Contabilidade Tecnologia Ltda",
+  // Nome fantasia registrado. Atenção: é diferente da marca usada no site
+  // ("Deeptax"), que segue sendo o nome comercial apresentado ao público.
+  tradeName: "DeepAdvisory Estratégia Empresarial",
   cnpj: "45.691.496/0001-25",
   // PENDENTE: registro no CRC (ex.: "CRC-SP 123456/O-0"). Enquanto vazio, o
   // CRC não aparece no topo nem no rodapé.
   crc: "",
-  tagline: "Contabilidade, auditoria e perícia com visão de negócio",
+  tagline: "Contabilidade, tributos e tecnologia com visão de negócio",
   shortDescription:
-    "Escritório contábil que une rigor técnico e leitura estratégica para dar clareza, segurança e crescimento à sua empresa.",
+    "Escritório que reúne contabilidade, especialistas em tributos, tecnologia fiscal, perícia contábil, consultoria e compliance em um só lugar — com rigor técnico e leitura estratégica.",
   // Domínio canônico do site. Controla canonical, sitemap, robots e Open Graph.
   //
   // O apex deeptax.com.br responde 308 e redireciona para www, então o endereço
@@ -165,9 +168,9 @@ export const site = {
         "A maior parte da nossa carteira é atendida de forma remota, com reuniões por vídeo e canal direto com o time. Também recebemos clientes presencialmente em nosso escritório, com agendamento.",
     },
     {
-      question: "Quanto custa uma auditoria ou perícia?",
+      question: "Quanto custa uma perícia ou um projeto de consultoria?",
       answer:
-        "Depende do escopo, do volume de transações e do prazo. Após uma conversa inicial de diagnóstico, enviamos uma proposta fechada com horas estimadas e etapas de entrega bem definidas.",
+        "Depende do escopo, do volume de documentos e do prazo. Após uma conversa inicial de diagnóstico, enviamos uma proposta fechada com etapas de entrega bem definidas.",
     },
     {
       question: "Vocês emitem laudo para uso judicial?",

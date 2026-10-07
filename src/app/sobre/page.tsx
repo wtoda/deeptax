@@ -116,11 +116,13 @@ export default function SobrePage() {
                   investimento, contratação e crescimento.
                 </p>
                 <p>
-                  A partir disso, reestruturamos o escritório em torno de quatro
-                  competências que se reforçam: a contabilidade do dia a dia, que
-                  gera o dado; a consultoria, que transforma o dado em decisão; a
-                  auditoria, que valida o dado perante terceiros; e a perícia, que
-                  defende o dado quando ele vira prova.
+                  A partir disso, organizamos o escritório em seis áreas que se
+                  reforçam: a contabilidade do dia a dia, que gera o dado; o
+                  tributário, que garante que o dado esteja apurado do jeito
+                  certo; a tecnologia, que tira a operação do trabalho manual; a
+                  consultoria, que transforma o dado em decisão; a perícia, que
+                  defende o dado quando ele vira prova; e o compliance, que
+                  comprova que tudo isso é feito de forma organizada.
                 </p>
                 <p>
                   Hoje atendemos empresas de comércio, indústria, serviços e
@@ -214,12 +216,12 @@ export default function SobrePage() {
                   {
                     title: "Contadores com registro ativo no CRC",
                     description:
-                      "Responsabilidade técnica formal em todos os trabalhos de contabilidade, auditoria e perícia.",
+                      "Responsabilidade técnica formal em todos os trabalhos de contabilidade, tributos, perícia e compliance.",
                   },
                   {
                     title: "Especialistas por frente",
                     description:
-                      "Profissionais dedicados a tributário, auditoria e perícia, com atualização constante em normas do CPC e do CFC.",
+                      "Profissionais dedicados a cada área — tributário, tecnologia fiscal, perícia e compliance — com atualização constante em normas do CPC e do CFC.",
                   },
                   {
                     title: "Equipe de apoio dedicada",
@@ -254,6 +256,8 @@ export default function SobrePage() {
                   <dl className="mt-6 space-y-4">
                     {[
                       { label: "Razão social", value: site.legalName },
+                      { label: "Nome fantasia", value: site.tradeName },
+                      { label: "Marca", value: site.name },
                       { label: "CNPJ", value: site.cnpj },
                       { label: "Registro profissional", value: site.crc },
                       { label: "Endereço", value: fullAddress },

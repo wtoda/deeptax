@@ -9,9 +9,9 @@ import { site } from "@/lib/site";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Serviços de Contabilidade, Auditoria, Consultoria e Perícia",
+  title: "As seis áreas da DeepTax: contabilidade, tributos, tecnologia, perícia, consultoria e compliance",
   description:
-    "Conheça as quatro frentes de atuação da Deeptax: serviços contábeis, auditoria contábil, consultoria tributária e perícia contábil. Escopo, metodologia e entregáveis de cada serviço.",
+    "Conheça as seis áreas do escritório: DeepCont (contabilidade), DeepTax (tributário), Deep Systems (tecnologia fiscal), DeepPericia (perícia contábil), DeepConsult (consultoria) e DeepCompliance (compliance). Escopo, metodologia e entregáveis de cada uma.",
   alternates: { canonical: "/servicos" },
 };
 
@@ -43,10 +43,10 @@ export default function ServicosPage() {
               Toda a estrutura contábil da sua empresa em um único escritório
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-brand-100/75 sm:text-lg">
-              Contabilidade do dia a dia, auditoria independente, consultoria
-              tributária e perícia contábil. Escopos distintos, o mesmo padrão
-              técnico — e a liberdade de contratar só o que a sua empresa precisa
-              agora.
+              Contabilidade do dia a dia, especialistas em tributos, tecnologia
+              fiscal, perícia contábil, consultoria e compliance. Escopos
+              distintos, o mesmo padrão técnico — e a liberdade de contratar só o
+              que a sua empresa precisa agora.
             </p>
           </div>
         </div>
@@ -61,7 +61,7 @@ export default function ServicosPage() {
             description="Cada frente tem página própria com escopo detalhado, metodologia em etapas, entregáveis e perguntas frequentes."
           />
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2">
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service, index) => (
               <Reveal key={service.slug} delay={index * 80}>
                 <ServiceCard service={service} index={index} />
@@ -148,14 +148,29 @@ export default function ServicosPage() {
                       "O arranjo mais frequente: a rotina fiscal em dia somada ao planejamento tributário e aos relatórios gerenciais mensais.",
                   },
                   {
-                    title: "Auditoria + Consultoria",
+                    title: "DeepCont + DeepTax",
                     description:
-                      "Indicado antes de captar crédito, receber investidor ou reorganizar o grupo. A auditoria revela; a consultoria corrige e projeta.",
+                      "O arranjo mais frequente: a rotina contábil em dia somada à revisão fiscal e ao aproveitamento de créditos que a apuração mensal não alcança.",
                   },
                   {
-                    title: "Perícia + Auditoria",
+                    title: "DeepTax + DeepConsult",
                     description:
-                      "Em disputas societárias, a mesma competência técnica que examina demonstrações sustenta a apuração de haveres.",
+                      "A revisão encontra a oportunidade; a consultoria desenha a estrutura que a sustenta no longo prazo, incluindo societário e sucessão.",
+                  },
+                  {
+                    title: "DeepPericia + DeepCont",
+                    description:
+                      "Em disputas societárias, a mesma competência técnica que mantém a escrituração sustenta a apuração de haveres e os cálculos judiciais.",
+                  },
+                  {
+                    title: "Deep Systems + DeepCont",
+                    description:
+                      "Para operações de volume alto: a automação assume a conferência repetitiva e libera a equipe contábil para analisar em vez de digitar.",
+                  },
+                  {
+                    title: "DeepCompliance + DeepConsult",
+                    description:
+                      "Indicado antes de captar crédito ou receber investidor: o compliance organiza as evidências e a consultoria prepara a informação econômica.",
                   },
                 ].map((combo) => (
                   <div

@@ -13,12 +13,16 @@ const pages = [
   { name: "01-home-hero", path: "/", full: false },
   { name: "02-home-full", path: "/", full: true },
   { name: "03-servicos", path: "/servicos", full: false },
-  { name: "04-servico-auditoria", path: "/servicos/auditoria", full: true },
-  { name: "05-servico-pericia", path: "/servicos/pericia-contabil", full: true },
-  { name: "06-sobre", path: "/sobre", full: false },
-  { name: "07-contato", path: "/contato", full: true },
-  { name: "08-privacidade", path: "/politica-de-privacidade", full: false },
-  { name: "09-404", path: "/pagina-inexistente", full: false },
+  { name: "04-deep-systems", path: "/servicos/deep-systems", full: true },
+  { name: "05-deep-tax", path: "/servicos/deep-tax", full: true },
+  { name: "06-deep-cont", path: "/servicos/deep-cont", full: true },
+  { name: "07-deep-pericia", path: "/servicos/deep-pericia", full: false },
+  { name: "08-deep-consult", path: "/servicos/deep-consult", full: false },
+  { name: "09-deep-compliance", path: "/servicos/deep-compliance", full: false },
+  { name: "10-sobre", path: "/sobre", full: false },
+  { name: "11-contato", path: "/contato", full: true },
+  { name: "12-privacidade", path: "/politica-de-privacidade", full: false },
+  { name: "13-404", path: "/pagina-inexistente", full: false },
 ];
 
 const viewports = [
@@ -54,7 +58,7 @@ for (const vp of viewports) {
 
   for (const target of pages) {
     // No mobile, só as páginas principais para não gerar arquivo demais.
-    if (vp.label === "mobile" && !["01-home-hero", "04-servico-auditoria", "07-contato"].includes(target.name)) {
+    if (vp.label === "mobile" && !["01-home-hero", "05-deep-tax", "11-contato"].includes(target.name)) {
       continue;
     }
 

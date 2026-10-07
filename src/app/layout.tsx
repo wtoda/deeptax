@@ -29,7 +29,10 @@ export const metadata: Metadata = {
   keywords: [
     "contabilidade",
     "escritório de contabilidade",
-    "auditoria contábil",
+    "revisão fiscal",
+    "recuperação de créditos tributários",
+    "perícia contábil",
+    "compliance",
     "consultoria tributária",
     "perícia contábil",
     "planejamento tributário",
@@ -95,10 +98,12 @@ const organizationSchema = {
     "@type": "OfferCatalog",
     name: "Serviços contábeis",
     itemListElement: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Auditoria Contábil" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Consultoria Contábil e Tributária" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Serviços Contábeis" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Perícia Contábil" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "DeepCont — Contabilidade" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "DeepTax — Tributário" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "DeepSystems — Tecnologia fiscal" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "DeepPericia — Perícia contábil" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "DeepConsult — Consultoria" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "DeepCompliance — Compliance" } },
     ],
   },
 };
