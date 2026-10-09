@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconAlert, IconSpinner } from "@/components/Icons";
 
 type Pendencia = { variavel: string; explica: string };
@@ -18,6 +18,40 @@ export function Login() {
   const [entrando, setEntrando] = useState(false);
   const [erro, setErro] = useState("");
   const [pendencias, setPendencias] = useState<Pendencia[] | null>(null);
+  const [verificando, setVerificando] = useState(true);
+
+  /**
+   * Pergunta ao servidor se o painel está configurado e se já há sessão.
+   * Sem isso, alguém abriria esta tela num deploy sem ADMIN_PASSWORD e veria
+   * um formulário de senha que nunca funcionaria, sem saber por quê.
+   */
+  useEffect(() => {
+    let ativo = true;
+
+    (async () => {
+      try {
+        const resposta = await fetch("/api/admin/sessao", { cache: "no-store" });
+        const dados = await resposta.json();
+        if (!ativo) return;
+
+        if (!dados.configurado) {
+          setPendencias(dados.pendencias ?? []);
+        } else if (dados.autenticado) {
+          // Já logado: vai direto para o editor.
+          router.replace("/admin");
+          return;
+        }
+      } catch {
+        // Sem resposta, mostramos o formulário — a tentativa de entrar dará o erro.
+      } finally {
+        if (ativo) setVerificando(false);
+      }
+    })();
+
+    return () => {
+      ativo = false;
+    };
+  }, [router]);
 
   const entrar = async (evento: React.FormEvent) => {
     evento.preventDefault();
@@ -48,6 +82,15 @@ export function Login() {
       setEntrando(false);
     }
   };
+
+  if (verificando) {
+    return (
+      <div className="flex items-center justify-center gap-3 py-16 text-brand-900/60">
+        <IconSpinner className="size-5" />
+        Verificando o acesso…
+      </div>
+    );
+  }
 
   if (pendencias) {
     return (
