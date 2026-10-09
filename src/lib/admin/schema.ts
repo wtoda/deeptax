@@ -113,7 +113,7 @@ export const abas: Aba[] = [
           "SOMENTE DÍGITOS, com 55 + DDD + número. É este campo que monta todos os botões de WhatsApp do site — se colocar parêntese, traço ou espaço, os botões param de funcionar.",
         exemplo: "5511932362770",
       },
-      { tipo: "texto", caminho: "contact.email", rotulo: "E-mail", exemplo: "atendimento@deeptax.com.br" },
+      { tipo: "texto", caminho: "contact.email", rotulo: "E-mail", exemplo: "contato@deeptax.com.br" },
       { tipo: "texto", caminho: "contact.commercialEmail", rotulo: "E-mail comercial", ajuda: "Exibido na página de contato." },
       { tipo: "texto", caminho: "contact.hours", rotulo: "Horário de atendimento", exemplo: "Segunda a sexta, das 9h às 18h" },
       { tipo: "texto", caminho: "contact.address.street", rotulo: "Logradouro e número" },

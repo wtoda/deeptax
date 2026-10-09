@@ -244,7 +244,7 @@ npm uninstall playwright-core && rm -rf scripts
 | Endereço | Avenida Paulista, 1636 — São Paulo/SP |
 | Telefone / WhatsApp | (11) 93236-2770 |
 | Número para links `wa.me` | 5511932362770 |
-| E-mail | atendimento@deeptax.com.br |
+| E-mail | contato@deeptax.com.br |
 | CNPJ | 45.691.496/0001-25 |
 
 ### Pendências antes de publicar
@@ -274,7 +274,7 @@ renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
 - [ ] **E-mail do domínio fora do ar** — o MX de `deeptax.com.br` aponta para o
       próprio domínio e depende do registro A, que agora aponta para a Vercel.
       Não afeta o site (a comunicação é por WhatsApp), mas afeta quem escreve
-      para `atendimento@deeptax.com.br`. Ver o alerta na seção de deploy.
+      para `contato@deeptax.com.br`. Ver o alerta na seção de deploy.
 - [ ] **Domínio** — `deeptax.com.br` já aponta para a Vercel (A `216.198.79.1`)
       e o apex redireciona 308 para `https://www.deeptax.com.br`, que é o
       canônico definido em `src/lib/site.ts`. Para trocar o canônico sem mexer
