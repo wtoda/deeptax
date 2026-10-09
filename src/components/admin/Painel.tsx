@@ -18,7 +18,12 @@ import {
 } from "@/lib/admin/schema";
 
 type Qualquer = Record<string, unknown>;
-type Pendencia = { variavel: string; explica: string };
+type Pendencia = {
+  variavel: string;
+  explica: string;
+  atalho?: { texto: string; url: string };
+  passos?: string[];
+};
 
 const comoTexto = (v: unknown) => (typeof v === "string" ? v : "");
 const comoLista = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);

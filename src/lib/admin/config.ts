@@ -40,7 +40,14 @@ export const ARQUIVO_PAGINAS = "content/paginas.json";
 /** Duração da sessão: 12 horas. */
 export const DURACAO_SESSAO_SEGUNDOS = 12 * 60 * 60;
 
-export type PendenciaDeConfiguracao = { variavel: string; explica: string };
+export type PendenciaDeConfiguracao = {
+  variavel: string;
+  explica: string;
+  /** Atalho para resolver — quando existe, o painel exibe como botão. */
+  atalho?: { texto: string; url: string };
+  /** Passo a passo curto, mostrado na tela de configuração. */
+  passos?: string[];
+};
 
 /**
  * Lista o que falta para o painel funcionar. Conteúdo usado tanto pela
@@ -52,7 +59,11 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
   if (!adminConfig.senha) {
     faltando.push({
       variavel: "ADMIN_PASSWORD",
-      explica: "senha que protege o acesso ao painel",
+      explica: "a senha que vai proteger o acesso ao painel — escolha uma e guarde",
+      passos: [
+        "Invente uma senha com pelo menos 10 caracteres.",
+        "Cadastre em Vercel → Settings → Environment Variables → nome ADMIN_PASSWORD.",
+      ],
     });
   } else if (adminConfig.senha.length < 10) {
     faltando.push({
@@ -65,7 +76,17 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
     faltando.push({
       variavel: "GITHUB_TOKEN",
       explica:
-        "token do GitHub com permissão de leitura e escrita em Contents, para o painel gravar as alterações no repositório",
+        "token do GitHub que autoriza o painel a gravar as alterações nos arquivos de conteúdo",
+      atalho: {
+        texto: "Criar o token no GitHub",
+        url: "https://github.com/settings/personal-access-tokens/new",
+      },
+      passos: [
+        "Em Repository access, escolha “Only select repositories” e marque wtoda/deeptax.",
+        "Em Permissions → Repository permissions, dê acesso “Read and write” a Contents.",
+        "Gere o token e copie (o GitHub só mostra uma vez).",
+        "Cole em Vercel → Settings → Environment Variables → nome GITHUB_TOKEN.",
+      ],
     });
   }
 

@@ -2,9 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { IconAlert, IconSpinner } from "@/components/Icons";
+import { IconAlert, IconExternal, IconSpinner } from "@/components/Icons";
 
-type Pendencia = { variavel: string; explica: string };
+type Pendencia = {
+  variavel: string;
+  explica: string;
+  atalho?: { texto: string; url: string };
+  passos?: string[];
+};
 
 /**
  * Tela de acesso ao painel.
@@ -94,27 +99,63 @@ export function Login() {
 
   if (pendencias) {
     return (
-      <div className="mx-auto max-w-2xl rounded-2xl border border-amber-200 bg-amber-50 p-7">
-        <h2 className="flex items-center gap-2 font-display text-lg font-bold text-brand-950">
-          <IconAlert className="size-5 text-amber-600" />
-          O painel precisa de configuração
-        </h2>
-        <p className="mt-3 text-sm leading-relaxed text-brand-900/75">
-          Falta configurar na Vercel (<strong>Settings → Environment Variables</strong>) e
-          fazer um novo deploy. Enquanto isso o painel fica indisponível — ele não abre
-          sem essas proteções.
-        </p>
-        <ul className="mt-4 space-y-3">
+      <div className="mx-auto max-w-2xl">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-7">
+          <h2 className="flex items-center gap-2 font-display text-lg font-bold text-brand-950">
+            <IconAlert className="size-5 text-amber-600" />
+            Falta configurar o painel
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-brand-900/75">
+            O painel fica indisponível até estas variáveis existirem na Vercel — é
+            proposital: sem elas ele não teria como proteger o acesso nem gravar as
+            alterações. Leva cerca de 5 minutos.
+          </p>
+        </div>
+
+        <div className="mt-5 space-y-4">
           {pendencias.map((p) => (
-            <li key={p.variavel} className="rounded-xl border border-amber-200 bg-white p-4">
-              <code className="text-sm font-bold text-brand-950">{p.variavel}</code>
-              <p className="mt-1 text-sm text-brand-900/70">{p.explica}</p>
-            </li>
+            <div key={p.variavel} className="rounded-2xl border border-brand-100 bg-white p-6 shadow-soft">
+              <code className="rounded-lg bg-brand-50 px-2.5 py-1 text-sm font-bold text-brand-950">
+                {p.variavel}
+              </code>
+              <p className="mt-2.5 text-sm text-brand-900/70">{p.explica}</p>
+
+              {p.passos && (
+                <ol className="mt-4 space-y-2">
+                  {p.passos.map((passo, i) => (
+                    <li key={i} className="flex gap-3 text-sm text-brand-900/75">
+                      <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-950 text-[0.65rem] font-bold text-white">
+                        {i + 1}
+                      </span>
+                      <span>{passo}</span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              {p.atalho && (
+                <a
+                  href={p.atalho.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl bg-brand-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-900"
+                >
+                  {p.atalho.texto}
+                  <IconExternal className="size-3.5" />
+                </a>
+              )}
+            </div>
           ))}
-        </ul>
-        <p className="mt-5 text-xs leading-relaxed text-brand-900/60">
-          O passo a passo está em <code>docs/PAINEL-DE-CONTEUDO.md</code>.
-        </p>
+        </div>
+
+        <div className="mt-5 rounded-2xl border border-brand-100 bg-brand-50/60 p-6">
+          <p className="text-sm font-semibold text-brand-950">Depois de cadastrar as duas</p>
+          <p className="mt-2 text-sm leading-relaxed text-brand-900/70">
+            Faça um <strong>Redeploy</strong> na Vercel (Deployments → os três pontos
+            do último deploy → Redeploy). Variável nova só passa a valer em um deploy
+            novo. Depois é só recarregar esta página e entrar.
+          </p>
+        </div>
       </div>
     );
   }
