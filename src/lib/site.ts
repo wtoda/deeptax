@@ -69,7 +69,7 @@ export class ErroDeConteudo extends Error {
 
 const texto = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
-function validar(bruto: unknown): SiteContent {
+export function validarSite(bruto: unknown): SiteContent {
   const problemas: string[] = [];
   const d = (bruto ?? {}) as Record<string, unknown>;
 
@@ -156,7 +156,7 @@ function validar(bruto: unknown): SiteContent {
   return conteudo;
 }
 
-export const site: SiteContent = validar(siteJson);
+export const site: SiteContent = validarSite(siteJson);
 
 /* --------------------------------------------------------------- DERIVADOS */
 

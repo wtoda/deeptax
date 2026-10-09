@@ -46,35 +46,65 @@ export type ServiceContent = {
   seo: { title: string; description: string; keywords: string[] };
 };
 
-const bruto = (servicesJson as { services?: unknown }).services;
+/**
+ * Valida e normaliza a lista de áreas. Usada tanto ao carregar o conteúdo
+ * quanto pelo painel, antes de gravar — as mesmas regras que protegem a
+ * publicação protegem a edição.
+ */
+export function validarAreas(bruto: unknown): ServiceContent[] {
+  const lista = (bruto as { services?: unknown } | null)?.services ?? bruto;
 
-if (!Array.isArray(bruto) || bruto.length === 0) {
-  throw new Error(
-    'O conteúdo das áreas está inválido: "services" em content/services.json ' +
-      "precisa ser uma lista com pelo menos uma área.",
-  );
-}
-
-const slugsVistos = new Set<string>();
-
-export const services: ServiceContent[] = (bruto as ServiceContent[]).map((servico) => {
-  const problemas: string[] = [];
-
-  if (!servico.slug?.trim()) problemas.push("uma área está sem slug");
-  if (!servico.name?.trim()) problemas.push(`a área "${servico.slug}" está sem name`);
-  if (!servico.shortName?.trim())
-    problemas.push(`a área "${servico.slug}" está sem shortName`);
-
-  // O slug vira URL: precisa ser seguro e único.
-  if (servico.slug && !/^[a-z0-9-]+$/.test(servico.slug)) {
-    problemas.push(
-      `o slug "${servico.slug}" é inválido: use apenas letras minúsculas, números e hífen`,
+  if (!Array.isArray(lista) || lista.length === 0) {
+    throw new Error(
+      'O conteúdo das áreas está inválido: "services" precisa ser uma lista ' +
+        "com pelo menos uma área.",
     );
   }
-  if (servico.slug && slugsVistos.has(servico.slug)) {
-    problemas.push(`o slug "${servico.slug}" está repetido em duas áreas`);
-  }
-  slugsVistos.add(servico.slug);
+
+  const slugsVistos = new Set<string>();
+  const problemas: string[] = [];
+
+  const areas = (lista as ServiceContent[]).map((servico) => {
+    const identificacao = servico.slug?.trim() || "(sem slug)";
+
+    if (!servico.slug?.trim()) problemas.push("uma área está sem slug");
+    if (!servico.name?.trim()) problemas.push(`a área "${identificacao}" está sem name`);
+    if (!servico.shortName?.trim())
+      problemas.push(`a área "${identificacao}" está sem shortName`);
+
+    // O slug vira URL: precisa ser seguro e único.
+    if (servico.slug && !/^[a-z0-9-]+$/.test(servico.slug)) {
+      problemas.push(
+        `o slug "${servico.slug}" é inválido: use apenas letras minúsculas, números e hífen`,
+      );
+    }
+    if (servico.slug && slugsVistos.has(servico.slug)) {
+      problemas.push(`o slug "${servico.slug}" está repetido em duas áreas`);
+    }
+    if (servico.slug) slugsVistos.add(servico.slug);
+
+    return {
+      ...servico,
+      icon: servico.icon || "ledger",
+      accent: servico.accent || "from-sky-500 to-cyan-400",
+      hero: {
+        ...servico.hero,
+        highlights: servico.hero?.highlights ?? [],
+      },
+      intro: {
+        ...servico.intro,
+        paragraphs: servico.intro?.paragraphs ?? [],
+      },
+      audience: {
+        ...servico.audience,
+        items: servico.audience?.items ?? [],
+      },
+      scope: servico.scope ?? [],
+      methodology: servico.methodology ?? [],
+      deliverables: servico.deliverables ?? [],
+      faq: servico.faq ?? [],
+    };
+  });
 
   if (problemas.length > 0) {
     throw new Error(
@@ -83,28 +113,10 @@ export const services: ServiceContent[] = (bruto as ServiceContent[]).map((servi
     );
   }
 
-  return {
-    ...servico,
-    icon: servico.icon || "ledger",
-    accent: servico.accent || "from-sky-500 to-cyan-400",
-    hero: {
-      ...servico.hero,
-      highlights: servico.hero?.highlights ?? [],
-    },
-    intro: {
-      ...servico.intro,
-      paragraphs: servico.intro?.paragraphs ?? [],
-    },
-    audience: {
-      ...servico.audience,
-      items: servico.audience?.items ?? [],
-    },
-    scope: servico.scope ?? [],
-    methodology: servico.methodology ?? [],
-    deliverables: servico.deliverables ?? [],
-    faq: servico.faq ?? [],
-  };
-});
+  return areas;
+}
+
+export const services: ServiceContent[] = validarAreas(servicesJson);
 
 export const getService = (slug: string) =>
   services.find((service) => service.slug === slug);

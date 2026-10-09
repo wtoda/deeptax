@@ -7,7 +7,8 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/"],
+        // O painel de conteúdo é área administrativa e não deve ser indexado.
+        disallow: ["/api/", "/admin"],
       },
     ],
     sitemap: `${site.url}/sitemap.xml`,

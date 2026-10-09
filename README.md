@@ -28,7 +28,27 @@ npm start            # servir o build de produção
 
 ---
 
-## 2. Onde trocar os dados do escritório
+## 2. Editar o conteúdo (painel)
+
+Os textos e dados do site ficam em `content/site.json` e
+`content/services.json` — arquivos de **dados**, não de código. Há duas formas
+de editá-los:
+
+**Pelo painel** (recomendado, sem mexer em código): **/admin** no site.
+Ele mostra o conteúdo em formulário, valida e grava no repositório; a Vercel
+publica sozinha. Configuração e uso em
+[`docs/PAINEL-DE-CONTEUDO.md`](docs/PAINEL-DE-CONTEUDO.md).
+
+**Editando o JSON**: altere `content/site.json` ou `content/services.json` e
+publique. Serve para mudanças em lote ou quando o painel não estiver
+configurado.
+
+> O painel precisa de `ADMIN_PASSWORD` e `GITHUB_TOKEN` na Vercel. Sem eles ele
+> abre apenas com o aviso do que falta — não fica aberto nem falha em silêncio.
+
+---
+
+## 3. Onde trocar os dados do escritório
 
 **Um único arquivo:** `src/lib/site.ts`
 
@@ -48,7 +68,7 @@ WhatsApp quebram.
 
 ---
 
-## 3. Conteúdo dos serviços
+## 4. Conteúdo dos serviços
 
 **Arquivo:** `src/lib/services.ts`
 
@@ -66,7 +86,7 @@ endereço `/servicos/<slug>`).
 
 ---
 
-## 4. Deploy na Vercel
+## 5. Deploy na Vercel
 
 O deploy é direto: a Vercel detecta Next.js automaticamente, sem build command
 customizado e **sem nenhuma variável de ambiente obrigatória**. Cada `git push`
@@ -95,7 +115,7 @@ o HTML, e mensagens de erro podem ser idênticas entre builds diferentes.
 > Vercel não recebe SMTP. Mantenha um hostname dedicado de e-mail (por exemplo
 > `mail.deeptax.com.br` com A para o servidor de e-mail) e aponte o MX para ele.
 
-## 5. Como os leads são capturados
+## 6. Como os leads são capturados
 
 **Tudo pelo WhatsApp, sem backend.** O formulário não envia nada para o nosso
 servidor: ele monta a mensagem no navegador do visitante e abre a conversa no
@@ -136,7 +156,7 @@ voltar a receber leads por e-mail, o caminho é reintroduzir um destino no
 servidor — e nesse caso vale reler a observação sobre MX e registro A na
 seção de deploy, porque o e-mail do domínio depende disso.
 
-## 6. Estrutura de páginas
+## 7. Estrutura de páginas
 
 | Rota | Arquivo | Conteúdo |
 | --- | --- | --- |
@@ -150,6 +170,7 @@ seção de deploy, porque o e-mail do domínio depende disso.
 | `/contato` | `src/app/contato/page.tsx` | Canais de contato, formulário completo e FAQ |
 | `/politica-de-privacidade` | `src/app/politica-de-privacidade/page.tsx` | LGPD |
 | `/api/version` | `src/app/api/version/route.ts` | Identifica o commit publicado (verificação de deploy) |
+| `/admin` | `src/app/admin/page.tsx` | Painel de edição de conteúdo (ver [`docs/PAINEL-DE-CONTEUDO.md`](docs/PAINEL-DE-CONTEUDO.md)) |
 
 O link **Blog** (`https://blog.deeptax.com.br`) aparece em dois lugares: no
 menu do topo, entre "Sobre" e "Contato", e na coluna "Escritório" do rodapé.
@@ -163,7 +184,7 @@ estruturados (`AccountingService`, `Service` e `FAQPage`), `sitemap.xml` e
 
 ---
 
-## 7. Scripts de verificação (opcional)
+## 8. Scripts de verificação (opcional)
 
 A pasta `scripts/` traz três utilitários de QA usados para validar o site. Eles
 dependem de `playwright-core` (já instalado como dependência de desenvolvimento)
@@ -200,7 +221,7 @@ npm uninstall playwright-core && rm -rf scripts
 
 ---
 
-## 8. Design system
+## 9. Design system
 
 - **Cores:** definidas em `src/app/globals.css` no bloco `@theme`
   (`brand` = azul institucional, `accent` = verde de conversão, `gold` = detalhe).

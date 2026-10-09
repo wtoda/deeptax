@@ -25,6 +25,9 @@ data/
 # Capturas de tela geradas pelos scripts de verificação
 .screenshots/
 
+# Artefatos locais de teste
+.test-tmp/
+
 # Sistema
 .DS_Store
 *.pem
