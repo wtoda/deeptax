@@ -7,7 +7,7 @@ import {
   IconCheck,
   IconFileText,
   IconWhatsApp,
-  serviceIcons,
+  resolverIconeArea,
 } from "@/components/Icons";
 import { Reveal } from "@/components/Reveal";
 import { FaqList, Section, SectionHeading } from "@/components/ui";
@@ -48,7 +48,7 @@ export default async function ServicePage({ params }: PageProps) {
 
   if (!service) notFound();
 
-  const Icon = serviceIcons[service.icon];
+  const Icon = resolverIconeArea(service.icon);
   const others = services.filter((item) => item.slug !== service.slug);
 
   const faqSchema = {
@@ -198,7 +198,7 @@ export default async function ServicePage({ params }: PageProps) {
                 </p>
                 <div className="mt-4 space-y-2">
                   {others.map((item) => {
-                    const OtherIcon = serviceIcons[item.icon];
+                    const OtherIcon = resolverIconeArea(item.icon);
                     return (
                       <Link
                         key={item.slug}

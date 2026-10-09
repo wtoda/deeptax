@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { IconArrowRight, serviceIcons } from "@/components/Icons";
+import {
+  IconArrowRight,
+  resolverIconeArea,
+} from "@/components/Icons";
 import type { ServiceContent } from "@/lib/services";
 
 export function ServiceCard({
@@ -9,7 +12,7 @@ export function ServiceCard({
   service: ServiceContent;
   index?: number;
 }) {
-  const Icon = serviceIcons[service.icon];
+  const Icon = resolverIconeArea(service.icon);
 
   return (
     <Link

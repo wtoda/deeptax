@@ -6,7 +6,7 @@ import {
   IconCheck,
   IconQuote,
   IconWhatsApp,
-  featureIcons,
+  resolverIconeDiferencial,
 } from "@/components/Icons";
 import { LeadForm } from "@/components/LeadForm";
 import { Reveal } from "@/components/Reveal";
@@ -199,7 +199,7 @@ export default function HomePage() {
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {site.differentials.map((item, index) => {
-              const Icon = featureIcons[item.icon as keyof typeof featureIcons];
+              const Icon = resolverIconeDiferencial(item.icon);
               return (
                 <Reveal key={item.title} delay={index * 70}>
                   <div className="h-full rounded-2xl border border-brand-100 bg-white p-7 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-accent-200 hover:shadow-lift">

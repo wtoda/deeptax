@@ -7,7 +7,7 @@ import {
   IconCheck,
   IconSparkles,
   IconUsers,
-  featureIcons,
+  resolverIconeDiferencial,
 } from "@/components/Icons";
 import { Reveal } from "@/components/Reveal";
 import { Section, SectionHeading } from "@/components/ui";
@@ -299,7 +299,7 @@ export default function SobrePage() {
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {site.differentials.map((item, index) => {
-              const Icon = featureIcons[item.icon as keyof typeof featureIcons];
+              const Icon = resolverIconeDiferencial(item.icon);
               return (
                 <Reveal key={item.title} delay={index * 70}>
                   <div className="h-full rounded-2xl border border-brand-100 bg-white p-7 shadow-soft">

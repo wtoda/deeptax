@@ -1,201 +1,172 @@
+import siteJson from "../../content/site.json";
+
 /**
  * ============================================================================
- *  CONFIGURAÇÃO CENTRAL DA DEEPTAX
+ *  CONTEÚDO DO SITE
  * ============================================================================
- *  Este é o ÚNICO arquivo que você precisa editar para publicar o site.
+ *  Os textos e dados do escritório vivem em `content/site.json` — não mais
+ *  neste arquivo. Edite pelo painel em /admin ou diretamente pelo JSON; este
+ *  módulo apenas carrega, valida e deriva o que os componentes consomem.
  *
- *  CONVENÇÃO: campos que ainda não têm dado real ficam como string vazia ("")
- *  e a interface simplesmente NÃO os exibe. Nada de dado inventado no ar.
- *  Procure por  PENDENTE  para achar o que falta.
+ *  A validação abaixo existe para dar mensagem clara quando alguém salva um
+ *  conteúdo inválido: sem ela, o erro apareceria como uma tela em branco.
  * ============================================================================
  */
 
 export type Stat = { value: string; label: string };
 export type Testimonial = { quote: string; author: string; company: string };
+export type FaqItem = { question: string; answer: string };
+export type Differential = { icon: string; title: string; description: string };
+export type ProcessStep = { step: string; title: string; description: string };
 
-export const site = {
-  /* ---------------------------------------------------------------- MARCA */
-  name: "Deeptax",
-  /**
-   * Razão social exibida no site — deve refletir o registro VIGENTE.
-   *
-   * O escritório vai alterar o contrato social para adotar
-   * "DeepTax Estratégia Contabilidade Tecnologia Ltda", que passará a ser o
-   * nome usado. Enquanto a alteração não estiver registrada na Junta Comercial
-   * e refletida no CNPJ e no CRC, o site mantém o nome atual — publicar o nome
-   * novo antes da averbação deixaria a identificação legal incorreta.
-   *
-   * QUANDO A ALTERAÇÃO FOR OFICIAL, troque apenas esta linha:
-   *   legalName: "DeepTax Estratégia Contabilidade Tecnologia Ltda",
-   */
-  legalName: "Forty Five Consultoria Fiscal Contabilidade Tecnologia Ltda",
-  // CONFERIR: nome fantasia informado antes pelo escritório. Não consta no
-  // registro consultado — confirmar se deve mesmo ser exibido.
-  tradeName: "DeepAdvisory Estratégia Empresarial",
-  cnpj: "45.691.496/0001-25",
-  crc: "CRC-SP 2SP045819/O-4",
-  tagline: "Contabilidade, tributos e tecnologia com visão de negócio",
-  shortDescription:
-    "Escritório que reúne contabilidade, especialistas em tributos, tecnologia fiscal, perícia contábil, consultoria e compliance em um só lugar — com rigor técnico e leitura estratégica.",
-  // Domínio canônico do site. Controla canonical, sitemap, robots e Open Graph.
-  //
-  // O apex deeptax.com.br responde 308 e redireciona para www, então o endereço
-  // oficial é o com www. NEXT_PUBLIC_SITE_URL pode sobrescrever este valor.
-  url: (process.env.NEXT_PUBLIC_SITE_URL || "https://www.deeptax.com.br").replace(
-    /\/+$/,
-    "",
-  ),
-
-  /* -------------------------------------------------------------- CONTATO */
-  contact: {
-    // Número informado é móvel: (11) 9-3236-2770 -> formato correto (11) 93236-2770
-    phone: "(11) 93236-2770",
-    whatsapp: "(11) 93236-2770",
-    // SOMENTE DÍGITOS, com 55 + DDD. É este campo que monta os links wa.me.
-    whatsappNumber: "5511932362770",
-    email: "atendimento@deeptax.com.br",
-    commercialEmail: "atendimento@deeptax.com.br",
-    address: {
-      street: "Avenida Paulista, 1636",
-      complement: "Conjunto 1504",
-      district: "Bela Vista",
-      city: "São Paulo",
-      state: "SP",
-      zip: "01310-200",
-      country: "Brasil",
-    },
-    hours: "Segunda a sexta, das 9h às 18h",
-  },
-
-  /* ------------------------------------------------------------- REDES/EXTRA */
-  // PENDENTE: URLs dos perfis. Enquanto vazios, os ícones não aparecem.
-  social: {
-    linkedin: "",
-    instagram: "",
-  },
-
-  /* ------------------------------------------------------------- NÚMEROS */
-  // PENDENTE: publique apenas números reais e verificáveis. Enquanto o array
-  // estiver vazio, a faixa de números desaparece do site inteiro.
-  // Formato esperado:
-  //   { value: "+15", label: "anos de experiência" },
-  //   { value: "+400", label: "empresas atendidas" },
-  //   { value: "100%", label: "prazos cumpridos" },
-  stats: [] as Stat[],
-
-  /* --------------------------------------------------------- DIFERENCIAIS */
-  differentials: [
-    {
-      icon: "shield",
-      title: "Rigor técnico",
-      description:
-        "Trabalho conduzido conforme as normas brasileiras de contabilidade e os pronunciamentos do CPC, com documentação de cada conclusão.",
-    },
-    {
-      icon: "chart",
-      title: "Leitura estratégica",
-      description:
-        "Não entregamos apenas números: traduzimos o resultado contábil em decisões práticas de caixa, preço, imposto e crescimento.",
-    },
-    {
-      icon: "clock",
-      title: "Prazos previsíveis",
-      description:
-        "Calendário fiscal definido no início do ano e um contato direto que responde quando você precisa, não quando sobra tempo.",
-    },
-    {
-      icon: "users",
-      title: "Time sênior dedicado",
-      description:
-        "Você fala com quem executa. Sócios e especialistas acompanham pessoalmente cada cliente da carteira.",
-    },
-    {
-      icon: "lock",
-      title: "Segurança e sigilo",
-      description:
-        "Dados tratados em ambiente controlado, com política de sigilo e conformidade com a LGPD em todos os processos.",
-    },
-    {
-      icon: "sparkles",
-      title: "Tecnologia aplicada",
-      description:
-        "Integração com sistemas de gestão, conciliação automatizada e relatórios em painel, sem planilha perdida em e-mail.",
-    },
-  ],
-
-  /* ------------------------------------------------------------ COMO FUNCIONA */
-  process: [
-    {
-      step: "01",
-      title: "Diagnóstico gratuito",
-      description:
-        "Uma conversa de 30 minutos para entender o momento da empresa, o regime tributário e as dores do dia a dia.",
-    },
-    {
-      step: "02",
-      title: "Proposta sob medida",
-      description:
-        "Você recebe escopo, entregáveis e honorários por escrito. Sem surpresa e sem taxa escondida.",
-    },
-    {
-      step: "03",
-      title: "Implantação organizada",
-      description:
-        "Migramos documentos, sistemas e histórico com cronograma definido e responsáveis nomeados.",
-    },
-    {
-      step: "04",
-      title: "Acompanhamento contínuo",
-      description:
-        "Rotina mensal de obrigações somada a reuniões periódicas de resultado e planejamento tributário.",
-    },
-  ],
-
-  /* -------------------------------------------------------------- DEPOIMENTOS */
-  // PENDENTE: depoimentos reais, com autorização escrita do cliente. Enquanto
-  // o array estiver vazio, a seção de depoimentos não é renderizada.
-  // Formato esperado:
-  //   { quote: "texto do depoimento", author: "Diretora Financeira", company: "Indústria — SP" },
-  testimonials: [] as Testimonial[],
-
-  /* ------------------------------------------------------------------- FAQ */
-  faq: [
-    {
-      question: "Vocês atendem empresas de qual porte?",
-      answer:
-        "Atendemos do MEI e Simples Nacional até indústrias de médio porte com faturamento na casa das centenas de milhões. O escopo e o time são dimensionados para cada operação.",
-    },
-    {
-      question: "É possível trocar de contador no meio do ano?",
-      answer:
-        "Sim, e é mais comum do que parece. Fazemos a transição do histórico, conciliamos saldos de abertura e assumimos as obrigações sem interrupção nem multa por atraso.",
-    },
-    {
-      question: "Como funciona o atendimento remoto?",
-      answer:
-        "A maior parte da nossa carteira é atendida de forma remota, com reuniões por vídeo e canal direto com o time. Também recebemos clientes presencialmente em nosso escritório, com agendamento.",
-    },
-    {
-      question: "Quanto custa uma perícia ou um projeto de consultoria?",
-      answer:
-        "Depende do escopo, do volume de documentos e do prazo. Após uma conversa inicial de diagnóstico, enviamos uma proposta fechada com etapas de entrega bem definidas.",
-    },
-    {
-      question: "Vocês emitem laudo para uso judicial?",
-      answer:
-        "Sim. Elaboramos laudos e pareceres técnicos assinados por contador com registro ativo no CRC, aptos a instruir processos judiciais, arbitragens e procedimentos administrativos.",
-    },
-  ],
+export type Address = {
+  street: string;
+  complement: string;
+  district: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
 };
+
+export type SiteContent = {
+  name: string;
+  legalName: string;
+  tradeName: string;
+  cnpj: string;
+  crc: string;
+  tagline: string;
+  shortDescription: string;
+  url: string;
+  blogUrl: string;
+  contact: {
+    phone: string;
+    whatsapp: string;
+    whatsappNumber: string;
+    email: string;
+    commercialEmail: string;
+    address: Address;
+    hours: string;
+  };
+  social: { linkedin: string; instagram: string };
+  stats: Stat[];
+  differentials: Differential[];
+  process: ProcessStep[];
+  testimonials: Testimonial[];
+  faq: FaqItem[];
+};
+
+/** Erro de conteúdo — mensagem pensada para quem edita, não para programador. */
+export class ErroDeConteudo extends Error {
+  constructor(problemas: string[]) {
+    super(
+      `O conteúdo do site tem ${problemas.length} problema(s) e não pode ser publicado:\n` +
+        problemas.map((p) => `  • ${p}`).join("\n"),
+    );
+    this.name = "ErroDeConteudo";
+  }
+}
+
+const texto = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+
+function validar(bruto: unknown): SiteContent {
+  const problemas: string[] = [];
+  const d = (bruto ?? {}) as Record<string, unknown>;
+
+  const exigir = (valor: unknown, campo: string, comoEditar: string) => {
+    const t = texto(valor);
+    if (!t) problemas.push(`"${campo}" está vazio. ${comoEditar}`);
+    return t;
+  };
+
+  const contact = (d.contact ?? {}) as Record<string, unknown>;
+  const address = (contact.address ?? {}) as Record<string, unknown>;
+
+  // O número do WhatsApp é o que monta todos os links wa.me do site: se vier
+  // com parênteses, traço ou espaço, os botões param de funcionar.
+  const whatsappNumber = texto(contact.whatsappNumber);
+  if (!/^\d{12,14}$/.test(whatsappNumber)) {
+    problemas.push(
+      `"contact.whatsappNumber" deve conter só dígitos, com 55 + DDD + número ` +
+        `(ex.: 5511932362770). Valor atual: "${whatsappNumber}".`,
+    );
+  }
+
+  const email = texto(contact.email);
+  if (email && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(email)) {
+    problemas.push(`"contact.email" não parece um e-mail válido: "${email}".`);
+  }
+
+  const lista = <T,>(v: unknown, campo: string): T[] => {
+    if (v === undefined || v === null) return [];
+    if (!Array.isArray(v)) {
+      problemas.push(`"${campo}" deveria ser uma lista.`);
+      return [];
+    }
+    return v as T[];
+  };
+
+  const conteudo: SiteContent = {
+    name: exigir(d.name, "name", "É o nome da marca exibido no site."),
+    legalName: texto(d.legalName),
+    tradeName: texto(d.tradeName),
+    cnpj: texto(d.cnpj),
+    crc: texto(d.crc),
+    tagline: texto(d.tagline),
+    shortDescription: exigir(
+      d.shortDescription,
+      "shortDescription",
+      "Aparece na descrição para buscadores e no rodapé.",
+    ),
+    // Também usada em canonical, sitemap, robots e Open Graph.
+    url: (process.env.NEXT_PUBLIC_SITE_URL || texto(d.url) || "https://www.deeptax.com.br").replace(
+      /\/+$/,
+      "",
+    ),
+    blogUrl: texto(d.blogUrl),
+    contact: {
+      phone: texto(contact.phone),
+      whatsapp: texto(contact.whatsapp),
+      whatsappNumber,
+      email,
+      commercialEmail: texto(contact.commercialEmail),
+      address: {
+        street: texto(address.street),
+        complement: texto(address.complement),
+        district: texto(address.district),
+        city: texto(address.city),
+        state: texto(address.state),
+        zip: texto(address.zip),
+        country: texto(address.country) || "Brasil",
+      },
+      hours: texto(contact.hours),
+    },
+    social: {
+      linkedin: texto((d.social as Record<string, unknown>)?.linkedin),
+      instagram: texto((d.social as Record<string, unknown>)?.instagram),
+    },
+    stats: lista<Stat>(d.stats, "stats"),
+    differentials: lista<Differential>(d.differentials, "differentials"),
+    process: lista<ProcessStep>(d.process, "process"),
+    testimonials: lista<Testimonial>(d.testimonials, "testimonials"),
+    faq: lista<FaqItem>(d.faq, "faq"),
+  };
+
+  if (problemas.length > 0) throw new ErroDeConteudo(problemas);
+  return conteudo;
+}
+
+export const site: SiteContent = validar(siteJson);
 
 /* --------------------------------------------------------------- DERIVADOS */
 
+/** Blog do escritório — link externo, exibido no menu e no rodapé. */
+export const blogUrl = site.blogUrl;
+
 /**
- * Monta o endereço completo ignorando as partes ainda não preenchidas.
+ * Monta o endereço completo ignorando as partes não preenchidas.
  * O CEP entra após a cidade/UF separado por vírgula — usar outro travessão
- * aqui deixaria a linha com duas quebras e leitura confusa.
- * Resultado: "Avenida Paulista, 1636, Conjunto 1504 — Bela Vista,
- * São Paulo/SP, 01310-200"
+ * deixaria a linha com duas quebras e leitura confusa.
  */
 export const fullAddress = [
   [site.contact.address.street, site.contact.address.complement]
@@ -213,9 +184,6 @@ export const fullAddress = [
   .filter(Boolean)
   .join(" — ");
 
-/** Endereço curto, usado em consultas de mapa. */
-export const mapAddress = fullAddress;
-
 export const whatsappLink = (message?: string) =>
   `https://wa.me/${site.contact.whatsappNumber}${
     message ? `?text=${encodeURIComponent(message)}` : ""
@@ -223,6 +191,3 @@ export const whatsappLink = (message?: string) =>
 
 export const defaultWhatsappMessage =
   `Olá! Vim pelo site da ${site.name} e gostaria de falar sobre os serviços contábeis.`;
-
-/** Blog do escritório — link externo, exibido no menu. */
-export const blogUrl = "https://blog.deeptax.com.br";

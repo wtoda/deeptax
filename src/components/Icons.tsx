@@ -251,3 +251,20 @@ export const featureIcons = {
 } as const;
 
 export type FeatureIconName = keyof typeof featureIcons;
+export type ServiceIconName = keyof typeof serviceIcons;
+
+/**
+ * Resolve o ícone pelo nome vindo do conteúdo.
+ *
+ * Como os textos agora são editáveis, um nome de ícone digitado errado não
+ * pode derrubar a página: cai no ícone padrão em vez de renderizar `undefined`.
+ */
+export const resolverIconeDiferencial = (nome: string) =>
+  featureIcons[nome as FeatureIconName] ?? featureIcons.sparkles;
+
+export const resolverIconeArea = (nome: string) =>
+  serviceIcons[nome as ServiceIconName] ?? serviceIcons.ledger;
+
+/** Nomes válidos, para o painel de edição oferecer as opções corretas. */
+export const nomesDeIconesDiferencial = Object.keys(featureIcons) as FeatureIconName[];
+export const nomesDeIconesArea = Object.keys(serviceIcons) as ServiceIconName[];

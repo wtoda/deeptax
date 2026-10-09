@@ -12,7 +12,7 @@ import {
   IconPhone,
   IconWhatsApp,
   IconX,
-  serviceIcons,
+  resolverIconeArea,
 } from "@/components/Icons";
 import { services } from "@/lib/services";
 import { blogUrl, defaultWhatsappMessage, site, whatsappLink } from "@/lib/site";
@@ -152,7 +152,7 @@ export function Header() {
                 <div className="overflow-hidden rounded-2xl border border-brand-100 bg-white p-2.5 shadow-lift">
                   <div className="grid grid-cols-2 gap-1">
                     {services.map((service) => {
-                      const Icon = serviceIcons[service.icon];
+                      const Icon = resolverIconeArea(service.icon);
                       return (
                         <Link
                           key={service.slug}
@@ -295,7 +295,7 @@ export function Header() {
               </p>
               <div className="space-y-1">
                 {services.map((service) => {
-                  const Icon = serviceIcons[service.icon];
+                  const Icon = resolverIconeArea(service.icon);
                   return (
                     <Link
                       key={service.slug}

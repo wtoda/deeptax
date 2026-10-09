@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { CtaSection } from "@/components/CtaSection";
-import { IconArrowRight, IconCheck, serviceIcons } from "@/components/Icons";
+import {
+  IconArrowRight,
+  IconCheck,
+  resolverIconeArea,
+} from "@/components/Icons";
 import { Reveal } from "@/components/Reveal";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Section, SectionHeading } from "@/components/ui";
@@ -88,7 +92,7 @@ export default function ServicosPage() {
 
             <div className="divide-y divide-brand-100">
               {services.map((service) => {
-                const Icon = serviceIcons[service.icon];
+                const Icon = resolverIconeArea(service.icon);
                 return (
                   <div
                     key={service.slug}
@@ -142,11 +146,6 @@ export default function ServicosPage() {
 
               <div className="mt-9 space-y-4">
                 {[
-                  {
-                    title: "Contabilidade + Consultoria",
-                    description:
-                      "O arranjo mais frequente: a rotina fiscal em dia somada ao planejamento tributário e aos relatórios gerenciais mensais.",
-                  },
                   {
                     title: "DeepCont + DeepTax",
                     description:
