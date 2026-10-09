@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { lerSessao } from "@/lib/admin/auth";
-import { adminDisponivel, pendenciasDeConfiguracao } from "@/lib/admin/config";
+import {
+  adminDisponivel,
+  avisoDeSenhaCurta,
+  pendenciasDeConfiguracao,
+} from "@/lib/admin/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,5 +26,6 @@ export async function GET() {
     configurado,
     autenticado: configurado ? await lerSessao() : false,
     pendencias: configurado ? [] : pendenciasDeConfiguracao(),
+    aviso: configurado ? avisoDeSenhaCurta() : null,
   });
 }

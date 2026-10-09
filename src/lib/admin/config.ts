@@ -65,10 +65,13 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
         "Cadastre em Vercel → Settings → Environment Variables → nome ADMIN_PASSWORD.",
       ],
     });
-  } else if (adminConfig.senha.length < 10) {
+  } else if (adminConfig.senha.length < 6) {
+    // Piso mínimo: abaixo disso a senha é indefensável mesmo com o limite de
+    // tentativas. Acima, quem decide o tamanho é o escritório.
     faltando.push({
       variavel: "ADMIN_PASSWORD",
-      explica: "a senha precisa ter pelo menos 10 caracteres",
+      explica:
+        "a senha cadastrada tem menos de 6 caracteres. Troque o valor de ADMIN_PASSWORD na Vercel por uma senha de pelo menos 6 caracteres.",
     });
   }
 
@@ -101,3 +104,19 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
 }
 
 export const adminDisponivel = () => pendenciasDeConfiguracao().length === 0;
+
+/**
+ * Aviso (não bloqueio) quando a senha é curta.
+ *
+ * O limite de tentativas do login já torna a força bruta lenta, então não faz
+ * sentido impedir o acesso por causa do tamanho. Mas vale registrar a
+ * recomendação, porque quem escolheu a senha pode não ter considerado isso.
+ */
+export function avisoDeSenhaCurta(): string | null {
+  if (!adminConfig.senha || adminConfig.senha.length >= 10) return null;
+  return (
+    "A senha do painel tem menos de 10 caracteres. Funciona, mas uma senha mais " +
+    "longa é recomendável: o painel tem acesso de escrita ao repositório. " +
+    "Para trocar, altere ADMIN_PASSWORD na Vercel e faça um Redeploy."
+  );
+}
