@@ -9,7 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { ServiceCard } from "@/components/ServiceCard";
 import { Section, SectionHeading } from "@/components/ui";
 import { services } from "@/lib/services";
-import { site } from "@/lib/site";
+import { paginas } from "@/lib/paginas";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -41,16 +41,13 @@ export default function ServicosPage() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
               <span className="size-1.5 rounded-full bg-accent-400" />
-              Serviços
+              {paginas.servicos.hero.selo}
             </span>
             <h1 className="mt-6 font-display text-[2.1rem] font-extrabold leading-[1.12] text-white sm:text-4xl lg:text-5xl">
-              Toda a estrutura contábil da sua empresa em um único escritório
+              {paginas.servicos.hero.titulo}
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-brand-100/75 sm:text-lg">
-              Contabilidade do dia a dia, especialistas em tributos, tecnologia
-              fiscal, perícia contábil, consultoria e compliance. Escopos
-              distintos, o mesmo padrão técnico — e a liberdade de contratar só o
-              que a sua empresa precisa agora.
+              {paginas.servicos.hero.descricao}
             </p>
           </div>
         </div>
@@ -60,9 +57,9 @@ export default function ServicosPage() {
       <Section tone="light">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Frentes de atuação"
-            title="Escolha por onde começar"
-            description="Cada frente tem página própria com escopo detalhado, metodologia em etapas, entregáveis e perguntas frequentes."
+            eyebrow={paginas.servicos.secoes.areas.selo}
+            title={paginas.servicos.secoes.areas.titulo}
+            description={paginas.servicos.secoes.areas.descricao}
           />
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -79,15 +76,15 @@ export default function ServicosPage() {
       <Section tone="muted">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Visão rápida"
-            title="O que cada serviço entrega, em uma linha"
-            description="Se ainda não sabe qual frente procura, este resumo ajuda a identificar o ponto de partida."
+            eyebrow={paginas.servicos.secoes.resumo.selo}
+            title={paginas.servicos.secoes.resumo.titulo}
+            description={paginas.servicos.secoes.resumo.descricao}
           />
 
           <div className="mt-12 overflow-hidden rounded-2xl border border-brand-100 bg-white shadow-soft">
             <div className="hidden grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)] gap-4 border-b border-brand-100 bg-brand-50/60 px-7 py-4 text-xs font-semibold uppercase tracking-[0.12em] text-brand-900/50 lg:grid">
-              <span>Serviço</span>
-              <span>Quando faz sentido contratar</span>
+              <span>{paginas.servicos.secoes.resumo.colunaServico}</span>
+              <span>{paginas.servicos.secoes.resumo.colunaQuando}</span>
             </div>
 
             <div className="divide-y divide-brand-100">
@@ -120,7 +117,7 @@ export default function ServicosPage() {
                         href={`/servicos/${service.slug}`}
                         className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-200 px-4 py-2.5 text-sm font-semibold text-brand-950 transition-colors hover:border-accent-300 hover:bg-accent-50/60 hover:text-accent-700"
                       >
-                        Detalhes
+                        {paginas.servicos.secoes.resumo.botaoDetalhes}
                         <IconArrowRight className="size-3.5" />
                       </Link>
                     </div>
@@ -139,39 +136,13 @@ export default function ServicosPage() {
             <div>
               <SectionHeading
                 align="left"
-                eyebrow="Combinações que funcionam"
-                title="Na prática, os serviços se complementam"
-                description="A maioria dos nossos clientes começa por um serviço e amplia o escopo conforme a empresa evolui. Alguns arranjos são especialmente comuns."
+                eyebrow={paginas.servicos.secoes.combinacoes.selo}
+                title={paginas.servicos.secoes.combinacoes.titulo}
+                description={paginas.servicos.secoes.combinacoes.descricao}
               />
 
               <div className="mt-9 space-y-4">
-                {[
-                  {
-                    title: "DeepCont + DeepTax",
-                    description:
-                      "O arranjo mais frequente: a rotina contábil em dia somada à revisão fiscal e ao aproveitamento de créditos que a apuração mensal não alcança.",
-                  },
-                  {
-                    title: "DeepTax + DeepConsult",
-                    description:
-                      "A revisão encontra a oportunidade; a consultoria desenha a estrutura que a sustenta no longo prazo, incluindo societário e sucessão.",
-                  },
-                  {
-                    title: "DeepPericia + DeepCont",
-                    description:
-                      "Em disputas societárias, a mesma competência técnica que mantém a escrituração sustenta a apuração de haveres e os cálculos judiciais.",
-                  },
-                  {
-                    title: "Deep Systems + DeepCont",
-                    description:
-                      "Para operações de volume alto: a automação assume a conferência repetitiva e libera a equipe contábil para analisar em vez de digitar.",
-                  },
-                  {
-                    title: "DeepCompliance + DeepConsult",
-                    description:
-                      "Indicado antes de captar crédito ou receber investidor: o compliance organiza as evidências e a consultoria prepara a informação econômica.",
-                  },
-                ].map((combo) => (
+                {paginas.servicos.secoes.combinacoes.itens.map((combo) => (
                   <div
                     key={combo.title}
                     className="flex gap-4 rounded-2xl border border-brand-100 bg-white p-6 shadow-soft"
@@ -197,21 +168,14 @@ export default function ServicosPage() {
                 <div className="bg-grid pointer-events-none absolute inset-0 opacity-50" />
                 <div className="relative">
                   <h3 className="font-display text-2xl font-bold text-white">
-                    Não sabe qual serviço precisa?
+                    {paginas.servicos.ajuda.titulo}
                   </h3>
                   <p className="mt-4 text-sm leading-relaxed text-brand-100/75">
-                    Conte o seu cenário em uma conversa de 30 minutos. Avaliamos a
-                    situação atual e indicamos exatamente qual frente resolve o seu
-                    problema — mesmo que a resposta seja que você não precisa
-                    contratar nada agora.
+                    {paginas.servicos.ajuda.descricao}
                   </p>
 
                   <ul className="mt-7 space-y-3">
-                    {[
-                      "Diagnóstico sem custo e sem compromisso",
-                      "Escopo e honorário por escrito",
-                      "Atendimento remoto ou presencial com agendamento",
-                    ].map((item) => (
+                    {paginas.servicos.ajuda.itens.map((item) => (
                       <li key={item} className="flex items-center gap-3">
                         <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-accent-500/20 text-accent-300">
                           <IconCheck className="size-3" />
@@ -225,7 +189,7 @@ export default function ServicosPage() {
                     href="/contato#proposta"
                     className="mt-8 inline-flex items-center gap-2 rounded-xl bg-accent-500 px-5 py-3 text-sm font-semibold text-white shadow-soft transition-all hover:bg-accent-600"
                   >
-                    Solicitar diagnóstico
+                    {paginas.servicos.ajuda.botao}
                     <IconArrowRight className="size-4" />
                   </Link>
                 </div>
@@ -237,8 +201,8 @@ export default function ServicosPage() {
 
       <CtaSection
         source="servicos-index"
-        title={`Fale com a ${site.name} e receba um escopo sob medida`}
-        description="Descreva o que a sua empresa precisa e devolvemos uma proposta com escopo, entregáveis, prazos e honorários definidos por escrito."
+        title={paginas.servicos.cta.titulo}
+        description={paginas.servicos.cta.descricao}
       />
     </>
   );

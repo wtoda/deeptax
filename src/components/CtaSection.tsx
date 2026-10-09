@@ -7,19 +7,22 @@ import {
   IconPhone,
   IconWhatsApp,
 } from "@/components/Icons";
+import { paginas } from "@/lib/paginas";
 import { defaultWhatsappMessage, site, whatsappLink } from "@/lib/site";
 
-const assurances = [
-  { icon: IconWhatsApp, text: "Atendimento direto no WhatsApp" },
-  { icon: IconCheck, text: "Diagnóstico inicial sem custo" },
-  { icon: IconLock, text: "Você envia só o que quiser compartilhar" },
-];
+// Os ícones ficam fixos; os textos vêm de content/paginas.json (ctaPadrao).
+const iconesDasGarantias = [IconWhatsApp, IconCheck, IconLock];
+
+const garantias = paginas.ctaPadrao.garantias.map((texto, i) => ({
+  icon: iconesDasGarantias[i] ?? IconCheck,
+  text: texto,
+}));
 
 export function CtaSection({
   id = "proposta",
-  eyebrow = "Fale com um especialista",
-  title = "Vamos entender o seu cenário antes de falar em honorário",
-  description = "Preencha os campos e envie pelo WhatsApp. Sua mensagem chega até nós já organizada, com empresa, telefone e o assunto de interesse — e você conversa direto com um contador.",
+  eyebrow = paginas.ctaPadrao.selo,
+  title = paginas.ctaPadrao.titulo,
+  description = paginas.ctaPadrao.descricao,
   defaultService = "",
   source = "cta-section",
 }: {
@@ -56,7 +59,7 @@ export function CtaSection({
             </p>
 
             <ul className="mt-8 space-y-3.5">
-              {assurances.map(({ icon: Icon, text }) => (
+              {garantias.map(({ icon: Icon, text }) => (
                 <li key={text} className="flex items-center gap-3">
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent-500/15 text-accent-300">
                     <Icon className="size-4" />
@@ -109,10 +112,10 @@ export function CtaSection({
           <Reveal delay={120}>
             <div className="rounded-3xl border border-brand-100 bg-white p-6 shadow-lift sm:p-8">
               <h3 className="font-display text-lg font-bold text-brand-950">
-                Solicitar diagnóstico gratuito
+                {paginas.ctaPadrao.tituloFormulario}
               </h3>
               <p className="mt-1.5 text-sm text-brand-900/60">
-                Você será levado ao WhatsApp com a mensagem já pronta.
+                {paginas.ctaPadrao.notaFormulario}
               </p>
               <div className="mt-6">
                 <LeadForm defaultService={defaultService} source={source} />

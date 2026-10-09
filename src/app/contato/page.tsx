@@ -18,6 +18,7 @@ import {
   site,
   whatsappLink,
 } from "@/lib/site";
+import { paginas } from "@/lib/paginas";
 
 export const metadata: Metadata = {
   title: "Contato e proposta",
@@ -33,7 +34,7 @@ const channels = [
     value: site.contact.whatsapp,
     href: whatsappLink(defaultWhatsappMessage),
     external: true,
-    note: "Canal mais rápido",
+    note: paginas.contato.canais.whatsapp,
     highlight: true,
   },
   {
@@ -42,7 +43,7 @@ const channels = [
     value: site.contact.phone,
     href: `tel:${site.contact.phone.replace(/\D/g, "")}`,
     external: false,
-    note: "Segunda a sexta, 9h às 18h",
+    note: paginas.contato.canais.telefone,
   },
   {
     icon: IconMail,
@@ -50,7 +51,7 @@ const channels = [
     value: site.contact.email,
     href: `mailto:${site.contact.email}`,
     external: false,
-    note: "Canal institucional — prefira o WhatsApp",
+    note: paginas.contato.canais.email,
   },
   {
     icon: IconMapPin,
@@ -58,7 +59,7 @@ const channels = [
     value: fullAddress,
     href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress)}`,
     external: true,
-    note: "Visitas com agendamento",
+    note: paginas.contato.canais.escritorio,
   },
 ];
 
@@ -84,15 +85,13 @@ export default function ContatoPage() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
               <span className="size-1.5 rounded-full bg-accent-400" />
-              Contato
+              {paginas.contato.hero.selo}
             </span>
             <h1 className="mt-6 font-display text-[2.1rem] font-extrabold leading-[1.12] text-white sm:text-4xl lg:text-5xl">
-              Vamos conversar sobre o que a sua empresa precisa
+              {paginas.contato.hero.titulo}
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-brand-100/75 sm:text-lg">
-              Escolha o canal que preferir. Se quiser uma proposta com escopo e
-              honorários, preencha o formulário — o diagnóstico inicial é gratuito
-              e sem compromisso.
+              {paginas.contato.hero.descricao}
             </p>
           </div>
         </div>
@@ -149,19 +148,13 @@ export default function ContatoPage() {
             <div>
               <SectionHeading
                 align="left"
-                eyebrow="Solicitar proposta"
-                title="Conte seu cenário e receba um escopo sob medida"
-                description="Quanto mais contexto você der, mais precisa será a nossa resposta. Nenhuma informação é compartilhada com terceiros."
+                eyebrow={paginas.contato.solicitar.selo}
+                title={paginas.contato.solicitar.titulo}
+                description={paginas.contato.solicitar.descricao}
               />
 
               <ul className="mt-9 space-y-4">
-                {[
-                  "Diagnóstico inicial sem custo",
-                  "Proposta com escopo, prazos e honorários por escrito",
-                  "Contador sênior responsável pelo seu atendimento",
-                  "Transição assistida, caso você esteja trocando de escritório",
-                  "Sigilo total e conformidade com a LGPD",
-                ].map((item) => (
+                {paginas.contato.solicitar.garantias.map((item) => (
                   <li key={item} className="flex items-start gap-3.5">
                     <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-lg bg-accent-50 text-accent-600">
                       <IconCheck className="size-3.5" />
@@ -180,7 +173,7 @@ export default function ContatoPage() {
                   </span>
                   <div>
                     <p className="font-display text-base font-bold text-brand-950">
-                      Horário de atendimento
+                      {paginas.contato.solicitar.horarioTitulo}
                     </p>
                     <p className="text-sm text-brand-900/60">{site.contact.hours}</p>
                   </div>
@@ -215,11 +208,10 @@ export default function ContatoPage() {
             <Reveal delay={100}>
               <div className="rounded-3xl border border-brand-100 bg-white p-6 shadow-lift sm:p-9">
                 <h2 className="font-display text-xl font-bold text-brand-950">
-                  Formulário de contato
+                  {paginas.contato.solicitar.formularioTitulo}
                 </h2>
                 <p className="mt-2 text-sm text-brand-900/60">
-                  Campos marcados com <span className="text-accent-500">*</span> são
-                  obrigatórios.
+                  {paginas.contato.solicitar.formularioNota}
                 </p>
                 <div className="mt-7">
                   <LeadForm source="pagina-contato" />
@@ -234,8 +226,8 @@ export default function ContatoPage() {
       <Section tone="light">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Antes de escrever"
-            title="Talvez a sua dúvida já esteja respondida"
+            eyebrow={paginas.contato.faq.selo}
+            title={paginas.contato.faq.titulo}
           />
           <div className="mx-auto mt-12 max-w-3xl">
             <FaqList items={site.faq} />
@@ -246,7 +238,7 @@ export default function ContatoPage() {
               href="/servicos"
               className="inline-flex items-center gap-2 rounded-xl border border-brand-200 bg-white px-5 py-3 text-sm font-semibold text-brand-950 shadow-soft transition-all hover:-translate-y-0.5 hover:border-accent-300 hover:text-accent-700"
             >
-              Conhecer os serviços em detalhe
+              {paginas.contato.botaoServicos}
               <IconArrowRight className="size-4" />
             </Link>
           </div>

@@ -3,7 +3,9 @@
 Ferramenta para alterar textos, telefone, e-mail, endereço, áreas e perguntas
 frequentes do site **sem mexer em código**.
 
-Endereço: **https://www.deeptax.com.br/admin**
+Endereço: **https://www.deeptax.com.br/admin/login**
+
+(abrir `/admin` sem sessão redireciona para o login automaticamente)
 
 ---
 
@@ -72,12 +74,31 @@ Acesse **https://www.deeptax.com.br/admin** e informe a senha que você cadastro
 
 O painel tem quatro abas:
 
+As abas são organizadas **por página** — escolha a página e edite os textos dela:
+
 | Aba | O que edita |
 |---|---|
-| **Contato e endereço** | Telefone, WhatsApp, e-mail, horário, endereço completo, redes sociais e o link do blog |
-| **Identificação e SEO** | Marca, razão social, nome fantasia, CNPJ, CRC, assinatura e a descrição que aparece no Google |
-| **Página inicial** | Diferenciais, etapas do atendimento, números, depoimentos e perguntas frequentes |
-| **Áreas (páginas internas)** | O conteúdo das seis áreas: Deep Systems, DeepTax, DeepCont, DeepPericia, DeepConsult e DeepCompliance |
+| **Contato e endereço** | Telefone, WhatsApp, e-mail, horário, endereço, redes sociais e o link do blog |
+| **Identificação e SEO** | Marca, razão social, nome fantasia, CNPJ, CRC, assinatura e a descrição do Google |
+| **Página inicial** | Topo (título, subtítulo, bullets), faixa de segmentos, títulos das seções, diferenciais, etapas, números, depoimentos e perguntas frequentes |
+| **Sobre o escritório** | Apresentação, história, missão, compromisso, princípios, time e chamadas |
+| **Página de contato** | Apresentação, observação de cada canal, textos do formulário e FAQ |
+| **Página de serviços** | Apresentação, títulos das seções, combinações de áreas e bloco final |
+| **Política de Privacidade** | Título, aviso de atualização e os itens da política |
+| **Chamada final (padrão)** | Bloco de contato que aparece no fim da maioria das páginas |
+| **Áreas (páginas internas)** | O conteúdo completo das seis áreas: Deep Systems, DeepTax, DeepCont, DeepPericia, DeepConsult e DeepCompliance |
+
+### Marcadores
+
+Nos textos das páginas você pode escrever marcadores que são substituídos
+automaticamente pelos dados do escritório:
+
+`{{nome}}` `{{razaoSocial}}` `{{nomeFantasia}}` `{{cnpj}}` `{{crc}}`
+`{{endereco}}` `{{telefone}}` `{{whatsapp}}` `{{email}}` `{{blog}}`
+
+Exemplo: escrever "Fale com a {{razaoSocial}}" mostra o nome registrado. Assim,
+trocar o telefone em *Contato e endereço* atualiza todas as menções de uma vez,
+inclusive dentro de um parágrafo.
 
 Ao alterar qualquer campo, a barra inferior avisa que há alterações pendentes e o
 botão **Salvar e publicar** é habilitado. Depois de salvar, aparece o link do
@@ -95,6 +116,8 @@ commit criado.
 - **Blocos em JSON:** dentro de cada área, as listas longas (escopo, metodologia,
   entregáveis, FAQ) são editadas em JSON. Se houver erro de vírgula ou aspas, o
   painel marca o campo em vermelho e **bloqueia o salvamento** até corrigir.
+- **Publicação:** ao salvar, a Vercel reconstrói o site (~1 minuto). O painel
+  mostra o link do commit criado.
 - **Sessão:** dura 12 horas. Depois disso, é preciso entrar de novo.
 - **Senha esquecida:** troque o valor de `ADMIN_PASSWORD` na Vercel e faça um
   redeploy. Não há recuperação por e-mail.

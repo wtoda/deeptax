@@ -36,6 +36,7 @@ export const NOME_DO_COOKIE = "deeptax_admin";
 /** Arquivos de conteúdo versionados no repositório. */
 export const ARQUIVO_SITE = "content/site.json";
 export const ARQUIVO_AREAS = "content/services.json";
+export const ARQUIVO_PAGINAS = "content/paginas.json";
 /** Duração da sessão: 12 horas. */
 export const DURACAO_SESSAO_SEGUNDOS = 12 * 60 * 60;
 

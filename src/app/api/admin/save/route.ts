@@ -3,6 +3,7 @@ import { lerSessao } from "@/lib/admin/auth";
 import {
   ARQUIVO_AREAS,
   ARQUIVO_SITE,
+  ARQUIVO_PAGINAS,
   adminDisponivel,
   adminConfig,
   pendenciasDeConfiguracao,
@@ -10,6 +11,7 @@ import {
 import { ErroGitHub, gravarArquivo, lerArquivo } from "@/lib/admin/github";
 import { validarSite } from "@/lib/site";
 import { validarAreas } from "@/lib/services";
+import { validarPaginas } from "@/lib/paginas";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, message: "Sessão expirada." }, { status: 401 });
   }
 
-  let corpo: { site?: unknown; areas?: unknown; observacao?: unknown };
+  let corpo: { site?: unknown; areas?: unknown; paginas?: unknown; observacao?: unknown };
   try {
     corpo = (await request.json()) as typeof corpo;
   } catch {
@@ -44,6 +46,7 @@ export async function POST(request: Request) {
   // e o site fica na versão anterior. Melhor barrar aqui, com mensagem clara.
   let siteValidado: ReturnType<typeof validarSite>;
   let areasValidadas: ReturnType<typeof validarAreas>;
+  let paginasValidadas: ReturnType<typeof validarPaginas>;
 
   try {
     siteValidado = validarSite(corpo.site);
@@ -63,6 +66,15 @@ export async function POST(request: Request) {
     );
   }
 
+  try {
+    paginasValidadas = validarPaginas(corpo.paginas);
+  } catch (erro) {
+    return NextResponse.json(
+      { ok: false, message: `Não salvei: ${problemaDe(erro)}`, campo: "paginas" },
+      { status: 422 },
+    );
+  }
+
   const observacao =
     typeof corpo.observacao === "string" ? corpo.observacao.trim().slice(0, 200) : "";
 
@@ -70,13 +82,15 @@ export async function POST(request: Request) {
     const gravados: string[] = [];
 
     // Só gravamos o que realmente mudou: evita commit vazio e redeploy inútil.
-    const [siteAtual, areasAtuais] = await Promise.all([
+    const [siteAtual, areasAtuais, textosAtuais] = await Promise.all([
       lerArquivo(ARQUIVO_SITE),
       lerArquivo(ARQUIVO_AREAS),
+      lerArquivo(ARQUIVO_PAGINAS),
     ]);
 
     const novoSite = JSON.stringify(corpo.site, null, 2) + "\n";
     const novasAreas = JSON.stringify({ services: areasValidadas }, null, 2) + "\n";
+    const novosTextos = JSON.stringify(corpo.paginas, null, 2) + "\n";
 
     let commit = "";
     let url = "";
@@ -99,6 +113,17 @@ export async function POST(request: Request) {
         `conteudo: atualiza as áreas pelo painel${observacao ? `\n\n${observacao}` : ""}`,
       );
       gravados.push("areas");
+      commit = r.commit || commit;
+      url = r.url || url;
+    }
+
+    if (novosTextos !== textosAtuais.conteudo) {
+      const r = await gravarArquivo(
+        ARQUIVO_PAGINAS,
+        novosTextos,
+        `conteudo: atualiza textos das páginas pelo painel${observacao ? `\n\n${observacao}` : ""}`,
+      );
+      gravados.push("paginas");
       commit = r.commit || commit;
       url = r.url || url;
     }

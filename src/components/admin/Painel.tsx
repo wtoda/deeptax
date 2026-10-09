@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { IconAlert, IconCheck, IconSpinner } from "@/components/Icons";
 import {
@@ -23,15 +24,15 @@ const comoTexto = (v: unknown) => (typeof v === "string" ? v : "");
 const comoLista = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 
 export function Painel() {
+  const router = useRouter();
   const [fase, setFase] = useState<"carregando" | "login" | "editor" | "sem-configuracao">(
     "carregando",
   );
   const [pendencias, setPendencias] = useState<Pendencia[]>([]);
-  const [senha, setSenha] = useState("");
-  const [entrando, setEntrando] = useState(false);
 
   const [site, setSite] = useState<Qualquer>({});
   const [areas, setAreas] = useState<Qualquer[]>([]);
+  const [textos, setTextos] = useState<Qualquer>({});
   const [original, setOriginal] = useState("");
 
   const [aba, setAba] = useState(abas[0]?.id ?? "contato");
@@ -59,7 +60,8 @@ export function Painel() {
         return;
       }
       if (!sessao.autenticado) {
-        setFase("login");
+        // O acesso tem rota própria: /admin/login
+        router.replace("/admin/login");
         return;
       }
 
@@ -74,7 +76,10 @@ export function Painel() {
 
       setSite(dados.site);
       setAreas(dados.areas.services ?? []);
-      setOriginal(JSON.stringify({ site: dados.site, areas: dados.areas }));
+      setTextos(dados.paginas ?? {});
+      setOriginal(
+        JSON.stringify({ site: dados.site, areas: dados.areas, paginas: dados.paginas }),
+      );
       setFase("editor");
     } catch {
       setErro("Falha de conexão ao carregar o conteúdo.");
@@ -86,49 +91,20 @@ export function Painel() {
     void carregar();
   }, [carregar]);
 
-  /* ---------------------------------------------------------------- login -- */
-
-  const entrar = async (evento: React.FormEvent) => {
-    evento.preventDefault();
-    setEntrando(true);
-    setErro("");
-    try {
-      const resposta = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senha }),
-      });
-      const dados = await resposta.json();
-
-      if (!resposta.ok || !dados.ok) {
-        setErro(dados.message ?? "Não foi possível entrar.");
-        if (dados.pendencias) {
-          setPendencias(dados.pendencias);
-          setFase("sem-configuracao");
-        }
-        return;
-      }
-      setSenha("");
-      await carregar();
-    } catch {
-      setErro("Falha de conexão.");
-    } finally {
-      setEntrando(false);
-    }
-  };
-
   const sair = async () => {
     await fetch("/api/admin/logout", { method: "POST" });
     setFase("login");
     setSite({});
     setAreas([]);
+    setTextos({});
   };
 
   /* --------------------------------------------------------------- salvar -- */
 
   const alterado = useMemo(
-    () => JSON.stringify({ site, areas: { services: areas } }) !== original,
-    [site, areas, original],
+    () =>
+      JSON.stringify({ site, areas: { services: areas }, paginas: textos }) !== original,
+    [site, areas, textos, original],
   );
 
   const jsonComErro = Object.values(errosJson).some(Boolean);
@@ -142,7 +118,7 @@ export function Painel() {
       const resposta = await fetch("/api/admin/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ site, areas }),
+        body: JSON.stringify({ site, areas, paginas: textos }),
       });
       const dados = await resposta.json();
 
@@ -153,7 +129,9 @@ export function Painel() {
 
       setMensagem(dados.message);
       if (dados.url) setLinkCommit(dados.url);
-      setOriginal(JSON.stringify({ site, areas: { services: areas } }));
+      setOriginal(
+        JSON.stringify({ site, areas: { services: areas }, paginas: textos }),
+      );
     } catch {
       setErro("Falha de conexão ao salvar.");
     } finally {
@@ -163,21 +141,31 @@ export function Painel() {
 
   /* -------------------------------------------------------------- campos --- */
 
-  const objetoAtual: Qualquer =
-    aba === "areas" ? (areas[indiceArea] ?? {}) : site;
+  /** De onde o campo lê e grava: a área em edição, os textos ou os dados. */
+  const objetoDe = (origem?: "site" | "paginas"): Qualquer => {
+    if (aba === "areas") return areas[indiceArea] ?? {};
+    if (origem === "paginas") return textos;
+    return site;
+  };
 
-  const aoMudarCampo = (caminho: string, valor: unknown) => {
+  const objetoAtual = objetoDe();
+
+  const aoMudarCampo = (caminho: string, valor: unknown, origem?: "site" | "paginas") => {
     if (aba === "areas") {
       const copia = structuredClone(areas);
       copia[indiceArea] = definir(copia[indiceArea] ?? {}, caminho, valor);
       setAreas(copia);
-    } else {
-      setSite((atual) => definir(atual, caminho, valor));
+      return;
     }
+    if (origem === "paginas") {
+      setTextos((atual) => definir(atual, caminho, valor));
+      return;
+    }
+    setSite((atual) => definir(atual, caminho, valor));
   };
 
   const renderizarCampo = (campo: Campo, chave: string) => {
-    const valor = ler(objetoAtual, campo.caminho);
+    const valor = ler(objetoDe(campo.origem), campo.caminho);
 
     if (campo.tipo === "texto" || campo.tipo === "texto-longo") {
       const Comum =
@@ -196,7 +184,7 @@ export function Painel() {
               {...Comum}
               value={comoTexto(valor)}
               placeholder={campo.exemplo}
-              onChange={(e) => aoMudarCampo(campo.caminho, e.target.value)}
+              onChange={(e) => aoMudarCampo(campo.caminho, e.target.value, campo.origem)}
               className="w-full resize-y rounded-lg border border-brand-200 bg-white p-2.5 text-sm text-brand-950 outline-none focus:border-accent-400"
             />
           ) : (
@@ -205,7 +193,7 @@ export function Painel() {
               {...Comum}
               value={comoTexto(valor)}
               placeholder={campo.exemplo}
-              onChange={(e) => aoMudarCampo(campo.caminho, e.target.value)}
+              onChange={(e) => aoMudarCampo(campo.caminho, e.target.value, campo.origem)}
               className="w-full rounded-lg border border-brand-200 bg-white p-2.5 text-sm text-brand-950 outline-none focus:border-accent-400"
             />
           )}
@@ -222,7 +210,7 @@ export function Painel() {
           {campo.ajuda && <p className="mb-1.5 text-xs text-brand-900/55">{campo.ajuda}</p>}
           <select
             value={comoTexto(valor)}
-            onChange={(e) => aoMudarCampo(campo.caminho, e.target.value)}
+            onChange={(e) => aoMudarCampo(campo.caminho, e.target.value, campo.origem)}
             className="w-full rounded-lg border border-brand-200 bg-white p-2.5 text-sm text-brand-950 outline-none focus:border-accent-400"
           >
             {campo.opcoes.map((o) => (
@@ -241,7 +229,7 @@ export function Painel() {
           key={chave}
           campo={campo}
           itens={comoLista(valor)}
-          onMudanca={(novo) => aoMudarCampo(campo.caminho, novo)}
+          onMudanca={(novo) => aoMudarCampo(campo.caminho, novo, campo.origem)}
         />
       );
     }
@@ -252,7 +240,7 @@ export function Painel() {
           key={chave}
           campo={campo}
           itens={comoLista(valor)}
-          onMudanca={(novo) => aoMudarCampo(campo.caminho, novo)}
+          onMudanca={(novo) => aoMudarCampo(campo.caminho, novo, campo.origem)}
         />
       );
     }
@@ -266,7 +254,7 @@ export function Painel() {
         invalido={Boolean(errosJson[chave])}
         onMudanca={(texto, valido) => {
           setErrosJson((atual) => ({ ...atual, [chave]: !valido }));
-          if (valido) aoMudarCampo(campo.caminho, JSON.parse(texto));
+          if (valido) aoMudarCampo(campo.caminho, JSON.parse(texto), campo.origem);
         }}
       />
     );
@@ -312,49 +300,7 @@ export function Painel() {
   }
 
   if (fase === "login") {
-    return (
-      <div className="mx-auto max-w-sm">
-        <form
-          onSubmit={entrar}
-          className="rounded-2xl border border-brand-100 bg-white p-7 shadow-soft"
-        >
-          <h2 className="font-display text-lg font-bold text-brand-950">
-            Painel de conteúdo
-          </h2>
-          <p className="mt-1.5 text-sm text-brand-900/60">
-            Acesso restrito ao escritório.
-          </p>
-
-          <label htmlFor="senha" className="mt-6 mb-1 block text-sm font-semibold text-brand-950">
-            Senha
-          </label>
-          <input
-            id="senha"
-            type="password"
-            autoComplete="current-password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            className="w-full rounded-lg border border-brand-200 p-3 text-sm outline-none focus:border-accent-400"
-          />
-
-          {erro && (
-            <p className="mt-3 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              <IconAlert className="mt-0.5 size-4 shrink-0" />
-              {erro}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={entrando || !senha}
-            className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-950 px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
-          >
-            {entrando && <IconSpinner className="size-4" />}
-            Entrar
-          </button>
-        </form>
-      </div>
-    );
+    return null; // a tela de acesso vive em /admin/login
   }
 
   /* ------------------------------------------------------------- editor ---- */

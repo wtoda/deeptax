@@ -3,6 +3,7 @@ import { lerSessao } from "@/lib/admin/auth";
 import {
   ARQUIVO_AREAS,
   ARQUIVO_SITE,
+  ARQUIVO_PAGINAS,
   adminDisponivel,
   adminConfig,
   pendenciasDeConfiguracao,
@@ -32,9 +33,10 @@ export async function GET() {
   }
 
   try {
-    const [site, areas] = await Promise.all([
+    const [site, areas, textos] = await Promise.all([
       lerArquivo(ARQUIVO_SITE),
       lerArquivo(ARQUIVO_AREAS),
+      lerArquivo(ARQUIVO_PAGINAS),
     ]);
 
     return NextResponse.json({
@@ -43,6 +45,7 @@ export async function GET() {
       branch: adminConfig.branch,
       site: JSON.parse(site.conteudo),
       areas: JSON.parse(areas.conteudo),
+      paginas: JSON.parse(textos.conteudo),
     });
   } catch (erro) {
     const status = erro instanceof ErroGitHub ? erro.status : 500;

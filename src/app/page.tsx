@@ -13,6 +13,7 @@ import { Reveal } from "@/components/Reveal";
 import { ServiceCard } from "@/components/ServiceCard";
 import { FaqList, Section, SectionHeading } from "@/components/ui";
 import { services } from "@/lib/services";
+import { paginas } from "@/lib/paginas";
 import { defaultWhatsappMessage, site, whatsappLink } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -45,28 +46,20 @@ export default function HomePage() {
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent-400 opacity-75" />
                   <span className="relative inline-flex size-2 rounded-full bg-accent-400" />
                 </span>
-                Contabilidade consultiva para empresas que crescem
+                {paginas.home.hero.selo}
               </span>
 
               <h1 className="mt-7 font-display text-[2.15rem] font-extrabold leading-[1.1] text-white sm:text-5xl lg:text-[3.4rem] lg:leading-[1.06]">
-                Seus números explicam o passado.
-                <span className="block text-gradient">Nós usamos para decidir o futuro.</span>
+                {paginas.home.hero.titulo}
+                <span className="block text-gradient">{paginas.home.hero.tituloDestaque}</span>
               </h1>
 
               <p className="mt-7 max-w-xl text-base leading-relaxed text-brand-100/75 sm:text-lg">
-                {site.name} reúne contabilidade, especialistas em tributos,
-                tecnologia fiscal, perícia contábil, consultoria e compliance em
-                um só lugar. Rigor técnico no que a lei exige, visão estratégica
-                no que o seu negócio precisa.
+                {paginas.home.hero.subtitulo}
               </p>
 
               <ul className="mt-8 grid gap-3 sm:grid-cols-2">
-                {[
-                  "Obrigações fiscais sempre em dia",
-                  "Planejamento tributário com base em números",
-                  "Relatórios gerenciais que orientam decisão",
-                  "Atendimento direto com contador sênior",
-                ].map((item) => (
+                {paginas.home.hero.itens.map((item) => (
                   <li key={item} className="flex items-center gap-2.5">
                     <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-accent-500/20 text-accent-300">
                       <IconCheck className="size-3" />
@@ -81,7 +74,7 @@ export default function HomePage() {
                   href="#proposta"
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent-500 px-6 py-3.5 text-sm font-semibold text-white shadow-lift transition-all hover:bg-accent-600 active:scale-[0.985]"
                 >
-                  Quero um diagnóstico gratuito
+                  {paginas.home.hero.botaoPrincipal}
                   <IconArrowRight className="size-4" />
                 </Link>
                 <a
@@ -91,7 +84,7 @@ export default function HomePage() {
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all hover:border-white/40 hover:bg-white/10"
                 >
                   <IconWhatsApp className="size-4 text-[#25D366]" />
-                  Falar no WhatsApp
+                  {paginas.home.hero.botaoWhatsapp}
                 </a>
               </div>
 
@@ -122,10 +115,10 @@ export default function HomePage() {
                     </span>
                     <div>
                       <h2 className="font-display text-base font-bold text-brand-950">
-                        Fale com um contador especialista
+                        {paginas.home.hero.formularioTitulo}
                       </h2>
                       <p className="text-xs text-brand-900/55">
-                        Resposta em até 1 dia útil
+                        {paginas.home.hero.formularioNota}
                       </p>
                     </div>
                   </div>
@@ -144,10 +137,10 @@ export default function HomePage() {
       <div className="border-y border-brand-100 bg-brand-50/60">
         <div className="container-x flex flex-col items-center gap-5 py-7 sm:flex-row sm:justify-between">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-900/45">
-            Atendemos empresas de diversos segmentos
+            {paginas.home.segmentos.titulo}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-brand-900/60">
-            {["Comércio", "Indústria", "Serviços", "Tecnologia", "Saúde", "Terceiro setor"].map(
+            {paginas.home.segmentos.itens.map(
               (segment) => (
                 <span key={segment} className="inline-flex items-center gap-2">
                   <span className="size-1.5 rounded-full bg-accent-400" />
@@ -163,9 +156,9 @@ export default function HomePage() {
       <Section id="servicos" tone="light">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Nossos serviços"
-            title="Seis áreas, uma visão completa do seu negócio"
-            description="Cada área resolve um problema diferente — e todas conversam entre si. É assim que a contabilidade deixa de ser obrigação e passa a ser ferramenta de gestão."
+            eyebrow={paginas.home.secoes.servicos.selo}
+            title={paginas.home.secoes.servicos.titulo}
+            description={paginas.home.secoes.servicos.descricao}
           />
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -192,9 +185,9 @@ export default function HomePage() {
       <Section tone="muted">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Por que a Deeptax"
-            title="O que muda quando a contabilidade é feita com método"
-            description="Não vendemos horas de digitação. Vendemos segurança sobre a informação, prazo cumprido e leitura estratégica do que os números estão dizendo."
+            eyebrow={paginas.home.secoes.diferenciais.selo}
+            title={paginas.home.secoes.diferenciais.titulo}
+            description={paginas.home.secoes.diferenciais.descricao}
           />
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -245,9 +238,9 @@ export default function HomePage() {
       <Section tone="light">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Como trabalhamos"
-            title="Do primeiro contato ao acompanhamento contínuo"
-            description="Um processo claro, com etapas definidas e responsáveis nomeados. Você sempre sabe o que vai acontecer e quando."
+            eyebrow={paginas.home.secoes.processo.selo}
+            title={paginas.home.secoes.processo.titulo}
+            description={paginas.home.secoes.processo.descricao}
           />
 
           <div className="mt-14 grid gap-6 lg:grid-cols-4">
@@ -284,9 +277,9 @@ export default function HomePage() {
         <Section tone="muted">
           <div className="container-x">
             <SectionHeading
-              eyebrow="Depoimentos"
-              title="Resultados que os nossos clientes descrevem"
-              description="Trechos de avaliações de clientes das áreas de contabilidade, tributos, consultoria e perícia."
+              eyebrow={paginas.home.secoes.depoimentos.selo}
+              title={paginas.home.secoes.depoimentos.titulo}
+              description={paginas.home.secoes.depoimentos.descricao}
             />
 
             <div className="mt-14 grid gap-6 lg:grid-cols-3">
@@ -313,9 +306,9 @@ export default function HomePage() {
       <Section tone="light">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Dúvidas frequentes"
-            title="Perguntas que ouvimos todos os dias"
-            description="Se a sua dúvida não estiver aqui, é só perguntar — respondemos sem compromisso."
+            eyebrow={paginas.home.secoes.faq.selo}
+            title={paginas.home.secoes.faq.titulo}
+            description={paginas.home.secoes.faq.descricao}
           />
           <div className="mx-auto mt-12 max-w-3xl">
             <FaqList items={site.faq} />

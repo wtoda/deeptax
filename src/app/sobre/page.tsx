@@ -12,6 +12,7 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { Section, SectionHeading } from "@/components/ui";
 import { services } from "@/lib/services";
+import { paginas } from "@/lib/paginas";
 import { fullAddress, site } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -20,29 +21,6 @@ export const metadata: Metadata = {
     "Conheça a Deeptax: um escritório contábil que une rigor técnico, tecnologia e leitura estratégica para apoiar a decisão de empresas de todos os portes.",
   alternates: { canonical: "/sobre" },
 };
-
-const values = [
-  {
-    title: "Técnica antes de opinião",
-    description:
-      "Toda recomendação que damos é sustentada por norma, dado e simulação. Se não conseguimos fundamentar, não recomendamos.",
-  },
-  {
-    title: "Transparência no escopo",
-    description:
-      "Você sabe o que está contratando, o que está incluído e quanto custa — antes de assinar, não depois.",
-  },
-  {
-    title: "Proximidade real",
-    description:
-      "Atendimento por pessoas que conhecem a sua operação, não por robô de triagem. Contador sênior com nome e telefone.",
-  },
-  {
-    title: "Confidencialidade",
-    description:
-      "Informação contábil é ativo sensível. Tratamos dados em ambiente controlado e sob política de sigilo e LGPD.",
-  },
-];
 
 export default function SobrePage() {
   return (
@@ -66,16 +44,13 @@ export default function SobrePage() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
               <span className="size-1.5 rounded-full bg-accent-400" />
-              Quem somos
+              {paginas.sobre.hero.selo}
             </span>
             <h1 className="mt-6 font-display text-[2.1rem] font-extrabold leading-[1.12] text-white sm:text-4xl lg:text-5xl">
-              Um escritório contábil construído sobre método, não sobre improviso
+              {paginas.sobre.hero.titulo}
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-relaxed text-brand-100/75 sm:text-lg">
-              A {site.name} nasceu de uma constatação simples: a maioria das
-              empresas não precisa de mais contabilidade — precisa de contabilidade
-              melhor. Feita no prazo, com técnica e, principalmente, com alguém
-              capaz de explicar o que os números estão dizendo.
+              {paginas.sobre.hero.descricao}
             </p>
           </div>
 
@@ -103,33 +78,14 @@ export default function SobrePage() {
             <div>
               <SectionHeading
                 align="left"
-                eyebrow="Nossa história"
-                title="De escritório de rotina a parceiro de decisão"
+                eyebrow={paginas.sobre.historia.selo}
+                title={paginas.sobre.historia.titulo}
               />
 
               <div className="mt-8 space-y-5 text-base leading-relaxed text-brand-900/70">
-                <p>
-                  Começamos atendendo pequenas empresas que precisavam,
-                  essencialmente, cumprir obrigações. Com o tempo, ficou evidente
-                  que o problema dos nossos clientes raramente era a guia do mês —
-                  era a ausência de informação confiável para decidir preço,
-                  investimento, contratação e crescimento.
-                </p>
-                <p>
-                  A partir disso, organizamos o escritório em seis áreas que se
-                  reforçam: a contabilidade do dia a dia, que gera o dado; o
-                  tributário, que garante que o dado esteja apurado do jeito
-                  certo; a tecnologia, que tira a operação do trabalho manual; a
-                  consultoria, que transforma o dado em decisão; a perícia, que
-                  defende o dado quando ele vira prova; e o compliance, que
-                  comprova que tudo isso é feito de forma organizada.
-                </p>
-                <p>
-                  Hoje atendemos empresas de comércio, indústria, serviços e
-                  tecnologia, em diferentes regimes tributários, com o mesmo
-                  compromisso: prazo cumprido, número confiável e uma conversa
-                  franca sobre o que faz sentido para o negócio.
-                </p>
+                {paginas.sobre.historia.paragrafos.map((paragrafo, i) => (
+                  <p key={i}>{paragrafo}</p>
+                ))}
               </div>
             </div>
 
@@ -140,12 +96,10 @@ export default function SobrePage() {
                     <IconBuilding className="size-5" />
                   </span>
                   <h3 className="mt-5 font-display text-lg font-bold text-brand-950">
-                    Nossa missão
+                    {paginas.sobre.historia.missaoTitulo}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-brand-900/70">
-                    Dar a empresários brasileiros clareza, segurança e tempo para
-                    cuidar do que realmente move o negócio — enquanto cuidamos do
-                    que a legislação exige.
+                    {paginas.sobre.historia.missao}
                   </p>
                 </div>
 
@@ -154,12 +108,10 @@ export default function SobrePage() {
                     <IconSparkles className="size-5" />
                   </span>
                   <h3 className="mt-5 font-display text-lg font-bold text-brand-950">
-                    Nosso compromisso
+                    {paginas.sobre.historia.compromissoTitulo}
                   </h3>
                   <p className="mt-3 text-sm leading-relaxed text-brand-900/70">
-                    Nunca recomendar um caminho que não defenderíamos tecnicamente
-                    diante de uma fiscalização ou de um juízo. Segurança jurídica
-                    vem antes de economia aparente.
+                    {paginas.sobre.historia.compromisso}
                   </p>
                 </div>
               </div>
@@ -172,13 +124,13 @@ export default function SobrePage() {
       <Section tone="muted">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Como pensamos"
-            title="Quatro princípios que orientam cada trabalho"
-            description="Não são frases de parede. São critérios que usamos para decidir o que aceitamos fazer e como conduzimos cada contrato."
+            eyebrow={paginas.sobre.valores.selo}
+            title={paginas.sobre.valores.titulo}
+            description={paginas.sobre.valores.descricao}
           />
 
           <div className="mt-14 grid gap-6 sm:grid-cols-2">
-            {values.map((value, index) => (
+            {paginas.sobre.valores.itens.map((value, index) => (
               <Reveal key={value.title} delay={index * 80}>
                 <div className="flex h-full gap-5 rounded-2xl border border-brand-100 bg-white p-7 shadow-soft">
                   <span className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-50 text-accent-600">
@@ -206,29 +158,13 @@ export default function SobrePage() {
             <div>
               <SectionHeading
                 align="left"
-                eyebrow="Nosso time"
-                title="Você fala com quem executa"
-                description="Sem camadas de atendimento entre você e o técnico responsável. Quem responde a sua dúvida é quem assina o seu balanço."
+                eyebrow={paginas.sobre.time.selo}
+                title={paginas.sobre.time.titulo}
+                description={paginas.sobre.time.descricao}
               />
 
               <div className="mt-9 space-y-5">
-                {[
-                  {
-                    title: "Contadores com registro ativo no CRC",
-                    description:
-                      "Responsabilidade técnica formal em todos os trabalhos de contabilidade, tributos, perícia e compliance.",
-                  },
-                  {
-                    title: "Especialistas por frente",
-                    description:
-                      "Profissionais dedicados a cada área — tributário, tecnologia fiscal, perícia e compliance — com atualização constante em normas do CPC e do CFC.",
-                  },
-                  {
-                    title: "Equipe de apoio dedicada",
-                    description:
-                      "Analistas e assistentes que garantem a rotina mensal dentro do prazo, sem sobrecarregar o contador responsável.",
-                  },
-                ].map((item) => (
+                {paginas.sobre.time.itens.map((item) => (
                   <div key={item.title} className="flex gap-4">
                     <span className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-950 text-accent-400">
                       <IconUsers className="size-5" />
@@ -251,7 +187,7 @@ export default function SobrePage() {
                 <div className="bg-grid pointer-events-none absolute inset-0 opacity-50" />
                 <div className="relative">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent-300">
-                    Dados do escritório
+                    {paginas.sobre.time.dadosTitulo}
                   </p>
                   <dl className="mt-6 space-y-4">
                     {[
@@ -260,7 +196,7 @@ export default function SobrePage() {
                       { label: "CNPJ", value: site.cnpj },
                       { label: "Registro profissional", value: site.crc },
                       { label: "Endereço", value: fullAddress },
-                      { label: "Atendimento", value: "Remoto em todo o Brasil e presencial com agendamento" },
+                      { label: "Atendimento", value: paginas.sobre.time.atendimento },
                     ]
                       .filter((row) => Boolean(row.value))
                       .map((row) => (
@@ -280,7 +216,7 @@ export default function SobrePage() {
                     href="/contato#proposta"
                     className="mt-8 inline-flex items-center gap-2 rounded-xl bg-accent-500 px-5 py-3 text-sm font-semibold text-white transition-all hover:bg-accent-600"
                   >
-                    Falar com o escritório
+                    {paginas.sobre.time.botao}
                     <IconArrowRight className="size-4" />
                   </Link>
                 </div>
@@ -294,8 +230,8 @@ export default function SobrePage() {
       <Section tone="muted">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Por que nos escolher"
-            title="O que você pode esperar trabalhando com a Deeptax"
+            eyebrow={paginas.sobre.porQue.selo}
+            title={paginas.sobre.porQue.titulo}
           />
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {site.differentials.map((item, index) => {
@@ -324,9 +260,9 @@ export default function SobrePage() {
       <Section tone="light">
         <div className="container-x">
           <SectionHeading
-            eyebrow="Onde atuamos"
-            title="As frentes que o escritório cobre hoje"
-            description="Você pode contratar uma frente isolada ou combinar serviços conforme a necessidade da empresa."
+            eyebrow={paginas.sobre.ondeAtuamos.selo}
+            title={paginas.sobre.ondeAtuamos.titulo}
+            description={paginas.sobre.ondeAtuamos.descricao}
           />
           <div className="mt-12 flex flex-wrap justify-center gap-3">
             {services.map((service) => (

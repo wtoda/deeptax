@@ -30,11 +30,18 @@ npm start            # servir o build de produção
 
 ## 2. Editar o conteúdo (painel)
 
-Os textos e dados do site ficam em `content/site.json` e
-`content/services.json` — arquivos de **dados**, não de código. Há duas formas
-de editá-los:
+Os textos e dados do site ficam em `content/` — arquivos de **dados**, não de
+código:
 
-**Pelo painel** (recomendado, sem mexer em código): **/admin** no site.
+| Arquivo | Conteúdo |
+| --- | --- |
+| `content/site.json` | Dados do escritório: contato, endereço, identificação, diferenciais, FAQ |
+| `content/services.json` | As seis áreas e todo o conteúdo das páginas internas |
+| `content/paginas.json` | Textos das páginas: inicial, sobre, contato, serviços e política |
+
+Há duas formas de editá-los:
+
+**Pelo painel** (recomendado, sem mexer em código): **/admin/login** no site.
 Ele mostra o conteúdo em formulário, valida e grava no repositório; a Vercel
 publica sozinha. Configuração e uso em
 [`docs/PAINEL-DE-CONTEUDO.md`](docs/PAINEL-DE-CONTEUDO.md).
@@ -170,6 +177,7 @@ seção de deploy, porque o e-mail do domínio depende disso.
 | `/contato` | `src/app/contato/page.tsx` | Canais de contato, formulário completo e FAQ |
 | `/politica-de-privacidade` | `src/app/politica-de-privacidade/page.tsx` | LGPD |
 | `/api/version` | `src/app/api/version/route.ts` | Identifica o commit publicado (verificação de deploy) |
+| `/admin/login` | `src/app/admin/login/page.tsx` | Acesso ao painel |
 | `/admin` | `src/app/admin/page.tsx` | Painel de edição de conteúdo (ver [`docs/PAINEL-DE-CONTEUDO.md`](docs/PAINEL-DE-CONTEUDO.md)) |
 
 O link **Blog** (`https://blog.deeptax.com.br`) aparece em dois lugares: no
