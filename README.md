@@ -116,11 +116,19 @@ o HTML, e mensagens de erro podem ser idênticas entre builds diferentes.
 - Para trocar o domínio canônico sem mexer em código, defina
   `NEXT_PUBLIC_SITE_URL` em *Settings → Environment Variables*.
 
-> **⚠️ Cuidado com e-mail ao apontar o domínio.** O registro MX da
-> `deeptax.com.br` aponta para o próprio domínio, então ele depende do registro
-> **A**. Ao apontar o A para a Vercel, o e-mail para de funcionar, porque a
-> Vercel não recebe SMTP. Mantenha um hostname dedicado de e-mail (por exemplo
-> `mail.deeptax.com.br` com A para o servidor de e-mail) e aponte o MX para ele.
+> **⚠️ Cuidado com e-mail ao apontar o domínio.** O MX **não pode** apontar
+> para o próprio domínio (`deeptax.com.br`), porque ele passaria a depender do
+> registro **A** — que aponta para a Vercel, e a Vercel não recebe SMTP. Foi
+> exatamente o que aconteceu aqui e derrubou o e-mail até o MX ser corrigido.
+> A configuração correta, com o site na Vercel e o e-mail na Hostinger, é:
+>
+> | Tipo | Nome | Valor |
+> | --- | --- | --- |
+> | A | `@` | `216.198.79.1` (Vercel — o site) |
+> | CNAME | `www` | `deeptax.com.br` |
+> | MX | `@` | `mx1.hostinger.com` (prioridade 5) |
+> | MX | `@` | `mx2.hostinger.com` (prioridade 10) |
+> | TXT | `@` | `v=spf1 include:_spf.mail.hostinger.com ~all` (apenas um) |
 
 ## 6. Como os leads são capturados
 
@@ -271,10 +279,19 @@ renderizados** — o site nunca exibe dado inventado. Procure por `PENDENTE`:
       consta no registro consultado; confirmar se deve ser exibido, já que a
       marca e a razão social agora são "Deeptax".
 - [ ] **Complemento** (sala/conjunto/andar), se houver.
-- [ ] **E-mail do domínio fora do ar** — o MX de `deeptax.com.br` aponta para o
-      próprio domínio e depende do registro A, que agora aponta para a Vercel.
-      Não afeta o site (a comunicação é por WhatsApp), mas afeta quem escreve
-      para `contato@deeptax.com.br`. Ver o alerta na seção de deploy.
+- [x] **E-mail do domínio** — resolvido. O MX passou a apontar para os
+      servidores da Hostinger (`mx1.hostinger.com` prioridade 5 e
+      `mx2.hostinger.com` prioridade 10), independentes do registro A, que
+      segue na Vercel para o site. Verificado por conexão SMTP: a caixa
+      `contato@deeptax.com.br` aceita mensagens. DKIM configurado (seletor
+      `default`) e DMARC em `p=none`.
+- [ ] **SPF duplicado** — existem hoje **dois** registros TXT de SPF no domínio:
+      o antigo (`v=spf1 +a +mx +ip4:51.161.115.176 ~all`, do servidor anterior)
+      e o da Hostinger (`v=spf1 include:_spf.mail.hostinger.com ~all`).
+      Pela RFC 7208, mais de um registro SPF faz a verificação resultar em
+      `permerror` — ou seja, **nenhum** dos dois vale, e mensagens enviadas
+      pelo domínio tendem a cair em spam. Ação: apagar o registro antigo e
+      manter apenas o da Hostinger.
 - [ ] **Domínio** — `deeptax.com.br` já aponta para a Vercel (A `216.198.79.1`)
       e o apex redireciona 308 para `https://www.deeptax.com.br`, que é o
       canônico definido em `src/lib/site.ts`. Para trocar o canônico sem mexer
