@@ -25,6 +25,16 @@ export async function GET() {
       env: process.env.VERCEL_ENV ?? "development",
       region: process.env.VERCEL_REGION ?? null,
       deployUrl: process.env.VERCEL_URL ?? null,
+      /**
+       * Identificador do deployment. Muda a cada publicação — inclusive quando
+       * o commit é o mesmo, como num Redeploy. É o que permite responder "este
+       * site foi reconstruído depois que eu mudei uma variável?".
+       */
+      deploymentId: process.env.VERCEL_DEPLOYMENT_ID ?? null,
+      /** Diz se as variáveis do painel chegaram neste build. */
+      painelConfigurado: Boolean(
+        process.env.ADMIN_PASSWORD && process.env.GITHUB_TOKEN,
+      ),
     },
     {
       headers: {
