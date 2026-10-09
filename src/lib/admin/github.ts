@@ -103,17 +103,36 @@ export async function gravarArquivo(
 ): Promise<{ commit: string; url: string }> {
   // Lemos o sha imediatamente antes de gravar: é o que o GitHub usa para
   // detectar que alguém alterou o arquivo nesse meio-tempo.
+  //
+  // A leitura também serve de diagnóstico: se ela funciona e a gravação falha,
+  // o problema é o NÍVEL da permissão, e não a permissão em si.
   const { sha } = await lerArquivo(arquivo);
 
-  const resposta = await chamarApi(`/repos/${adminConfig.repo}/contents/${arquivo}`, {
-    method: "PUT",
-    body: JSON.stringify({
-      message: mensagem,
-      content: Buffer.from(conteudo, "utf8").toString("base64"),
-      sha,
-      branch: adminConfig.branch,
-    }),
-  });
+  let resposta: Response;
+  try {
+    resposta = await chamarApi(`/repos/${adminConfig.repo}/contents/${arquivo}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        message: mensagem,
+        content: Buffer.from(conteudo, "utf8").toString("base64"),
+        sha,
+        branch: adminConfig.branch,
+      }),
+    });
+  } catch (erro) {
+    if (erro instanceof ErroGitHub && erro.status === 403) {
+      throw new ErroGitHub(
+        "O token do GitHub consegue LER o repositório, mas não tem permissão para " +
+          "ESCREVER nele — por isso a leitura funcionou e a gravação não. Abra o token em " +
+          "github.com/settings/personal-access-tokens, clique nele e mude “Permissions → " +
+          "Repository permissions → Contents” de “Read” para “Read and write”. " +
+          "Se o valor do token mudar, atualize GITHUB_TOKEN na Vercel e faça um Redeploy; " +
+          "se continuar o mesmo, já passa a valer na hora.",
+        erro.status,
+      );
+    }
+    throw erro;
+  }
 
   const dados = (await resposta.json()) as {
     commit?: { sha?: string; html_url?: string };
