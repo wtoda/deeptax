@@ -420,3 +420,33 @@ details.acc > div{padding-bottom:.9rem;font-size:.9rem;color:var(--ink-2)}
   .foot{border-top:1px solid #ccc}
   h1{font-size:20pt}
 }
+
+/* ---------- conteúdo de apoio ----------
+   Bloco editorial abaixo do app: dá substância indexável às telas rasas e
+   responde dúvidas de cauda longa em formato de perguntas frequentes. Fica
+   FORA do <main> porque o app limpa o main a cada navegação. */
+.apoio{
+  max-width:1180px;width:100%;margin:0 auto;
+  padding:1.6rem clamp(1rem,3vw,2.4rem) 2.6rem;
+  border-top:1px solid var(--line);
+  font-size:.92rem;color:var(--ink-2);
+}
+.apoio h2{font-size:1.08rem;color:var(--ink);margin:0 0 .8rem;letter-spacing:-.01em}
+.apoio h3{
+  font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--ink-3);margin:1.6rem 0 .6rem;
+}
+.apoio p{margin:0 0 .8rem;line-height:1.7;max-width:80ch}
+.apoio-faq details{
+  border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--card);
+  padding:.7rem .9rem;margin-bottom:.5rem;max-width:80ch;
+}
+.apoio-faq summary{cursor:pointer;font-weight:600;color:var(--ink);font-size:.9rem}
+.apoio-faq summary::marker{color:var(--accent)}
+.apoio-faq details p{margin:.6rem 0 0;font-size:.88rem;color:var(--ink-2)}
+.apoio-rel ul{list-style:none;margin:0;padding:0;display:grid;gap:.35rem;max-width:80ch}
+.apoio-rel li a{
+  color:var(--accent-2);text-decoration:underline;font-size:.88rem;
+  display:inline-block;padding:.15rem 0;
+}
+@media print{.apoio{border-top:1px solid #ccc;padding-left:0;padding-right:0}}

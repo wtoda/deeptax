@@ -1263,7 +1263,7 @@ export const CATALOGO_NORMAS = [
     url: "https://www12.senado.leg.br/",
     tags: ["alíquota de referência", "Senado", "TCU", "pendente", "2027"],
     onde: [
-      { rotulo: "Painel", href: "/reforma-tributaria/painel/" },
+      { rotulo: "Painel", href: "/reforma-tributaria/" },
       { rotulo: "Calculadora", href: "/reforma-tributaria/calculadora/" },
     ],
     destaques: [
@@ -1743,7 +1743,7 @@ export const DERE = {
  * ÍNDICE DE BUSCA GLOBAL (derivado do conteúdo acima)
  * ------------------------------------------------------------------ */
 const PAGINAS = [
-  { t: "Painel de situação", href: "/reforma-tributaria/painel/", r: "Onde a reforma está agora, o que muda e o que está pendente.", tags: ["painel", "início", "status", "resumo"] },
+  { t: "Painel de situação", href: "/reforma-tributaria/", r: "Onde a reforma está agora, o que muda e o que está pendente.", tags: ["painel", "início", "status", "resumo"] },
   { t: "Cronograma da transição", href: "/reforma-tributaria/cronograma/", r: "Ano a ano, de 2026 a 2033, com alíquotas e marcos.", tags: ["cronograma", "transição", "calendário", "2027", "2033", "rampa"] },
   { t: "Entenda o modelo", href: "/reforma-tributaria/entenda/", r: "IBS, CBS, IS, princípios e regimes diferenciados.", tags: ["ibs", "cbs", "is", "modelo", "princípios", "regimes"] },
   { t: "Antes e depois", href: "/reforma-tributaria/comparativo/", r: "Comparação entre o modelo atual e o novo, incluindo preço final.", tags: ["comparativo", "icms", "pis", "cofins", "iss", "carga"] },
@@ -1804,7 +1804,7 @@ export const INDICE = [
   })),
   ...RADAR.map((r) => ({
     titulo: r.titulo,
-    href: "/reforma-tributaria/painel/",
+    href: "/reforma-tributaria/",
     rota: "Radar regulatório",
     resumo: r.texto,
     tags: [r.tag, r.data],

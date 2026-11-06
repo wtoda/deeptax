@@ -1,0 +1,159 @@
+{
+  "_leiaMe": "Conteúdo de apoio inserido ABAIXO do app em cada tela (fora do <main>, para o app não apagar na re-renderização). Serve para duas coisas: dar substância indexável às telas mais rasas e responder buscas de cauda longa com FAQ. Escreva sempre com base nas normas e marque como estimativa o que ainda depende de regulamentação.",
+
+  "calculadora": {
+    "titulo": "Como usar a calculadora de IBS e CBS",
+    "paragrafos": [
+      "A calculadora simula a carga de IBS, CBS e Imposto Seletivo sobre uma operação a partir do valor informado, da alíquota aplicável ao ano escolhido e das condições da cadeia. Cada linha do resultado traz a memória de cálculo e a base legal correspondente, para que o número possa ser conferido — e não apenas aceito.",
+      "O ponto mais importante para quem vem do modelo atual: na reforma, o tributo é cobrado no destino, e o crédito é amplo. Uma empresa que compra de outra que já recolheu IBS e CBS aproveita esse valor na entrada, de modo que a carga efetiva depende da posição na cadeia — não apenas do faturamento. É por isso que a calculadora permite comparar a operação isolada com a simulação de cadeia.",
+      "Em 2026 vigora o ano de teste, com alíquotas reduzidas (CBS de 0,9% e IBS de 0,1%). A partir de 2027 a CBS entra em cheio, e o IBS começa a substituir o ICMS e o ISS de forma gradual, até o regime pleno em 2033. Como a alíquota de referência ainda depende de resolução do Senado, todo resultado de 2027 em diante deve ser lido como cenário — a calculadora deixa isso explícito em cada simulação."
+    ],
+    "faq": [
+      {
+        "q": "Qual é a alíquota de referência do IBS e da CBS?",
+        "a": "Em 2026, o ano de teste, aplicam-se CBS de 0,9% e IBS de 0,1%. Para 2027, o TCU aprovou em 28/10/2026 o cálculo da alíquota de referência da CBS em 11,3468%. O Comitê Gestor do IBS estimou uma alíquota combinada de cerca de 27,9% (CBS de 9,21% e IBS de 18,7%), mas a fixação final cabe ao Senado por resolução. Até a publicação, todo percentual de 2027 em diante é premissa."
+      },
+      {
+        "q": "A calculadora substitui a apuração oficial?",
+        "a": "Não. Ela é instrumento de estudo e planejamento: mostra como a alíquota incide sobre a base e como o crédito se comporta na cadeia. A apuração oficial depende da escrituração, dos documentos fiscais com os novos campos (CST e cClassTrib) e das regras do regime específico aplicável à atividade."
+      },
+      {
+        "q": "Como funciona o crédito de IBS e CBS?",
+        "a": "A não cumulatividade passa a ser plena: em regra, o tributo destacado na aquisição de bem ou serviço gera crédito na etapa seguinte, sem as restrições setoriais que hoje existem no PIS e na COFINS. Isso muda a conta de quem compra de fornecedor que já recolhe — a carga deixa de se acumular ao longo da cadeia."
+      },
+      {
+        "q": "O que é o split payment e por que ele muda o caixa?",
+        "a": "No split payment, o valor do tributo é separado no momento do pagamento e recolhido ao fisco, em vez de o contribuinte receber o total e recolher depois. O efeito prático é a redução do descasamento entre recebimento e recolhimento — e exige que o sistema de vendas saiba calcular e segregar o tributo na transação."
+      },
+      {
+        "q": "Preciso incluir o Imposto Seletivo na simulação?",
+        "a": "Somente se a operação envolver bem ou serviço sujeito ao tributo, como determinados produtos com efeito à saúde ou ao meio ambiente. As alíquotas do Imposto Seletivo dependem de lei ordinária; a extração mineral, por exemplo, já tem alíquota definida em lei complementar."
+      }
+    ],
+    "relacionados": [
+      { "href": "/reforma-tributaria/cronograma/", "texto": "Cronograma completo da transição, ano a ano" },
+      { "href": "/reforma-tributaria/entenda/", "texto": "Como funcionam IBS, CBS e Imposto Seletivo" },
+      { "href": "/reforma-tributaria/documentos/", "texto": "Documentos fiscais e os novos campos obrigatórios" }
+    ]
+  },
+
+  "comparativo": {
+    "titulo": "O que muda do modelo atual para o novo",
+    "paragrafos": [
+      "O modelo atual cobra tributos sobre o consumo em várias etapas e com regras distintas por esfera: ICMS estadual, ISS municipal, PIS e COFINS federais, além do IPI sobre produtos industrializados. A reforma concentra essa tributação em dois tributos de base ampla — o IBS e a CBS — e mantém um imposto seletivo sobre bens e serviços considerados prejudiciais.",
+      "A mudança mais visível no preço é a forma de apresentação. No modelo atual, o tributo integra a própria base de cálculo e é cobrado \"por dentro\": o valor da nota já o contém, diluído. No novo modelo, a legislação prevê a evidência do tributo ao consumidor, o que torna a carga visível na operação — efeito que muda a comunicação de preço no varejo e no comércio.",
+      "Para a empresa, o impacto relevante não é só a alíquota: é a mudança de lógica de crédito e de local de recolhimento. O tributo passa a ser devido no destino do consumo, e não na origem da operação, o que afeta empresas com filiais em vários estados, operações interestaduais e vendas a distância."
+    ],
+    "faq": [
+      {
+        "q": "Quais tributos deixam de existir com a reforma?",
+        "a": "ICMS e ISS são substituídos pelo IBS; PIS e COFINS, pela CBS; o IPI tende a ser reduzido a zero, exceto na Zona Franca de Manaus, e o Imposto Seletivo incide sobre bens e serviços específicos definidos em lei."
+      },
+      {
+        "q": "A carga tributária total aumenta?",
+        "a": "A reforma é desenhada para manter a carga global, mas redistribui entre setores. A alíquota de referência combinada foi estimada em cerca de 27,9%, com valores ainda sujeitos à fixação pelo Senado. Setores com regimes específicos, como serviços, podem ter tratamento diferenciado — por isso a análise precisa ser feita por atividade, não por alíquota geral."
+      },
+      {
+        "q": "Quando a mudança começa a valer para a minha empresa?",
+        "a": "2026 é o ano de teste, com alíquotas reduzidas e caráter informativo. A partir de 2027 a CBS entra em vigor, e o IBS começa a substituir ICMS e ISS gradualmente entre 2029 e 2032, com regime pleno em 2033."
+      }
+    ],
+    "relacionados": [
+      { "href": "/reforma-tributaria/cronograma/", "texto": "Cronograma da transição, ano a ano" },
+      { "href": "/reforma-tributaria/calculadora/", "texto": "Simular a carga no novo regime" },
+      { "href": "/reforma-tributaria/entenda/", "texto": "Entender o funcionamento dos três tributos" }
+    ]
+  },
+
+  "aprender": {
+    "titulo": "Como aproveitar o quiz",
+    "paragrafos": [
+      "O quiz reúne oito perguntas sobre o que costuma gerar dúvida na reforma: a diferença entre IBS e CBS, o que é o Imposto Seletivo, em que ano cada mudança começa, quais documentos fiscais mudam e como funciona o crédito. Cada resposta traz explicação e o fundamento legal correspondente, para que o aprendizado fique ancorado na norma.",
+      "Ele foi montado para ser usado antes de uma reunião com o contador ou com a equipe fiscal: identifica rapidamente onde está a lacuna de entendimento e indica quali tela consultar depois. Não há nota mínima nem avaliação — o objetivo é apontar o que revisar."
+    ],
+    "faq": [
+      {
+        "q": "Preciso saber contabilidade para responder?",
+        "a": "Não. As perguntas partem de conceitos, não de lançamentos. Quem já atua na área fiscal tende a acertar mais, mas o conteúdo de apoio de cada resposta explica o raciocínio do zero."
+      },
+      {
+        "q": "De onde vêm as respostas?",
+        "a": "Da EC 132/2023, da LC 214/2025 e do material oficial da Receita Federal. Cada pergunta indica a norma que sustenta a resposta."
+      }
+    ],
+    "relacionados": [
+      { "href": "/reforma-tributaria/entenda/", "texto": "Entenda o modelo antes de testar" },
+      { "href": "/reforma-tributaria/glossario/", "texto": "Glossário com base legal de cada termo" },
+      { "href": "/reforma-tributaria/cronograma/", "texto": "Cronograma da transição" }
+    ]
+  },
+
+  "conformidade": {
+    "titulo": "Como usar o checklist de adequação",
+    "paragrafos": [
+      "O checklist organiza a preparação em etapas verificáveis, por perfil: empresa, Simples Nacional e MEI, contador e cidadão. A ordem não é arbitrária — começa pelo que a lei já exige e avança para o que depende de regulamentação, para que o esforço não seja gasto em item que ainda pode mudar.",
+      "O progresso fica salvo no navegador, o que permite retomar de onde parou. Na prática, a recomendação é percorrer o checklist trimestralmente durante a transição: 2026 é o ano de teste e serve justamente para ajustar sistemas e processos com alíquotas reduzidas, antes de 2027."
+    ],
+    "faq": [
+      {
+        "q": "Por onde começar a adequação?",
+        "a": "Por dois pontos que independem de regulamentação: conferir se o sistema de emissão já suporta os novos campos (CST e cClassTrib) e mapear onde o crédito de IBS e CBS passa a ser gerado ou perdido na sua cadeia. Depois, avançar para preço, contrato e fluxo de caixa com split payment."
+      },
+      {
+        "q": "Empresa do Simples Nacional precisa se preparar agora?",
+        "a": "Sim. O Simples continua existindo, mas quem tem cliente no regime regular passa a emitir documento com os novos campos e a conviver com o crédito do comprador — o que afeta competitividade, mesmo sem mudança imediata na guia."
+      }
+    ],
+    "relacionados": [
+      { "href": "/reforma-tributaria/cronograma/", "texto": "O que já vale e o que ainda depende de norma" },
+      { "href": "/reforma-tributaria/documentos/", "texto": "Documentos fiscais e os campos novos" },
+      { "href": "/reforma-tributaria/divulgacao/", "texto": "Como comunicar a mudança sem risco" }
+    ]
+  },
+
+  "glossario": {
+    "titulo": "Por que o vocabulário importa",
+    "paragrafos": [
+      "Boa parte da confusão sobre a reforma vem de siglas que parecem sinônimos e não são. \"Regime específico\" não é o mesmo que \"regime diferenciado\"; \"base de cálculo\" não é o mesmo que \"alíquota de referência\"; e \"split payment\" não é uma forma de imposto, mas de recolhimento.",
+      "Cada termo do glossário traz a definição e a norma que a sustenta, para que a consulta sirva tanto ao entendimento quanto à citação em documento interno. Se você precisa explicar a reforma para outra área da empresa, este é o ponto de partida."
+    ],
+    "faq": [
+      {
+        "q": "Qual a diferença entre regime específico e regime diferenciado?",
+        "a": "O regime específico substitui a regra geral por um conjunto próprio de apuração, geralmente com alíquota e base distintas — é o caso de combustíveis e serviços financeiros. O regime diferenciado mantém a regra geral com alíquota reduzida ou tratamento próprio de crédito, como saúde e educação."
+      },
+      {
+        "q": "O que significa cClassTrib?",
+        "a": "É o código de classificação tributária que acompanha o documento fiscal e determina o tratamento aplicável àquela operação — alíquota, regime e creditamento. Substitui, na prática, a lógica de códigos fiscais espalhados pelo modelo atual."
+      }
+    ],
+    "relacionados": [
+      { "href": "/reforma-tributaria/entenda/", "texto": "Entenda o modelo em texto corrido" },
+      { "href": "/reforma-tributaria/documentos/", "texto": "Onde cada código aparece no documento" },
+      { "href": "/reforma-tributaria/fontes/", "texto": "Normas oficiais e como citar" }
+    ]
+  },
+
+  "divulgacao": {
+    "titulo": "Comunicar sem afirmar o que ainda não é lei",
+    "paragrafos": [
+      "A reforma tem uma característica que cria risco de comunicação: parte das regras já está em lei, e parte ainda depende de regulamentação. Um material que trate alíquota estimada como definitiva pode gerar expectativa errada em cliente, colaborador ou sócio — e, no limite, exposição por informação incorreta.",
+      "O kit separa frases seguras, que se sustentam na norma publicada, de frases de risco, que dependem de ato futuro ou de interpretação. O checklist antes de publicar existe para isso: verificar se cada número citado tem fonte oficial e data, e se o texto diferencia claramente o que é lei do que é cenário."
+    ],
+    "faq": [
+      {
+        "q": "Posso dizer ao cliente que a alíquota será de 26,5%?",
+        "a": "Com ressalva. A alíquota de referência combinada foi estimada em cerca de 27,9% pelo Comitê Gestor do IBS, e a CBS de 2027 foi calculada pelo TCU em 11,3468%. Como a fixação cabe ao Senado, o correto é apresentar como estimativa com a fonte e a data — nunca como valor definitivo."
+      },
+      {
+        "q": "Como explicar a reforma em uma frase?",
+        "a": "Uma formulação segura: \"a reforma substitui cinco tributos sobre o consumo por dois de base ampla — IBS e CBS — com transição de 2026 a 2033, e as alíquotas finais ainda dependem de resolução do Senado\". Ela é curta e não afirma o que ainda não está definido."
+      }
+    ],
+    "relacionados": [
+      { "href": "/reforma-tributaria/fontes/", "texto": "Fontes oficiais e como citar" },
+      { "href": "/reforma-tributaria/cronograma/", "texto": "O que já vigora em cada ano" },
+      { "href": "/reforma-tributaria/conformidade/", "texto": "Checklist de adequação" }
+    ]
+  }
+}

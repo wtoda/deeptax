@@ -22,11 +22,13 @@ renderizado e grava **uma página estática por rota**, com título, descrição
 canonical e dados estruturados próprios.
 
 ```
-/reforma-tributaria/                  → 880 palavras no HTML
-/reforma-tributaria/cronograma/       → 1.009
-/reforma-tributaria/calculadora/      → 291
+/reforma-tributaria/                  →   880 palavras no HTML
 /reforma-tributaria/legislacao/       → 4.291
-/reforma-tributaria/documentos/       → 2.074
+/reforma-tributaria/documentos/       → 2.102
+/reforma-tributaria/entenda/          → 2.071
+/reforma-tributaria/cronograma/       → 1.009
+/reforma-tributaria/calculadora/      → 1.433
+/reforma-tributaria/aprender/         →   530
 ```
 
 O app continua funcionando normalmente sobre a página pré-renderizada.
@@ -34,11 +36,13 @@ O app continua funcionando normalmente sobre a página pré-renderizada.
 ## Como construir e publicar
 
 ```bash
-node build.mjs          # gera dist/ (13 páginas + assets)
+node build.mjs              # gera dist/ (13 páginas + assets)
+node verificar-links.mjs    # confere que todo link interno resolve
+node testar-apoio.mjs       # confere o bloco de apoio no navegador
 
 # publicar no VPS
 tar czf - -C dist . | ssh root@187.127.60.53 \
-  'mkdir -p /opt/deeptax/portal && tar xzf - -C /opt/deeptax/portal \
+  'tar xzf - -C /opt/deeptax/portal \
    && chown -R www-data:www-data /opt/deeptax/portal'
 ```
 
@@ -69,13 +73,59 @@ fontes.
 - Links internos vêm do menu, do rodapé e de uma seção na home do site
   institucional — é o que transfere autoridade para as páginas do portal.
 
+### Conteúdo de apoio (`seo-extra.json`)
+
+Telas que são ferramentas (calculadora, comparativo, quiz) têm pouco texto: o
+valor está na interação, não em parágrafos. Para não ficarem rasas aos olhos do
+rastreador, `seo-extra.json` acrescenta a cada tela, **abaixo do app**:
+
+- parágrafos que explicam o que a ferramenta faz e como ler o resultado;
+- perguntas frequentes (com `FAQPage` em JSON-LD);
+- três links para telas relacionadas (malha interna).
+
+O bloco entra **depois do `<main>`**, e não dentro dele: o app faz
+`main.innerHTML = ""` a cada navegação e apagaria o conteúdo injetado. O build
+grava o bloco de cada tela no HTML estático; `app.js` reescreve o mesmo bloco ao
+navegar sem recarregar, para a página nunca exibir o texto da tela anterior.
+
+Resultado medido (texto total da página):
+
+| tela | antes | depois |
+| --- | --- | --- |
+| calculadora | 1.044 | 1.558 (+49%) |
+| comparativo | 608 | 981 (+61%) |
+| divulgação | 743 | 994 (+34%) |
+| glossário | 672 | 888 (+32%) |
+| conformidade | 604 | 838 (+39%) |
+| aprender | 459 | 651 (+42%) |
+
+As telas que já tinham texto próprio (legislação, documentos, entenda,
+cronograma, DeRE, fontes) ficaram **idênticas** — o bloco só entra onde falta
+substância, e não como enchimento uniforme.
+
+## Armadilhas do build
+
+- **`String.replace` com string de substituição interpreta `$`.** O conteúdo tem
+  valores como `R$&nbsp;374,57`, e `$&` significa "o match inteiro": a injeção
+  do `<main>` cuspia tags no meio das tabelas de valores e corrompia o HTML que
+  o rastreador lia. Toda substituição que injeta conteúdo usa **função**.
+  O build agora falha se a página não tiver exatamente um `<main>`.
+- **O painel é a raiz do portal** (`/reforma-tributaria/`), não
+  `/reforma-tributaria/painel/`. O nginx redireciona 301 o endereço antigo.
+  `verificar-links.mjs` existe porque esse link quebrado passou despercebido:
+  clicar dentro do app funcionava (o router intercepta), mas nova aba e
+  rastreador recebiam 404.
+
 ## Estrutura
 
 ```
 portal/
 ├── index.html          shell da aplicação (vira a base de todas as páginas)
 ├── seo.json            título/descrição/canonical de cada tela
-├── build.mjs           pré-renderização + SEO
+├── seo-extra.json      texto de apoio, FAQ e links por tela
+├── build.mjs           pré-renderização + SEO + dados estruturados
+├── verificar-links.mjs confere os links internos de dist/
+├── testar-apoio.mjs    testa o bloco de apoio no navegador
 ├── assets/
 │   ├── css/estilo.css  identidade visual Deeptax (variáveis no :root)
 │   └── js/

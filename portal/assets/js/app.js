@@ -41,8 +41,74 @@ export function parametros() {
   return Object.fromEntries(new URLSearchParams(location.search));
 }
 
-/** Caminho canônico de uma tela. */
-export const caminhoDaRota = (rota) => `${BASE}/${rota}/`;
+/**
+ * Caminho canônico de uma tela.
+ * O painel é a raiz do portal — não existe /reforma-tributaria/painel/, e
+ * apontar para lá daria 404 em nova aba e para o rastreador.
+ */
+export const caminhoDaRota = (rota) => (rota === "painel" ? `${BASE}/` : `${BASE}/${rota}/`);
+
+/* ------------------------- conteúdo de apoio (SEO) ------------------------- */
+
+/**
+ * Monta o HTML do bloco editorial de uma tela.
+ * @param {{titulo:string, paragrafos?:string[], faq?:{q:string,a:string}[], relacionados?:{href:string,texto:string}[]}} dados
+ */
+function htmlApoio(dados) {
+  const paragrafos = (dados.paragrafos ?? []).map((t) => `<p>${esc(t)}</p>`).join("");
+
+  const faq = (dados.faq ?? []).length
+    ? `<h3>Perguntas frequentes</h3><div class="apoio-faq">${dados.faq
+        .map((f) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`)
+        .join("")}</div>`
+    : "";
+
+  const rel = (dados.relacionados ?? []).length
+    ? `<h3>Continue por aqui</h3><nav class="apoio-rel" aria-label="Páginas relacionadas"><ul>${dados.relacionados
+        .map((r) => `<li><a href="${esc(r.href)}">${esc(r.texto)}</a></li>`)
+        .join("")}</ul></nav>`
+    : "";
+
+  return `<h2>${esc(dados.titulo)}</h2>${paragrafos}${faq}${rel}`;
+}
+
+/**
+ * Alinha o bloco de apoio com a rota corrente.
+ *
+ * O build já grava o bloco certo no HTML de cada tela (para o rastreador ler sem
+ * executar JS). Aqui apenas trocamos o conteúdo quando a navegação é feita pelo
+ * app, para que a página não continue exibindo o texto da tela anterior.
+ */
+function renderizarApoio(rota) {
+  const fonte = document.getElementById("apoio-dados");
+  if (!fonte) return; // build ainda não injetou os dados
+
+  let dados;
+  try {
+    dados = JSON.parse(fonte.textContent);
+  } catch {
+    return;
+  }
+
+  let secao = document.getElementById("conteudo-apoio");
+  const entrada = dados[rota];
+  if (!entrada) {
+    if (secao) secao.remove();
+    return;
+  }
+
+  if (!secao) {
+    const referencia = document.querySelector(".foot");
+    if (!referencia) return;
+    secao = document.createElement("section");
+    secao.id = "conteudo-apoio";
+    secao.className = "apoio";
+    referencia.parentNode.insertBefore(secao, referencia);
+  }
+
+  const html = htmlApoio(entrada);
+  if (secao.innerHTML !== html) secao.innerHTML = html;
+}
 
 let renderSeq = 0;
 
@@ -65,6 +131,8 @@ export async function navegar() {
   };
   crumbs.innerHTML = `<span>${esc(grupos[rota] ?? "")}</span> › <strong>${esc(ROTAS[rota].titulo)}</strong>`;
 
+  renderizarApoio(rota);
+
   main.setAttribute("aria-busy", "true");
   try {
     const mod = await ROTAS[rota].mod();
@@ -81,7 +149,7 @@ export async function navegar() {
         <h2>Não foi possível carregar esta tela</h2>
         <p class="muted">Ocorreu um erro ao montar a página <code>${esc(rota)}</code>.</p>
         <pre class="small" style="white-space:pre-wrap;color:#a8321f">${esc(String(erro && erro.message || erro))}</pre>
-        <p><a class="btn btn-ghost" href="/reforma-tributaria/painel/">Voltar ao painel</a></p>
+        <p><a class="btn btn-ghost" href="/reforma-tributaria/">Voltar ao painel</a></p>
       </div>`;
   } finally {
     if (seq === renderSeq) main.setAttribute("aria-busy", "false");
