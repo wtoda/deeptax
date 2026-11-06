@@ -81,12 +81,27 @@ Atualizar o **código** (não o conteúdo):
 
 ```bash
 # na máquina de desenvolvimento
-tar czf - --exclude=node_modules --exclude=.next --exclude=.git . \
+tar czf - --exclude=node_modules --exclude=.next --exclude=.git --exclude=.npmrc . \
   | ssh root@187.127.60.53 'tar xzf - -C /opt/deeptax/app'
-ssh root@187.127.60.53 'cd /opt/deeptax/app && \
-  su -s /bin/bash deeptax -c "HOME=/opt/deeptax npm ci && HOME=/opt/deeptax npm run build" && \
-  systemctl restart deeptax'
+
+# O tar roda como root e o arquivo carrega o dono do ambiente de origem: sem o
+# chown, os arquivos ficam root:root (package.json já apareceu como 600) e o
+# `npm run build` do usuário deeptax morre com EACCES.
+ssh root@187.127.60.53 'chown -R deeptax:deeptax /opt/deeptax/app'
+
+ssh root@187.127.60.53 'su -s /bin/bash deeptax -c "cd /opt/deeptax/app \
+  && HOME=/opt/deeptax npm run build"'
+ssh root@187.127.60.53 'systemctl restart deeptax && sleep 4 && systemctl is-active deeptax'
 ```
+
+> **Nunca canalize o build por `| tail`.** O status da pipeline passa a ser o do
+> `tail`, então um build que falhou segue adiante e o `systemctl restart` roda
+> com `.next` inexistente — foi assim que o site ficou fora do ar uma vez.
+> Redirecione para um arquivo e confira o código de saída:
+> ```bash
+> ... npm run build > /tmp/build.log 2>&1; echo "exit=$?"; tail -6 /tmp/build.log
+> ```
+
 
 ---
 
@@ -111,3 +126,9 @@ automática (timer do certbot).
   abrir, de propósito.
 - **O cookie de sessão tem a flag `Secure`**: o painel só autentica em **HTTPS**.
   Testar por HTTP dá 401 — não é defeito.
+- **`tar` como root troca o dono dos arquivos.** Sem `chown -R deeptax:deeptax`
+  depois de extrair, o `npm run build` falha com `EACCES` em `package.json` — e,
+  se o `.next` tiver sido apagado antes, o serviço entra em laço de reinício.
+  Extraia, faça o `chown`, construa, confirme o `exit=0` e só então reinicie.
+- **Canalizar o build por `| tail` esconde a falha.** O status passa a ser o do
+  `tail` e o `&& systemctl restart` executa mesmo com o build quebrado.

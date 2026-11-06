@@ -51,7 +51,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const rotasDoPortal: MetadataRoute.Sitemap = portaisReforma.map(
     ([caminho, prioridade]) => ({
-      url: `${site.url}/reforma-tributaria/${caminho}${caminho ? "/" : "/"}`,
+      // A raiz do portal é "/reforma-tributaria/" — sem a barra dupla que a
+      // concatenação ingênua produzia ("/reforma-tributaria//"), que não é a
+      // URL canônica declarada na própria página.
+      url: `${site.url}/reforma-tributaria/${caminho}${caminho ? "/" : ""}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: prioridade,
