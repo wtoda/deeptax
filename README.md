@@ -109,6 +109,14 @@ Responde o commit publicado, a branch, o ambiente e a região. Existe porque
 verificar deploy por comportamento engana: alterações só no servidor não mudam
 o HTML, e mensagens de erro podem ser idênticas entre builds diferentes.
 
+### DNS
+
+A configuração de DNS do domínio — site, e-mail, SPF, DKIM e DMARC — está
+documentada em [`docs/DNS.md`](docs/DNS.md), com os valores exatos e como
+verificar cada um. Vale consultar antes de mexer em registros, e principalmente
+**se o domínio parar de resolver**: nesse caso o problema é DNS, não a
+hospedagem, e o site segue acessível em `deeptax.vercel.app`.
+
 ### Depois do deploy
 
 - O domínio `deeptax.com.br` aponta para a Vercel (A `216.198.79.1`) e o apex
