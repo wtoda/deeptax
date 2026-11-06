@@ -124,6 +124,14 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/reforma-tributaria"
+                  className="text-sm text-brand-100/70 transition-colors hover:text-accent-300"
+                >
+                  Portal da Reforma Tributária
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/contato"
                   className="text-sm text-brand-100/70 transition-colors hover:text-accent-300"
                 >

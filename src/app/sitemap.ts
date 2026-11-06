@@ -28,6 +28,36 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
+  /**
+   * Portal da Reforma Tributária. São páginas estáticas (pré-renderizadas) em
+   * /reforma-tributaria/, servidas pelo nginx. Entram aqui para que o sitemap
+   * do site seja a única fonte de URLs do domínio.
+   */
+  const portaisReforma = [
+    ["", 0.9],
+    ["cronograma", 0.8],
+    ["entenda", 0.8],
+    ["calculadora", 0.8],
+    ["documentos", 0.7],
+    ["legislacao", 0.7],
+    ["dere", 0.7],
+    ["conformidade", 0.7],
+    ["comparativo", 0.6],
+    ["glossario", 0.6],
+    ["aprender", 0.5],
+    ["divulgacao", 0.5],
+    ["fontes", 0.5],
+  ] as const;
+
+  const rotasDoPortal: MetadataRoute.Sitemap = portaisReforma.map(
+    ([caminho, prioridade]) => ({
+      url: `${site.url}/reforma-tributaria/${caminho}${caminho ? "/" : "/"}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: prioridade,
+    }),
+  );
+
   const serviceRoutes: MetadataRoute.Sitemap = services.map((service) => ({
     url: `${site.url}/servicos/${service.slug}`,
     lastModified: now,
@@ -35,5 +65,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...serviceRoutes];
+  return [...staticRoutes, ...serviceRoutes, ...rotasDoPortal];
 }

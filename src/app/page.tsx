@@ -178,6 +178,63 @@ export default function HomePage() {
               <IconArrowRight className="size-4" />
             </Link>
           </div>
+
+          {/* ------------------------------------------------- portal reforma */}
+          <Reveal>
+            <div className="mt-16 overflow-hidden rounded-3xl border border-brand-100 bg-brand-50/60">
+              <div className="grid gap-8 p-8 sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-accent-200 bg-accent-50 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-accent-700">
+                    <span className="size-1.5 rounded-full bg-accent-500" />
+                    Conteúdo gratuito
+                  </span>
+                  <h3 className="mt-4 font-display text-2xl font-bold text-brand-950 sm:text-3xl">
+                    Portal da Reforma Tributária
+                  </h3>
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-brand-900/70">
+                    Reunimos, em um só lugar, o que muda com o IBS, a CBS e o
+                    Imposto Seletivo: cronograma até 2033, calculadora com memória
+                    de cálculo, documentos fiscais, base legal e checklist de
+                    conformidade — separando o que é lei vigente do que ainda é
+                    estimativa.
+                  </p>
+                  <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <Link
+                      href="/reforma-tributaria"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-950 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-900"
+                    >
+                      Abrir o portal
+                      <IconArrowRight className="size-4" />
+                    </Link>
+                    <Link
+                      href="/reforma-tributaria/cronograma"
+                      className="inline-flex items-center justify-center rounded-xl border border-brand-200 bg-white px-5 py-3 text-sm font-semibold text-brand-900 transition-colors hover:border-accent-300 hover:text-accent-700"
+                    >
+                      Ver o cronograma
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="grid gap-2.5">
+                  {[
+                    { href: "/reforma-tributaria/calculadora", t: "Calculadora IBS e CBS" },
+                    { href: "/reforma-tributaria/documentos", t: "Documentos fiscais" },
+                    { href: "/reforma-tributaria/legislacao", t: "Legislação e impacto" },
+                    { href: "/reforma-tributaria/conformidade", t: "Checklist de conformidade" },
+                  ].map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="group flex items-center justify-between rounded-xl border border-brand-100 bg-white px-4 py-3.5 text-sm font-medium text-brand-950 shadow-soft transition-all hover:border-accent-200 hover:shadow-lift"
+                    >
+                      {item.t}
+                      <IconArrowRight className="size-4 text-brand-300 transition-all group-hover:translate-x-0.5 group-hover:text-accent-500" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </Section>
 

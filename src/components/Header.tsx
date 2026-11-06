@@ -204,6 +204,10 @@ export function Header() {
               <span className="sr-only">(abre em nova aba)</span>
             </a>
 
+            <NavLink href="/reforma-tributaria" active={isActive("/reforma-tributaria")}>
+              Reforma Tributária
+            </NavLink>
+
             <NavLink href="/contato" active={isActive("/contato")}>
               Contato
             </NavLink>
@@ -285,6 +289,9 @@ export function Header() {
                   <IconExternal className="size-4 text-brand-900/40" />
                   <span className="sr-only">(abre em nova aba)</span>
                 </a>
+                <MobileNavLink href="/reforma-tributaria" active={isActive("/reforma-tributaria")}>
+                  Reforma Tributária
+                </MobileNavLink>
                 <MobileNavLink href="/contato" active={isActive("/contato")}>
                   Contato
                 </MobileNavLink>

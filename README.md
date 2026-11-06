@@ -153,7 +153,29 @@ hospedagem, e o site segue acessível em `deeptax.vercel.app`.
 > | MX | `@` | `mx2.hostinger.com` (prioridade 10) |
 > | TXT | `@` | `v=spf1 include:_spf.mail.hostinger.com ~all` (apenas um) |
 
-## 6. Como os leads são capturados
+## 6. Portal da Reforma Tributária
+
+Conteúdo de atração de tráfego em **https://www.deeptax.com.br/reforma-tributaria/**
+— 13 telas sobre IBS, CBS e Imposto Seletivo: cronograma, calculadora,
+documentos fiscais, legislação e conformidade.
+
+É um app estático **pré-renderizado** (uma página HTML por tela), servido pelo
+nginx direto do disco, independente do Next.js. Código e instruções em
+[`portal/README.md`](portal/README.md).
+
+| Para mudar | Onde |
+| --- | --- |
+| Título/descrição no Google de cada tela | `portal/seo.json` |
+| Identidade visual (cores) | `portal/assets/css/estilo.css` (`:root`) |
+| Conteúdo editorial | `portal/assets/js/dados.js` |
+| Telas | `portal/assets/js/views/` |
+
+Depois de qualquer alteração: `node build.mjs` dentro de `portal/` e publicar
+o `dist/`. As URLs do portal entram automaticamente no sitemap do site.
+
+---
+
+## 7. Como os leads são capturados
 
 **Tudo pelo WhatsApp, sem backend.** O formulário não envia nada para o nosso
 servidor: ele monta a mensagem no navegador do visitante e abre a conversa no
@@ -194,7 +216,7 @@ voltar a receber leads por e-mail, o caminho é reintroduzir um destino no
 servidor — e nesse caso vale reler a observação sobre MX e registro A na
 seção de deploy, porque o e-mail do domínio depende disso.
 
-## 7. Estrutura de páginas
+## 8. Estrutura de páginas
 
 | Rota | Arquivo | Conteúdo |
 | --- | --- | --- |
@@ -223,7 +245,7 @@ estruturados (`AccountingService`, `Service` e `FAQPage`), `sitemap.xml` e
 
 ---
 
-## 8. Scripts de verificação (opcional)
+## 9. Scripts de verificação (opcional)
 
 A pasta `scripts/` traz três utilitários de QA usados para validar o site. Eles
 dependem de `playwright-core` (já instalado como dependência de desenvolvimento)
@@ -260,7 +282,7 @@ npm uninstall playwright-core && rm -rf scripts
 
 ---
 
-## 9. Design system
+## 10. Design system
 
 - **Cores:** definidas em `src/app/globals.css` no bloco `@theme`
   (`brand` = azul institucional, `accent` = verde de conversão, `gold` = detalhe).

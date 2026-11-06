@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reforma Tributária — Deeptax | IBS, CBS e Imposto Seletivo</title>
+<meta name="description" content="Portal da Deeptax sobre a Reforma Tributária do Consumo: cronograma 2026 a 2033, IBS, CBS, Imposto Seletivo, calculadora com memória de cálculo, documentos fiscais e base legal (EC 132/2023 e LC 214/2025).">
+<link rel="canonical" href="https://www.deeptax.com.br/reforma-tributaria/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Deeptax">
+<meta property="og:title" content="Reforma Tributária — Deeptax">
+<meta property="og:description" content="Cronograma, calculadora e base legal da Reforma Tributária do Consumo (IBS, CBS e Imposto Seletivo).">
+<meta property="og:url" content="https://www.deeptax.com.br/reforma-tributaria/">
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f6f5c'/%3E%3Cpath d='M8 21V11h3.2v4h5.6v-4H20v10h-3.2v-3.6h-5.6V21z' fill='%23fbfaf7'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/reforma-tributaria/assets/css/estilo.css">
+</head>
+<body>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a href="/reforma-tributaria/painel/" class="brand-link">
+        <span class="brand-mark" aria-hidden="true">D</span>
+        <span class="brand-text">
+          <strong>Reforma Tributária</strong>
+          <small>por Deeptax</small>
+        </span>
+      </a>
+    </div>
+
+    <div class="status-chip" id="status-chip" title="Situação atual do cronograma">
+      <span class="dot"></span>
+      <span id="status-chip-texto">carregando…</span>
+    </div>
+
+    <nav class="nav" id="nav" aria-label="Navegação principal">
+      <p class="nav-group">Visão geral</p>
+      <a href="/reforma-tributaria/painel/" data-rota="painel"><span class="ico">◧</span> Painel</a>
+      <a href="/reforma-tributaria/cronograma/" data-rota="cronograma"><span class="ico">◷</span> Cronograma</a>
+
+      <p class="nav-group">Entender</p>
+      <a href="/reforma-tributaria/entenda/" data-rota="entenda"><span class="ico">◎</span> Entenda o modelo</a>
+      <a href="/reforma-tributaria/comparativo/" data-rota="comparativo"><span class="ico">⇄</span> Antes e depois</a>
+      <a href="/reforma-tributaria/legislacao/" data-rota="legislacao"><span class="ico">§</span> Legislação</a>
+      <a href="/reforma-tributaria/glossario/" data-rota="glossario"><span class="ico">≡</span> Glossário</a>
+      <a href="/reforma-tributaria/aprender/" data-rota="aprender"><span class="ico">✓</span> Aprender</a>
+
+      <p class="nav-group">Operar</p>
+      <a href="/reforma-tributaria/calculadora/" data-rota="calculadora"><span class="ico">∑</span> Calculadora</a>
+      <a href="/reforma-tributaria/documentos/" data-rota="documentos"><span class="ico">▤</span> Documentos fiscais</a>
+      <a href="/reforma-tributaria/dere/" data-rota="dere"><span class="ico">▦</span> DeRE</a>
+      <a href="/reforma-tributaria/conformidade/" data-rota="conformidade"><span class="ico">☑</span> Conformidade</a>
+
+      <p class="nav-group">Comunicar</p>
+      <a href="/reforma-tributaria/divulgacao/" data-rota="divulgacao"><span class="ico">✉</span> Kit de divulgação</a>
+      <a href="/reforma-tributaria/fontes/" data-rota="fontes"><span class="ico">§</span> Fontes e base legal</a>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="update-box">
+        <span class="lbl">Base atualizada em</span>
+        <strong id="foot-data">—</strong>
+        <button class="linkish" id="btn-print" type="button">Imprimir / PDF</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false">☰</button>
+      <div class="crumbs" id="crumbs"></div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" id="btn-busca" type="button" title="Buscar (tecla /)">Buscar <kbd>/</kbd></button>
+      </div>
+    </header>
+
+    <main id="conteudo" tabindex="-1"></main>
+
+    <footer class="foot">
+      <p>Portal <strong>Reforma Tributária</strong> da <a href="https://www.deeptax.com.br/">Deeptax</a> — estudo e simulação da Reforma Tributária do Consumo (EC 132/2023 e LC 214/2025).</p>
+      <p class="muted">Conteúdo informativo e educacional. Não substitui consultoria tributária individualizada. Alíquotas de transição e parâmetros regulamentares podem ser alterados por ato normativo posterior — confira sempre a fonte oficial indicada em <a href="/reforma-tributaria/fontes/">Fontes</a>.</p>
+    </footer>
+  </div>
+</div>
+
+<div class="search-overlay" id="busca" hidden>
+  <div class="search-box">
+    <input type="search" id="busca-input" placeholder="Buscar por IBS, split payment, cesta básica, 2027…" autocomplete="off" aria-label="Buscar no conteúdo">
+    <div class="search-results" id="busca-resultados"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="/reforma-tributaria/assets/js/app.js"></script>
+</body>
+</html>

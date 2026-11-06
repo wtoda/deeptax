@@ -26,6 +26,9 @@ data/
 # Capturas de tela geradas pelos scripts de verificação
 .screenshots/
 
+# Saída do build do portal (gerada por portal/build.mjs)
+portal/dist/
+
 # Artefatos locais de teste
 .test-tmp/
 
