@@ -2,16 +2,18 @@ import { NextResponse } from "next/server";
 import { lerSessao } from "@/lib/admin/auth";
 import {
   ARQUIVO_AREAS,
-  ARQUIVO_SITE,
   ARQUIVO_PAGINAS,
+  ARQUIVO_SITE,
   adminDisponivel,
   adminConfig,
+  armazenamentoLocal,
   pendenciasDeConfiguracao,
 } from "@/lib/admin/config";
 import { ErroGitHub, gravarArquivo, lerArquivo } from "@/lib/admin/github";
 import { validarSite } from "@/lib/site";
 import { validarAreas } from "@/lib/services";
 import { validarPaginas } from "@/lib/paginas";
+import { gravarConteudoLocal, lerConteudoLocal } from "@/lib/admin/arquivos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -78,20 +80,94 @@ export async function POST(request: Request) {
   const observacao =
     typeof corpo.observacao === "string" ? corpo.observacao.trim().slice(0, 200) : "";
 
-  try {
-    const gravados: string[] = [];
+  const novoSite = JSON.stringify(corpo.site, null, 2) + "\n";
+  const novasAreas = JSON.stringify({ services: areasValidadas }, null, 2) + "\n";
+  const novosTextos = JSON.stringify(corpo.paginas, null, 2) + "\n";
 
-    // Só gravamos o que realmente mudou: evita commit vazio e redeploy inútil.
+  try {
+    /* ------------------------------------------- modo servidor próprio ---- */
+    if (armazenamentoLocal) {
+      const gravados: string[] = [];
+
+      // Só gravamos o que mudou, para não disparar reconstrução à toa.
+      const [siteAtual, areasAtuais, textosAtuais] = await Promise.all([
+        lerConteudoLocal(ARQUIVO_SITE),
+        lerConteudoLocal(ARQUIVO_AREAS),
+        lerConteudoLocal(ARQUIVO_PAGINAS),
+      ]);
+
+      if (novoSite !== siteAtual) {
+        await gravarConteudoLocal(ARQUIVO_SITE, novoSite);
+        gravados.push("site");
+      }
+      if (novasAreas !== areasAtuais) {
+        await gravarConteudoLocal(ARQUIVO_AREAS, novasAreas);
+        gravados.push("areas");
+      }
+      if (novosTextos !== textosAtuais) {
+        await gravarConteudoLocal(ARQUIVO_PAGINAS, novosTextos);
+        gravados.push("paginas");
+      }
+
+      if (gravados.length === 0) {
+        return NextResponse.json({
+          ok: true,
+          semAlteracao: true,
+          message: "Nada mudou desde a última publicação — nada foi regravado.",
+        });
+      }
+
+      // Registro no GitHub é opcional no modo local: serve de histórico e de
+      // backup. Se falhar, a alteração continua válida no servidor — por isso o
+      // erro aqui não impede o salvamento, apenas é relatado.
+      let avisoDeCommit: string | undefined;
+      if (adminConfig.token) {
+        try {
+          const alvos: [string, string][] = [
+            ["site", novoSite],
+            ["areas", novasAreas],
+            ["paginas", novosTextos],
+          ];
+          for (const [chave, conteudo] of alvos) {
+            if (!gravados.includes(chave)) continue;
+            const arquivo =
+              chave === "site"
+                ? ARQUIVO_SITE
+                : chave === "areas"
+                  ? ARQUIVO_AREAS
+                  : ARQUIVO_PAGINAS;
+            await gravarArquivo(
+              arquivo,
+              conteudo,
+              `conteudo: atualiza ${chave} pelo painel (auto-hospedado)${observacao ? `\n\n${observacao}` : ""}`,
+            );
+          }
+        } catch (erro) {
+          avisoDeCommit =
+            "O conteúdo foi salvo no servidor, mas não pôde ser registrado no GitHub: " +
+            (erro instanceof Error ? erro.message : String(erro));
+        }
+      }
+
+      return NextResponse.json({
+        ok: true,
+        gravados,
+        armazenamento: "local",
+        aviso: avisoDeCommit,
+        message:
+          "Conteúdo salvo no servidor. O site é reconstruído automaticamente " +
+          "em cerca de 1 minuto — recarregue a página para ver.",
+      });
+    }
+
+    /* ------------------------------------------------ modo Vercel -------- */
     const [siteAtual, areasAtuais, textosAtuais] = await Promise.all([
       lerArquivo(ARQUIVO_SITE),
       lerArquivo(ARQUIVO_AREAS),
       lerArquivo(ARQUIVO_PAGINAS),
     ]);
 
-    const novoSite = JSON.stringify(corpo.site, null, 2) + "\n";
-    const novasAreas = JSON.stringify({ services: areasValidadas }, null, 2) + "\n";
-    const novosTextos = JSON.stringify(corpo.paginas, null, 2) + "\n";
-
+    const gravados: string[] = [];
     let commit = "";
     let url = "";
 

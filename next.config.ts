@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * Pasta de saída do build. Em servidor próprio, o script de reconstrução
+   * aponta para uma pasta separada e só troca depois que a construção termina
+   * com sucesso — assim o site continua servindo a versão anterior durante o
+   * rebuild, em vez de ficar alguns segundos fora do ar.
+   */
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,

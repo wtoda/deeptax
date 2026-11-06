@@ -93,7 +93,22 @@ endereço `/servicos/<slug>`).
 
 ---
 
-## 5. Deploy na Vercel
+## 5. Deploy
+
+O site roda em produção no **VPS da Hostinger** (auto-hospedado) e a Vercel
+segue como ambiente alternativo. Os dois modos funcionam:
+
+| Ambiente | Onde o painel grava | Reconstrução |
+| --- | --- | --- |
+| VPS (`187.127.60.53`) | arquivos locais em `content/` | automática, ~70s após salvar |
+| Vercel | API do GitHub (exige `GITHUB_TOKEN`) | o push dispara o deploy |
+
+### VPS de produção
+
+Receita completa em [`docs/DEPLOY-VPS.md`](docs/DEPLOY-VPS.md) — serviços,
+nginx, log, como atualizar código e como trocar a senha.
+
+### Vercel (ambiente alternativo)
 
 O deploy é direto: a Vercel detecta Next.js automaticamente, sem build command
 customizado e **sem nenhuma variável de ambiente obrigatória**. Cada `git push`

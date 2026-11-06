@@ -3,24 +3,28 @@
 Registro da configuração de DNS do domínio, para que uma perda de zona — como a
 que aconteceu — possa ser reconstruída sem depender da memória de ninguém.
 
-> **Situação do site e do e-mail:** o site roda na **Vercel** e o e-mail na
-> **Hostinger**. O domínio é gerenciado no **hospedameusite.com.br**, que é o
-> registrador e o provedor de DNS (nameservers `nsp1` a `nsp4`).
+> **Situação do site e do e-mail:** o site roda no **VPS de produção**
+> (`187.127.60.53`, Hostinger KVM) e o e-mail na **Hostinger**. O domínio é
+> gerenciado no **hospedameusite.com.br**, que é o registrador e o provedor de
+> DNS (nameservers `nsp1` a `nsp4`).
+>
+> Detalhes do deploy em [`DEPLOY-VPS.md`](DEPLOY-VPS.md). A Vercel continua
+> configurada como ambiente alternativo, mas o domínio aponta para o VPS.
 
 ---
 
 ## Registros necessários
 
-### Site (Vercel)
+### Site (VPS de produção)
 
 | Tipo | Nome | Valor | Para quê |
 | --- | --- | --- | --- |
-| `A` | `@` | `216.198.79.1` | aponta o domínio raiz para a Vercel |
-| `CNAME` | `www` | `deeptax.com.br` | o site responde em `www` (o `www` é o canônico) |
+| `A` | `@` | `187.127.60.53` | aponta o domínio raiz para o VPS |
+| `A` | `www` | `187.127.60.53` | o site responde em `www` |
 
-> O apex responde 308 e redireciona para `https://www.deeptax.com.br`. O
-> endereço canônico é definido em `content/site.json` (campo `url`) ou pela
-> variável `NEXT_PUBLIC_SITE_URL` na Vercel.
+> O endereço canônico fica em `content/site.json` (campo `url`) e é
+> `https://www.deeptax.com.br`. Depois de o DNS apontar para o VPS, o
+> certificado é emitido com `certbot --nginx -d deeptax.com.br -d www.deeptax.com.br`.
 
 ### E-mail (Hostinger)
 
@@ -60,8 +64,8 @@ v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAylP4LCR8YucfQiMiEi
 
 ```bash
 # o domínio resolve?
-dig +short deeptax.com.br A          # esperado: 216.198.79.1
-dig +short www.deeptax.com.br A      # esperado: 216.198.79.1
+dig +short deeptax.com.br A          # esperado: 187.127.60.53
+dig +short www.deeptax.com.br A      # esperado: 187.127.60.53
 
 # o e-mail está roteado para a Hostinger?
 dig +short deeptax.com.br MX         # esperado: mx1 e mx2.hostinger.com
@@ -81,8 +85,14 @@ curl -s https://www.deeptax.com.br/api/version
 
 ## Se o domínio parar de resolver
 
-Sintoma: `curl` no domínio devolve erro de conexão, mas `deeptax.vercel.app`
-responde normalmente. Nesse caso o problema é **DNS**, não a hospedagem.
+Sintoma: `curl` no domínio devolve erro de conexão, mas o servidor responde
+quando consultado com o cabeçalho `Host`:
+
+```bash
+curl -sI -H "Host: deeptax.com.br" http://187.127.60.53/
+```
+
+Se isso responde 200, o problema é **DNS**, não a hospedagem.
 
 ```bash
 # quem o registro .br diz que deve responder pelo domínio?

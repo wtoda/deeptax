@@ -40,6 +40,13 @@ export const ARQUIVO_PAGINAS = "content/paginas.json";
 /** Duração da sessão: 12 horas. */
 export const DURACAO_SESSAO_SEGUNDOS = 12 * 60 * 60;
 
+/**
+ * Em servidor próprio (fora da Vercel) o disco é gravável e o painel salva os
+ * arquivos de conteúdo localmente. Na Vercel o disco é somente leitura, então
+ * lá o único caminho é a API do GitHub.
+ */
+export const armazenamentoLocal = !process.env.VERCEL;
+
 export type PendenciaDeConfiguracao = {
   variavel: string;
   explica: string;
@@ -75,7 +82,8 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
     });
   }
 
-  if (!adminConfig.token) {
+  // O token só é necessário quando a gravação depende do GitHub.
+  if (!armazenamentoLocal && !adminConfig.token) {
     faltando.push({
       variavel: "GITHUB_TOKEN",
       explica:

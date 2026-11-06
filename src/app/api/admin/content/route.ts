@@ -2,23 +2,26 @@ import { NextResponse } from "next/server";
 import { lerSessao } from "@/lib/admin/auth";
 import {
   ARQUIVO_AREAS,
-  ARQUIVO_SITE,
   ARQUIVO_PAGINAS,
+  ARQUIVO_SITE,
   adminDisponivel,
   adminConfig,
+  armazenamentoLocal,
   pendenciasDeConfiguracao,
 } from "@/lib/admin/config";
 import { ErroGitHub, lerArquivo } from "@/lib/admin/github";
+import { lerConteudoLocal } from "@/lib/admin/arquivos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Devolve o conteúdo atual do site, lido direto do repositório.
+ * Devolve o conteúdo atual do site.
  *
- * Lemos do GitHub, e não da cópia empacotada no build, porque a cópia do
- * build fica congelada: depois de salvar, o painel precisa mostrar o que foi
- * salvo, e não o que estava no ar quando a função subiu.
+ * Lê do disco quando o site roda em servidor próprio e do repositório quando
+ * roda na Vercel. Em nenhum dos casos usa a cópia empacotada no build: ela fica
+ * congelada e o painel precisa mostrar o que foi salvo, e não o que existia
+ * quando a aplicação subiu.
  */
 export async function GET() {
   if (!adminDisponivel()) {
@@ -33,19 +36,38 @@ export async function GET() {
   }
 
   try {
-    const [site, areas, textos] = await Promise.all([
-      lerArquivo(ARQUIVO_SITE),
-      lerArquivo(ARQUIVO_AREAS),
-      lerArquivo(ARQUIVO_PAGINAS),
-    ]);
+    // Em servidor próprio, lê do disco; na Vercel, do repositório.
+    let conteudos: [string, string, string];
+
+    if (armazenamentoLocal) {
+      conteudos = await Promise.all([
+        lerConteudoLocal(ARQUIVO_SITE),
+        lerConteudoLocal(ARQUIVO_AREAS),
+        lerConteudoLocal(ARQUIVO_PAGINAS),
+      ]);
+    } else {
+      const remotos = await Promise.all([
+        lerArquivo(ARQUIVO_SITE),
+        lerArquivo(ARQUIVO_AREAS),
+        lerArquivo(ARQUIVO_PAGINAS),
+      ]);
+      conteudos = remotos.map((r) => r.conteudo) as [string, string, string];
+    }
+
+    const [site, areas, textos] = conteudos.map((c) => JSON.parse(c)) as [
+      Record<string, unknown>,
+      { services?: unknown },
+      Record<string, unknown>,
+    ];
 
     return NextResponse.json({
       ok: true,
       repo: adminConfig.repo,
       branch: adminConfig.branch,
-      site: JSON.parse(site.conteudo),
-      areas: JSON.parse(areas.conteudo),
-      paginas: JSON.parse(textos.conteudo),
+      armazenamento: armazenamentoLocal ? "local" : "github",
+      site,
+      areas,
+      paginas: textos,
     });
   } catch (erro) {
     const status = erro instanceof ErroGitHub ? erro.status : 500;
