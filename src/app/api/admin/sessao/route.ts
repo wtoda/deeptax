@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { lerSessao } from "@/lib/admin/auth";
 import {
   adminDisponivel,
+  ambienteDoPainel,
   avisoDeSenhaCurta,
   pendenciasDeConfiguracao,
 } from "@/lib/admin/config";
@@ -23,6 +24,9 @@ export async function GET() {
 
   return NextResponse.json({
     ok: true,
+    // "servidor" ou "vercel": as telas do painel usam isso para dar instruções
+    // do ambiente certo, em vez de mandar todo mundo para a Vercel.
+    ambiente: ambienteDoPainel,
     configurado,
     autenticado: configurado ? await lerSessao() : false,
     pendencias: configurado ? [] : pendenciasDeConfiguracao(),

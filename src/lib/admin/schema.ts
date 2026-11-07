@@ -132,7 +132,7 @@ export const abas: Aba[] = [
     id: "identificacao",
     titulo: "Identificação e SEO",
     descricao:
-      "Marca, dados de registro e os textos que aparecem no Google. O domínio canônico é controlado pela variável NEXT_PUBLIC_SITE_URL na Vercel — o campo abaixo é só o padrão.",
+      "Marca, dados de registro e os textos que aparecem no Google. O domínio canônico é controlado pela variável de ambiente NEXT_PUBLIC_SITE_URL — o campo abaixo é só o padrão.",
     campos: [
       { tipo: "texto", caminho: "name", rotulo: "Marca", exemplo: "Deeptax" },
       {
@@ -150,7 +150,7 @@ export const abas: Aba[] = [
         tipo: "texto",
         caminho: "url",
         rotulo: "Domínio padrão",
-        ajuda: "Alimenta canonical, sitemap, robots e Open Graph. A variável NEXT_PUBLIC_SITE_URL na Vercel tem prioridade sobre este valor.",
+        ajuda: "Alimenta canonical, sitemap, robots e Open Graph. A variável de ambiente NEXT_PUBLIC_SITE_URL tem prioridade sobre este valor.",
       },
     ],
   },

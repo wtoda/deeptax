@@ -11,27 +11,49 @@ Endereço: **https://www.deeptax.com.br/admin/login**
 
 ## Como funciona
 
-O painel lê o conteúdo atual do repositório, mostra em formulário e, ao salvar,
-grava a alteração no GitHub. A Vercel detecta o push e publica sozinha — o site
-costuma atualizar em cerca de 1 minuto.
+> **O site roda em servidor próprio (VPS), não na Vercel.** O painel grava os
+> arquivos de conteúdo **direto no disco do servidor** e um observador do sistema
+> reconstrói o site sozinho, de forma atômica, em cerca de 1 minuto. Não é
+> preciso token do GitHub nem deploy manual. Ver
+> [`DEPLOY-VPS.md`](./DEPLOY-VPS.md).
+
+O painel lê o conteúdo do servidor, mostra em formulário e, ao salvar, grava a
+alteração no disco. O observador `deeptax-reconstruir.path` percebe a mudança,
+constrói numa pasta separada e troca a versão no ar — se a construção falhar,
+nada é trocado e o site continua como estava.
 
 Consequências úteis desse desenho:
 
-- **Todo ajuste fica registrado**: cada salvamento vira um commit com data, autor
-  e a alteração exata. Dá para ver o histórico e desfazer qualquer mudança.
-- **Nada é alterado direto no site**: o repositório é a fonte única da verdade,
-  então o que está no ar é sempre o que está versionado.
-- **Se algo der errado, é reversível**: como cada salvamento é um commit, voltar
-  atrás é reverter o commit no GitHub.
+- **O site não sai do ar** durante a gravação: a nova versão só entra depois de
+  construída com sucesso.
+- **Se algo der errado, é reversível**: cada salvamento é um arquivo `.json`
+  versionado no Git, então dá para comparar e voltar atrás.
+- **O conteúdo vive no servidor**: sem `GITHUB_TOKEN` configurado, os arquivos
+  **não** vão para o GitHub sozinhos. Eles entram no backup do servidor
+  (ver [`BLOG.md`](./BLOG.md#imagens) e a seção de backup em
+  [`DEPLOY-VPS.md`](./DEPLOY-VPS.md)).
 
 ---
 
-## Configuração (uma vez, ~10 minutos)
+## Configuração (uma vez, ~2 minutos)
+
+Em servidor próprio o painel precisa de **uma única variável** — a senha. Abra
+`/opt/deeptax/deeptax.env` e confira:
+
+```bash
+ADMIN_PASSWORD=uma-senha-longa-aqui
+```
+
+Depois de alterar: `systemctl restart deeptax`. Só isso: sem token, sem deploy.
+
+> As duas seções seguintes (token do GitHub e variáveis na Vercel) valem apenas
+> se algum dia o site voltar a rodar na Vercel. No servidor próprio o token é
+> **opcional** e serve só como histórico/backup das alterações.
 
 Enquanto isto não estiver feito, o painel abre mostrando o que falta — ele não
 funciona sem essas proteções.
 
-### 1. Criar o token do GitHub
+### 1. Criar o token do GitHub (opcional no servidor)
 
 1. Acesse https://github.com/settings/personal-access-tokens/new
    (GitHub → foto de perfil → *Settings* → *Developer settings* →

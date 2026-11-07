@@ -36,6 +36,8 @@ export function Painel() {
   );
   const [pendencias, setPendencias] = useState<Pendencia[]>([]);
   const [avisoSenha, setAvisoSenha] = useState<string | null>(null);
+  /** "servidor" (VPS própria) ou "vercel" — decide o texto das mensagens. */
+  const [ambiente, setAmbiente] = useState<"servidor" | "vercel">("servidor");
 
   const [site, setSite] = useState<Qualquer>({});
   const [areas, setAreas] = useState<Qualquer[]>([]);
@@ -62,6 +64,9 @@ export function Painel() {
       const sessao = await (await fetch("/api/admin/sessao", { cache: "no-store" })).json();
 
       setAvisoSenha(sessao.aviso ?? null);
+      if (sessao.ambiente === "vercel" || sessao.ambiente === "servidor") {
+        setAmbiente(sessao.ambiente);
+      }
 
       if (!sessao.configurado) {
         setPendencias(sessao.pendencias ?? []);
@@ -288,9 +293,20 @@ export function Painel() {
           O painel precisa de configuração
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-brand-900/75">
-          Falta configurar na Vercel (<strong>Settings → Environment Variables</strong>) e
-          fazer um novo deploy. Enquanto isso, o painel fica indisponível — ele não abre
-          sem essas proteções.
+          {ambiente === "servidor" ? (
+            <>
+              Falta definir as variáveis no servidor, em{" "}
+              <code className="font-mono">/opt/deeptax/deeptax.env</code>, e reiniciar o
+              serviço. Enquanto isso, o painel fica indisponível — ele não abre sem essas
+              proteções.
+            </>
+          ) : (
+            <>
+              Falta configurar na Vercel (<strong>Settings → Environment Variables</strong>)
+              e fazer um novo deploy. Enquanto isso, o painel fica indisponível — ele não
+              abre sem essas proteções.
+            </>
+          )}
         </p>
         <ul className="mt-4 space-y-3">
           {pendencias.map((p) => (
@@ -332,7 +348,9 @@ export function Painel() {
             Editar conteúdo do site
           </h2>
           <p className="mt-1 text-sm text-brand-900/60">
-            Ao salvar, as alterações vão para o repositório e a Vercel publica sozinha.
+            {ambiente === "servidor"
+              ? "Ao salvar, o site é reconstruído automaticamente em cerca de 1 minuto."
+              : "Ao salvar, as alterações vão para o repositório e a Vercel publica sozinha."}
           </p>
         </div>
         <button

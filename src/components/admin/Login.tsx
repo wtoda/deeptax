@@ -24,6 +24,8 @@ export function Login() {
   const [erro, setErro] = useState("");
   const [pendencias, setPendencias] = useState<Pendencia[] | null>(null);
   const [verificando, setVerificando] = useState(true);
+  /** "servidor" (VPS própria) ou "vercel" — muda o texto das instruções. */
+  const [ambiente, setAmbiente] = useState<"servidor" | "vercel">("servidor");
 
   /**
    * Pergunta ao servidor se o painel está configurado e se já há sessão.
@@ -38,6 +40,10 @@ export function Login() {
         const resposta = await fetch("/api/admin/sessao", { cache: "no-store" });
         const dados = await resposta.json();
         if (!ativo) return;
+
+        if (dados.ambiente === "vercel" || dados.ambiente === "servidor") {
+          setAmbiente(dados.ambiente);
+        }
 
         if (!dados.configurado) {
           setPendencias(dados.pendencias ?? []);
@@ -106,9 +112,9 @@ export function Login() {
             Falta configurar o painel
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-brand-900/75">
-            O painel fica indisponível até estas variáveis existirem na Vercel — é
-            proposital: sem elas ele não teria como proteger o acesso nem gravar as
-            alterações. Leva cerca de 5 minutos.
+            O painel fica indisponível até esta configuração existir{" "}
+            {ambiente === "servidor" ? "no servidor" : "na Vercel"} — é proposital: sem
+            ela o painel não teria como proteger o acesso nem gravar as alterações.
           </p>
         </div>
 
@@ -149,12 +155,22 @@ export function Login() {
         </div>
 
         <div className="mt-5 rounded-2xl border border-brand-100 bg-brand-50/60 p-6">
-          <p className="text-sm font-semibold text-brand-950">Depois de cadastrar as duas</p>
-          <p className="mt-2 text-sm leading-relaxed text-brand-900/70">
-            Faça um <strong>Redeploy</strong> na Vercel (Deployments → os três pontos
-            do último deploy → Redeploy). Variável nova só passa a valer em um deploy
-            novo. Depois é só recarregar esta página e entrar.
+          <p className="text-sm font-semibold text-brand-950">
+            {ambiente === "servidor" ? "Depois de ajustar o arquivo" : "Depois de cadastrar as duas"}
           </p>
+          {ambiente === "servidor" ? (
+            <p className="mt-2 text-sm leading-relaxed text-brand-900/70">
+              Rode <code className="rounded bg-white px-1.5 py-0.5 font-mono text-xs">systemctl restart deeptax</code>{" "}
+              no servidor. Variável nova só passa a valer depois de reiniciar o
+              serviço. Depois é só recarregar esta página e entrar.
+            </p>
+          ) : (
+            <p className="mt-2 text-sm leading-relaxed text-brand-900/70">
+              Faça um <strong>Redeploy</strong> na Vercel (Deployments → os três pontos
+              do último deploy → Redeploy). Variável nova só passa a valer em um deploy
+              novo. Depois é só recarregar esta página e entrar.
+            </p>
+          )}
         </div>
       </div>
     );
@@ -201,7 +217,19 @@ export function Login() {
         </button>
 
         <p className="mt-4 text-center text-xs text-brand-900/45">
-          Esqueceu a senha? Ela é definida na variável ADMIN_PASSWORD, na Vercel.
+          {ambiente === "servidor" ? (
+            <>
+              Esqueceu a senha? Ela fica em <code className="font-mono">ADMIN_PASSWORD</code>,
+              no arquivo <code className="font-mono">/opt/deeptax/deeptax.env</code> do
+              servidor — não há recuperação por e-mail.
+            </>
+          ) : (
+            <>
+              Esqueceu a senha? Ela é definida na variável{" "}
+              <code className="font-mono">ADMIN_PASSWORD</code>, na Vercel — não há
+              recuperação por e-mail.
+            </>
+          )}
         </p>
       </form>
     </div>

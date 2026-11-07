@@ -48,6 +48,19 @@ export const DURACAO_SESSAO_SEGUNDOS = 12 * 60 * 60;
  */
 export const armazenamentoLocal = !process.env.VERCEL;
 
+/**
+ * Onde o painel está rodando. É isto que decide o TEXTO das instruções: a
+ * mesma tela de configuração precisa dizer coisas diferentes conforme o
+ * ambiente, em vez de mandar todo mundo para a Vercel.
+ */
+export const ambienteDoPainel = armazenamentoLocal ? "servidor" : "vercel";
+
+/** Como se define uma variável em cada ambiente — usado nas mensagens. */
+const ONDE_DEFINIR =
+  ambienteDoPainel === "servidor"
+    ? "Defina em /opt/deeptax/deeptax.env, no servidor, e reinicie com: systemctl restart deeptax"
+    : "Cadastre em Vercel → Settings → Environment Variables e faça um Redeploy.";
+
 export type PendenciaDeConfiguracao = {
   variavel: string;
   explica: string;
@@ -68,18 +81,24 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
     faltando.push({
       variavel: "ADMIN_PASSWORD",
       explica: "a senha que vai proteger o acesso ao painel — escolha uma e guarde",
-      passos: [
-        "Invente uma senha com pelo menos 10 caracteres.",
-        "Cadastre em Vercel → Settings → Environment Variables → nome ADMIN_PASSWORD.",
-      ],
+      passos:
+        ambienteDoPainel === "servidor"
+          ? [
+              "Invente uma senha com pelo menos 10 caracteres.",
+              "No servidor, edite /opt/deeptax/deeptax.env e ajuste a linha ADMIN_PASSWORD=...",
+              "Aplique com: systemctl restart deeptax",
+            ]
+          : [
+              "Invente uma senha com pelo menos 10 caracteres.",
+              "Cadastre em Vercel → Settings → Environment Variables → nome ADMIN_PASSWORD.",
+            ],
     });
   } else if (adminConfig.senha.length < 6) {
     // Piso mínimo: abaixo disso a senha é indefensável mesmo com o limite de
     // tentativas. Acima, quem decide o tamanho é o escritório.
     faltando.push({
       variavel: "ADMIN_PASSWORD",
-      explica:
-        "a senha cadastrada tem menos de 6 caracteres. Troque o valor de ADMIN_PASSWORD na Vercel por uma senha de pelo menos 6 caracteres.",
+      explica: `a senha cadastrada tem menos de 6 caracteres. Troque o valor de ADMIN_PASSWORD por uma senha de pelo menos 6 caracteres. ${ONDE_DEFINIR}`,
     });
   }
 
@@ -97,7 +116,9 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
         "Em Repository access, escolha “Only select repositories” e marque wtoda/deeptax.",
         "Em Permissions → Repository permissions, dê acesso “Read and write” a Contents.",
         "Gere o token e copie (o GitHub só mostra uma vez).",
-        "Cole em Vercel → Settings → Environment Variables → nome GITHUB_TOKEN.",
+        ambienteDoPainel === "servidor"
+          ? "Acrescente a linha GITHUB_TOKEN=... em /opt/deeptax/deeptax.env e reinicie o serviço."
+          : "Cole em Vercel → Settings → Environment Variables → nome GITHUB_TOKEN.",
       ],
     });
   }
@@ -125,7 +146,6 @@ export function avisoDeSenhaCurta(): string | null {
   if (!adminConfig.senha || adminConfig.senha.length >= 10) return null;
   return (
     "A senha do painel tem menos de 10 caracteres. Funciona, mas uma senha mais " +
-    "longa é recomendável: o painel tem acesso de escrita ao repositório. " +
-    "Para trocar, altere ADMIN_PASSWORD na Vercel e faça um Redeploy."
+    `longa é recomendável: o painel tem acesso de escrita ao conteúdo do site. ${ONDE_DEFINIR}`
   );
 }

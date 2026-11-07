@@ -5,7 +5,9 @@ import {
   registrarTentativa,
   senhaConfere,
 } from "@/lib/admin/auth";
-import { adminDisponivel, pendenciasDeConfiguracao } from "@/lib/admin/config";
+import { adminDisponivel, pendenciasDeConfiguracao,
+  armazenamentoLocal,
+} from "@/lib/admin/config";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,7 +40,7 @@ export async function POST(request: Request) {
         ok: false,
         message:
           "Muitas tentativas de acesso. Aguarde 15 minutos ou redefina a senha " +
-          "alterando a variável ADMIN_PASSWORD na Vercel.",
+          `em ADMIN_PASSWORD (${armazenamentoLocal ? "/opt/deeptax/deeptax.env, no servidor" : "na Vercel"}).`,
       },
       { status: 429 },
     );
