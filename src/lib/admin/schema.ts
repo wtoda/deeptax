@@ -124,7 +124,6 @@ export const abas: Aba[] = [
       { tipo: "texto", caminho: "contact.address.zip", rotulo: "CEP" },
       { tipo: "texto", caminho: "social.linkedin", rotulo: "LinkedIn", ajuda: "Deixe vazio para o ícone não aparecer no rodapé." },
       { tipo: "texto", caminho: "social.instagram", rotulo: "Instagram" },
-      { tipo: "texto", caminho: "blogUrl", rotulo: "Endereço do blog", ajuda: "Link externo exibido no menu do topo e no rodapé." },
     ],
   },
 

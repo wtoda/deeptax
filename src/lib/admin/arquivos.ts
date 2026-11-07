@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   ARQUIVO_AREAS,
   ARQUIVO_PAGINAS,
+  ARQUIVO_POSTS,
   ARQUIVO_SITE,
 } from "@/lib/admin/config";
 
@@ -20,7 +21,7 @@ import {
 
 const RAIZ = process.cwd();
 
-const arquivosPermitidos = new Set([ARQUIVO_SITE, ARQUIVO_AREAS, ARQUIVO_PAGINAS]);
+const arquivosPermitidos = new Set([ARQUIVO_SITE, ARQUIVO_AREAS, ARQUIVO_PAGINAS, ARQUIVO_POSTS]);
 
 /**
  * Resolve o caminho absoluto de um arquivo de conteúdo, recusando qualquer coisa

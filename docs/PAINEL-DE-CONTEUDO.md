@@ -78,7 +78,7 @@ As abas são organizadas **por página** — escolha a página e edite os textos
 
 | Aba | O que edita |
 |---|---|
-| **Contato e endereço** | Telefone, WhatsApp, e-mail, horário, endereço, redes sociais e o link do blog |
+| **Contato e endereço** | Telefone, WhatsApp, e-mail, horário, endereço e redes sociais |
 | **Identificação e SEO** | Marca, razão social, nome fantasia, CNPJ, CRC, assinatura e a descrição do Google |
 | **Página inicial** | Topo (título, subtítulo, bullets), faixa de segmentos, títulos das seções, diferenciais, etapas, números, depoimentos e perguntas frequentes |
 | **Sobre o escritório** | Apresentação, história, missão, compromisso, princípios, time e chamadas |
@@ -87,6 +87,11 @@ As abas são organizadas **por página** — escolha a página e edite os textos
 | **Política de Privacidade** | Título, aviso de atualização e os itens da política |
 | **Chamada final (padrão)** | Bloco de contato que aparece no fim da maioria das páginas |
 | **Áreas (páginas internas)** | O conteúdo completo das seis áreas: Deep Systems, DeepTax, DeepCont, DeepPericia, DeepConsult e DeepCompliance |
+| **Blog** | Criação e publicação dos artigos, com envio de imagens |
+
+> A aba **Blog** salva separadamente: ela tem barra de salvar própria, porque
+> grava `content/posts.json` e não os arquivos de texto do site. O passo a passo
+> está em [`BLOG.md`](./BLOG.md).
 
 ### Marcadores
 

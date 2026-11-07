@@ -231,13 +231,17 @@ seção de deploy, porque o e-mail do domínio depende disso.
 | `/politica-de-privacidade` | `src/app/politica-de-privacidade/page.tsx` | LGPD |
 | `/api/version` | `src/app/api/version/route.ts` | Identifica o commit publicado (verificação de deploy) |
 | `/admin/login` | `src/app/admin/login/page.tsx` | Acesso ao painel |
-| `/admin` | `src/app/admin/page.tsx` | Painel de edição de conteúdo (ver [`docs/PAINEL-DE-CONTEUDO.md`](docs/PAINEL-DE-CONTEUDO.md)) |
+| `/admin` | `src/app/admin/page.tsx` | Painel de edição de conteúdo e do blog (ver [`docs/PAINEL-DE-CONTEUDO.md`](docs/PAINEL-DE-CONTEUDO.md)) |
+| `/blog` | `src/app/blog/page.tsx` | Lista de artigos (ver [`docs/BLOG.md`](docs/BLOG.md)) |
+| `/blog/[slug]` | `src/app/blog/[slug]/page.tsx` | Artigo publicado |
+| `/blog/rss.xml` | `src/app/blog/rss.xml/route.ts` | Feed RSS 2.0 do blog |
+| `/midia/[arquivo]` | `src/app/midia/[arquivo]/route.ts` | Serve as imagens enviadas pelo painel |
 
-O link **Blog** (`https://blog.deeptax.com.br`) aparece em dois lugares: no
-menu do topo, entre "Sobre" e "Contato", e na coluna "Escritório" do rodapé.
-É link externo: abre em nova aba com `rel="noopener noreferrer"`, com ícone de
-link externo e texto para leitor de tela ("abre em nova aba"). A URL fica em
-`blogUrl` (`src/lib/site.ts`).
+O **blog** fica em `/blog`, dentro do domínio principal: cada artigo reforça o
+mesmo domínio e entra no mesmo sitemap. O antigo `blog.deeptax.com.br`
+(WordPress) foi descontinuado e não tem mais registro DNS. Os textos vivem em
+`content/posts.json` e são escritos pelo painel, em blocos — ver
+[`docs/BLOG.md`](docs/BLOG.md).
 
 SEO já configurado: metadados por página, Open Graph, Twitter Card, dados
 estruturados (`AccountingService`, `Service` e `FAQPage`), `sitemap.xml` e

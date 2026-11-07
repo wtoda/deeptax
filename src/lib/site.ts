@@ -38,7 +38,6 @@ export type SiteContent = {
   tagline: string;
   shortDescription: string;
   url: string;
-  blogUrl: string;
   contact: {
     phone: string;
     whatsapp: string;
@@ -58,9 +57,9 @@ export type SiteContent = {
 
 /** Erro de conteúdo — mensagem pensada para quem edita, não para programador. */
 export class ErroDeConteudo extends Error {
-  constructor(problemas: string[]) {
+  constructor(problemas: string[], assunto = "O conteúdo do site") {
     super(
-      `O conteúdo do site tem ${problemas.length} problema(s) e não pode ser publicado:\n` +
+      `${assunto} tem ${problemas.length} problema(s) e não pode ser publicado:\n` +
         problemas.map((p) => `  • ${p}`).join("\n"),
     );
     this.name = "ErroDeConteudo";
@@ -123,7 +122,6 @@ export function validarSite(bruto: unknown): SiteContent {
       /\/+$/,
       "",
     ),
-    blogUrl: texto(d.blogUrl),
     contact: {
       phone: texto(contact.phone),
       whatsapp: texto(contact.whatsapp),
@@ -159,9 +157,6 @@ export function validarSite(bruto: unknown): SiteContent {
 export const site: SiteContent = validarSite(siteJson);
 
 /* --------------------------------------------------------------- DERIVADOS */
-
-/** Blog do escritório — link externo, exibido no menu e no rodapé. */
-export const blogUrl = site.blogUrl;
 
 /**
  * Monta o endereço completo ignorando as partes não preenchidas.

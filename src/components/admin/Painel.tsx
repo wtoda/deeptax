@@ -16,6 +16,7 @@ import {
   camposJsonDaArea,
   type Campo,
 } from "@/lib/admin/schema";
+import { EditorDePosts } from "@/components/admin/EditorDePosts";
 
 type Qualquer = Record<string, unknown>;
 type Pendencia = {
@@ -316,9 +317,11 @@ export function Painel() {
   const campos = aba === "areas" ? camposDaArea : (abas.find((a) => a.id === aba)?.campos ?? []);
   const camposJson = aba === "areas" ? camposJsonDaArea : [];
   const descricaoAba =
-    aba === "areas"
-      ? "Conteúdo das páginas internas. Escolha a área e edite os textos. Os blocos em JSON são as listas mais longas (escopo, metodologia, FAQ)."
-      : (abas.find((a) => a.id === aba)?.descricao ?? "");
+    aba === "blog"
+      ? "Escreva e publique os artigos do blog. O corpo é montado em blocos — parágrafo, título, lista, citação e imagem —, sem marcação para digitar. Rascunhos ficam fora do site até você desmarcar."
+      : aba === "areas"
+        ? "Conteúdo das páginas internas. Escolha a área e edite os textos. Os blocos em JSON são as listas mais longas (escopo, metodologia, FAQ)."
+        : (abas.find((a) => a.id === aba)?.descricao ?? "");
 
   return (
     <div className="pb-28">
@@ -350,7 +353,7 @@ export function Painel() {
 
       {/* Abas */}
       <div className="mb-6 flex flex-wrap gap-1.5 border-b border-brand-100 pb-3">
-        {[...abas, { id: "areas", titulo: "Áreas (páginas internas)" }].map((a) => (
+        {[...abas, { id: "areas", titulo: "Áreas (páginas internas)" }, { id: "blog", titulo: "Blog" }].map((a) => (
           <button
             key={a.id}
             type="button"
@@ -395,6 +398,8 @@ export function Painel() {
         </div>
       )}
 
+      {aba === "blog" ? <EditorDePosts /> : (
+      <>
       {/* Campos */}
       <div className="grid gap-5 lg:grid-cols-2">
         {campos.map((campo, i) => (
@@ -420,8 +425,11 @@ export function Painel() {
           </div>
         </div>
       )}
+      </>
+      )}
 
-      {/* Barra de salvar */}
+      {/* Barra de salvar — o blog tem a sua própria, porque salva à parte */}
+      {aba !== "blog" && (
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-brand-100 bg-white/95 backdrop-blur">
         <div className="container-x flex flex-wrap items-center justify-between gap-3 py-3.5">
           <div className="min-w-0 text-sm">
@@ -471,6 +479,7 @@ export function Painel() {
           </button>
         </div>
       </div>
+      )}
     </div>
   );
 }

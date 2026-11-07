@@ -25,7 +25,8 @@ const marcadores: Record<string, string> = {
   telefone: site.contact.phone,
   whatsapp: site.contact.whatsapp,
   email: site.contact.email,
-  blog: site.blogUrl,
+  // O blog é interno desde que o subdomínio antigo foi descontinuado.
+  blog: "/blog",
 };
 
 /** Substitui os marcadores em um texto. Marcador desconhecido fica como está. */

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { blogTemPosts, posts, urlAbsolutaDoPost } from "@/lib/blog";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 
@@ -68,5 +69,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...serviceRoutes, ...rotasDoPortal];
+  /**
+   * Blog. A lista só entra no sitemap quando tem post publicado — um endereço
+   * vazio não deve ser oferecido ao rastreador. Cada post usa a data real de
+   * publicação/atualização como lastModified, que é o sinal de frescor.
+   */
+  const rotasDoBlog: MetadataRoute.Sitemap = blogTemPosts
+    ? [
+        {
+          url: `${site.url}/blog`,
+          lastModified: now,
+          changeFrequency: "weekly",
+          priority: 0.7,
+        },
+        ...posts.map((post) => ({
+          url: urlAbsolutaDoPost(post),
+          lastModified: new Date(`${post.atualizadoEm ?? post.data}T12:00:00`),
+          changeFrequency: "yearly" as const,
+          priority: 0.6,
+        })),
+      ]
+    : [];
+
+  return [...staticRoutes, ...serviceRoutes, ...rotasDoPortal, ...rotasDoBlog];
 }
