@@ -58,9 +58,18 @@ depois responderia 404 até reiniciar. São servidas pela rota `/midia/<arquivo>
 com cache de um ano (o nome é o hash do conteúdo, então o endereço nunca muda
 para o mesmo arquivo).
 
-> **Backup:** `arquivos/midia/` é o único conteúdo que **não** está no Git.
-> Inclua essa pasta no backup do servidor. Se ela se perder, os posts continuam
-> publicados, mas as imagens somem.
+> **Backup — leia isto.** No servidor **não há** `GITHUB_TOKEN` configurado,
+> então o painel grava apenas no disco: **nem os artigos nem as imagens vão para
+> o Git sozinhos**. Os dois diretórios abaixo vivem só no servidor e precisam
+> entrar no backup:
+>
+> - `content/` — os textos do site e os artigos (`posts.json`)
+> - `arquivos/midia/` — as imagens enviadas
+>
+> Se o servidor for reinstalado sem backup, perdem-se os artigos. Se o deploy de
+> código mandar `content/` junto, os artigos são sobrescritos pela versão do
+> ambiente de desenvolvimento — por isso o pacote de deploy os exclui
+> (ver [`DEPLOY-VPS.md`](./DEPLOY-VPS.md)).
 
 ---
 

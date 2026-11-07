@@ -81,7 +81,14 @@ Atualizar o **código** (não o conteúdo):
 
 ```bash
 # na máquina de desenvolvimento
-tar czf - --exclude=node_modules --exclude=.next --exclude=.git --exclude=.npmrc . \
+#
+# ATENÇÃO ao que NÃO vai no pacote:
+#   content/   → o painel escreve esses arquivos DIRETO no servidor. Mandar a
+#                versão local apagaria todo texto e todo artigo publicado.
+#   arquivos/  → imagens enviadas pelo painel; só existem no servidor.
+# Só inclua content/ na PRIMEIRA instalação, quando o servidor está vazio.
+tar czf - --exclude=node_modules --exclude=.next --exclude=.git --exclude=.npmrc \
+         --exclude=content --exclude=arquivos . \
   | ssh root@187.127.60.53 'tar xzf - -C /opt/deeptax/app'
 
 # O tar roda como root e o arquivo carrega o dono do ambiente de origem: sem o
@@ -132,3 +139,7 @@ automática (timer do certbot).
   Extraia, faça o `chown`, construa, confirme o `exit=0` e só então reinicie.
 - **Canalizar o build por `| tail` esconde a falha.** O status passa a ser o do
   `tail` e o `&& systemctl restart` executa mesmo com o build quebrado.
+- **O deploy de código não pode levar `content/` nem `arquivos/`.** Esses dois
+  diretórios são escritos pelo painel **no servidor**; mandar a versão do
+  ambiente de desenvolvimento sobrescreve o que o escritório publicou. É o
+  caminho mais curto entre "atualizei o site" e "sumiram os artigos".
