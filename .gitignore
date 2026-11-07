@@ -37,3 +37,4 @@ portal/dist/
 *.pem
 *.log
 arquivos/
+dados/

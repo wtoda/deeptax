@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
-import {
-  iniciarSessao,
-  limparTentativas,
-  registrarTentativa,
-  senhaConfere,
-} from "@/lib/admin/auth";
-import { adminDisponivel, pendenciasDeConfiguracao,
-  armazenamentoLocal,
-} from "@/lib/admin/config";
+import { iniciarSessao, limparTentativas, registrarTentativa } from "@/lib/admin/auth";
+import { adminDisponivel, pendenciasDeConfiguracao } from "@/lib/admin/config";
+import { normalizarEmail, verificarCredenciais } from "@/lib/admin/usuarios";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,36 +26,52 @@ export async function POST(request: Request) {
     );
   }
 
-  const chave = origem(request);
-  const { liberado } = registrarTentativa(`login:${chave}`);
-  if (!liberado) {
-    return NextResponse.json(
-      {
-        ok: false,
-        message:
-          "Muitas tentativas de acesso. Aguarde 15 minutos ou redefina a senha " +
-          `em ADMIN_PASSWORD (${armazenamentoLocal ? "/opt/deeptax/deeptax.env, no servidor" : "na Vercel"}).`,
-      },
-      { status: 429 },
-    );
-  }
-
+  let usuario = "";
   let senha = "";
   try {
-    const corpo = (await request.json()) as { senha?: unknown };
+    const corpo = (await request.json()) as { usuario?: unknown; email?: unknown; senha?: unknown };
+    usuario = typeof corpo.usuario === "string" ? corpo.usuario : typeof corpo.email === "string" ? corpo.email : "";
     senha = typeof corpo.senha === "string" ? corpo.senha : "";
   } catch {
     return NextResponse.json({ ok: false, message: "Requisição inválida." }, { status: 400 });
   }
 
-  if (!senhaConfere(senha)) {
+  if (!usuario.trim() || !senha) {
     return NextResponse.json(
-      { ok: false, message: "Senha incorreta." },
+      { ok: false, message: "Informe o e-mail e a senha." },
+      { status: 400 },
+    );
+  }
+
+  // O limite combina IP e conta: um ataque contra uma conta não pode trancar o
+  // acesso de outra pessoa que esteja na mesma rede.
+  const chave = `login:${origem(request)}:${normalizarEmail(usuario)}`;
+  const { liberado } = registrarTentativa(chave);
+  if (!liberado) {
+    return NextResponse.json(
+      {
+        ok: false,
+        message:
+          "Muitas tentativas de acesso. Aguarde 15 minutos ou use “Esqueci a senha” " +
+          "para definir uma nova.",
+      },
+      { status: 429 },
+    );
+  }
+
+  const encontrado = await verificarCredenciais(usuario, senha);
+
+  if (!encontrado) {
+    // Mesma resposta para e-mail inexistente e senha errada: dizer qual dos dois
+    // falhou entregaria a lista de quem tem acesso ao painel.
+    return NextResponse.json(
+      { ok: false, message: "E-mail ou senha incorretos." },
       { status: 401 },
     );
   }
 
-  limparTentativas(`login:${chave}`);
-  await iniciarSessao();
-  return NextResponse.json({ ok: true });
+  limparTentativas(chave);
+  await iniciarSessao(encontrado.email);
+
+  return NextResponse.json({ ok: true, usuario: { email: encontrado.email, nome: encontrado.nome } });
 }

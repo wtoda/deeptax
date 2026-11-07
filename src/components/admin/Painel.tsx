@@ -17,6 +17,7 @@ import {
   type Campo,
 } from "@/lib/admin/schema";
 import { EditorDePosts } from "@/components/admin/EditorDePosts";
+import { MinhaConta } from "@/components/admin/MinhaConta";
 
 type Qualquer = Record<string, unknown>;
 type Pendencia = {
@@ -35,9 +36,9 @@ export function Painel() {
     "carregando",
   );
   const [pendencias, setPendencias] = useState<Pendencia[]>([]);
-  const [avisoSenha, setAvisoSenha] = useState<string | null>(null);
   /** "servidor" (VPS própria) ou "vercel" — decide o texto das mensagens. */
   const [ambiente, setAmbiente] = useState<"servidor" | "vercel">("servidor");
+  const [conta, setConta] = useState<{ email: string; nome: string } | null>(null);
 
   const [site, setSite] = useState<Qualquer>({});
   const [areas, setAreas] = useState<Qualquer[]>([]);
@@ -63,10 +64,10 @@ export function Painel() {
       // apenas abriu a tela de login.
       const sessao = await (await fetch("/api/admin/sessao", { cache: "no-store" })).json();
 
-      setAvisoSenha(sessao.aviso ?? null);
       if (sessao.ambiente === "vercel" || sessao.ambiente === "servidor") {
         setAmbiente(sessao.ambiente);
       }
+      if (sessao.usuario) setConta(sessao.usuario);
 
       if (!sessao.configurado) {
         setPendencias(sessao.pendencias ?? []);
@@ -333,7 +334,9 @@ export function Painel() {
   const campos = aba === "areas" ? camposDaArea : (abas.find((a) => a.id === aba)?.campos ?? []);
   const camposJson = aba === "areas" ? camposJsonDaArea : [];
   const descricaoAba =
-    aba === "blog"
+    aba === "conta"
+      ? "Sua conta de acesso ao painel e a troca da sua senha. Cada pessoa do escritório deve ter a sua própria conta."
+      : aba === "blog"
       ? "Escreva e publique os artigos do blog. O corpo é montado em blocos — parágrafo, título, lista, citação e imagem —, sem marcação para digitar. Rascunhos ficam fora do site até você desmarcar."
       : aba === "areas"
         ? "Conteúdo das páginas internas. Escolha a área e edite os textos. Os blocos em JSON são as listas mais longas (escopo, metodologia, FAQ)."
@@ -353,25 +356,28 @@ export function Painel() {
               : "Ao salvar, as alterações vão para o repositório e a Vercel publica sozinha."}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={sair}
-          className="rounded-lg border border-brand-200 bg-white px-3.5 py-2 text-sm font-semibold text-brand-800 hover:bg-brand-50"
-        >
-          Sair
-        </button>
+        <div className="flex items-center gap-3">
+          {conta && (
+            <span className="text-right text-xs leading-tight text-brand-900/55">
+              <span className="block font-semibold text-brand-950">
+                {conta.nome || conta.email}
+              </span>
+              {conta.nome && <span className="block font-mono">{conta.email}</span>}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={sair}
+            className="rounded-lg border border-brand-200 bg-white px-3.5 py-2 text-sm font-semibold text-brand-800 hover:bg-brand-50"
+          >
+            Sair
+          </button>
+        </div>
       </div>
-
-      {avisoSenha && (
-        <p className="mb-6 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          <IconAlert className="mt-0.5 size-4 shrink-0" />
-          <span>{avisoSenha}</span>
-        </p>
-      )}
 
       {/* Abas */}
       <div className="mb-6 flex flex-wrap gap-1.5 border-b border-brand-100 pb-3">
-        {[...abas, { id: "areas", titulo: "Áreas (páginas internas)" }, { id: "blog", titulo: "Blog" }].map((a) => (
+        {[...abas, { id: "areas", titulo: "Áreas (páginas internas)" }, { id: "blog", titulo: "Blog" }, { id: "conta", titulo: "Minha conta" }].map((a) => (
           <button
             key={a.id}
             type="button"
@@ -416,7 +422,7 @@ export function Painel() {
         </div>
       )}
 
-      {aba === "blog" ? <EditorDePosts /> : (
+      {aba === "conta" ? <MinhaConta /> : aba === "blog" ? <EditorDePosts /> : (
       <>
       {/* Campos */}
       <div className="grid gap-5 lg:grid-cols-2">
@@ -447,7 +453,7 @@ export function Painel() {
       )}
 
       {/* Barra de salvar — o blog tem a sua própria, porque salva à parte */}
-      {aba !== "blog" && (
+      {aba !== "blog" && aba !== "conta" && (
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-brand-100 bg-white/95 backdrop-blur">
         <div className="container-x flex flex-wrap items-center justify-between gap-3 py-3.5">
           <div className="min-w-0 text-sm">

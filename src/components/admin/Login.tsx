@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IconAlert, IconExternal, IconSpinner } from "@/components/Icons";
@@ -19,6 +20,7 @@ type Pendencia = {
  */
 export function Login() {
   const router = useRouter();
+  const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [entrando, setEntrando] = useState(false);
   const [erro, setErro] = useState("");
@@ -73,7 +75,7 @@ export function Login() {
       const resposta = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ senha }),
+        body: JSON.stringify({ usuario, senha }),
       });
       const dados = await resposta.json();
 
@@ -187,14 +189,27 @@ export function Login() {
           Acesso restrito ao escritório.
         </p>
 
-        <label htmlFor="senha" className="mt-6 mb-1 block text-sm font-semibold text-brand-950">
+        <label htmlFor="usuario" className="mt-6 mb-1 block text-sm font-semibold text-brand-950">
+          E-mail
+        </label>
+        <input
+          id="usuario"
+          type="email"
+          autoComplete="username"
+          autoFocus
+          value={usuario}
+          onChange={(e) => setUsuario(e.target.value)}
+          placeholder="nome@deeptax.com.br"
+          className="w-full rounded-lg border border-brand-200 p-3 text-sm outline-none focus:border-accent-400"
+        />
+
+        <label htmlFor="senha" className="mt-4 mb-1 block text-sm font-semibold text-brand-950">
           Senha
         </label>
         <input
           id="senha"
           type="password"
           autoComplete="current-password"
-          autoFocus
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
           className="w-full rounded-lg border border-brand-200 p-3 text-sm outline-none focus:border-accent-400"
@@ -209,27 +224,17 @@ export function Login() {
 
         <button
           type="submit"
-          disabled={entrando || !senha}
+          disabled={entrando || !usuario.trim() || !senha}
           className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-950 px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
         >
           {entrando && <IconSpinner className="size-4" />}
           Entrar
         </button>
 
-        <p className="mt-4 text-center text-xs text-brand-900/45">
-          {ambiente === "servidor" ? (
-            <>
-              Esqueceu a senha? Ela fica em <code className="font-mono">ADMIN_PASSWORD</code>,
-              no arquivo <code className="font-mono">/opt/deeptax/deeptax.env</code> do
-              servidor — não há recuperação por e-mail.
-            </>
-          ) : (
-            <>
-              Esqueceu a senha? Ela é definida na variável{" "}
-              <code className="font-mono">ADMIN_PASSWORD</code>, na Vercel — não há
-              recuperação por e-mail.
-            </>
-          )}
+        <p className="mt-5 text-center text-xs text-brand-900/50">
+          <Link href="/admin/recuperar" className="font-semibold text-accent-700 underline">
+            Esqueci a senha
+          </Link>
         </p>
       </form>
     </div>

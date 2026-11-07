@@ -1,3 +1,7 @@
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { randomBytes } from "node:crypto";
+import path from "node:path";
+
 /**
  * ============================================================================
  *  CONFIGURAÇÃO DO PAINEL DE EDIÇÃO
@@ -25,9 +29,16 @@ export const adminConfig = {
    * para apontar a um simulador em testes.
    */
   apiBase: process.env.GITHUB_API_URL ?? "https://api.github.com",
-  /** Segredo da sessão: derivado da senha, para não exigir outra variável. */
+  /**
+   * Segredo que assina o cookie de sessão.
+   *
+   * Não pode vir da senha de um usuário: com várias contas, trocar a senha
+   * derrubaria a sessão de todo mundo, e a saída de um usuário invalidaria o
+   * acesso dos demais. A ordem é: variável de ambiente, arquivo gerado no
+   * servidor, e só no fim a senha antiga (para não quebrar instalação Vercel).
+   */
   get segredoSessao() {
-    return process.env.ADMIN_SESSION_SECRET || `deeptax::${this.senha}`;
+    return obterSegredoDeSessao();
   },
 } as const;
 
@@ -38,6 +49,18 @@ export const ARQUIVO_SITE = "content/site.json";
 export const ARQUIVO_AREAS = "content/services.json";
 export const ARQUIVO_PAGINAS = "content/paginas.json";
 export const ARQUIVO_POSTS = "content/posts.json";
+
+/**
+ * Dados de operação do painel — fora de `content/` de propósito: `content/` é
+ * conteúdo editorial (versionado, editável pelo painel). Credenciais e tokens
+ * ficam em `dados/`, que entra no .gitignore.
+ */
+export const PASTA_DADOS = "dados";
+export const ARQUIVO_USUARIOS = "dados/usuarios.json";
+export const ARQUIVO_TOKENS = "dados/tokens-senha.json";
+
+/** Validade do link de recuperação de senha. */
+export const VALIDADE_TOKEN_MINUTOS = 30;
 /** Duração da sessão: 12 horas. */
 export const DURACAO_SESSAO_SEGUNDOS = 12 * 60 * 60;
 
@@ -55,11 +78,6 @@ export const armazenamentoLocal = !process.env.VERCEL;
  */
 export const ambienteDoPainel = armazenamentoLocal ? "servidor" : "vercel";
 
-/** Como se define uma variável em cada ambiente — usado nas mensagens. */
-const ONDE_DEFINIR =
-  ambienteDoPainel === "servidor"
-    ? "Defina em /opt/deeptax/deeptax.env, no servidor, e reinicie com: systemctl restart deeptax"
-    : "Cadastre em Vercel → Settings → Environment Variables e faça um Redeploy.";
 
 export type PendenciaDeConfiguracao = {
   variavel: string;
@@ -77,28 +95,25 @@ export type PendenciaDeConfiguracao = {
 export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
   const faltando: PendenciaDeConfiguracao[] = [];
 
-  if (!adminConfig.senha) {
+  // O acesso ao painel é por conta de usuário, e não mais por uma senha única
+  // compartilhada: sem nenhum usuário cadastrado, não há como entrar.
+  if (usuariosCadastrados() === 0) {
     faltando.push({
-      variavel: "ADMIN_PASSWORD",
-      explica: "a senha que vai proteger o acesso ao painel — escolha uma e guarde",
+      variavel: "nenhum usuário cadastrado",
+      explica:
+        "o painel não tem contas. São as contas que dão acesso e identificam quem " +
+        "alterou cada texto — não existe mais senha única compartilhada.",
       passos:
         ambienteDoPainel === "servidor"
           ? [
-              "Invente uma senha com pelo menos 10 caracteres.",
-              "No servidor, edite /opt/deeptax/deeptax.env e ajuste a linha ADMIN_PASSWORD=...",
-              "Aplique com: systemctl restart deeptax",
+              "No servidor, rode: node scripts/gerenciar-usuarios.mjs criar",
+              "Informe o e-mail e a senha quando o comando pedir.",
+              "Pronto: entre em /admin/login com esse e-mail e senha.",
             ]
           : [
-              "Invente uma senha com pelo menos 10 caracteres.",
-              "Cadastre em Vercel → Settings → Environment Variables → nome ADMIN_PASSWORD.",
+              "Rode localmente: node scripts/gerenciar-usuarios.mjs criar",
+              "O arquivo dados/usuarios.json precisa ir junto no deploy.",
             ],
-    });
-  } else if (adminConfig.senha.length < 6) {
-    // Piso mínimo: abaixo disso a senha é indefensável mesmo com o limite de
-    // tentativas. Acima, quem decide o tamanho é o escritório.
-    faltando.push({
-      variavel: "ADMIN_PASSWORD",
-      explica: `a senha cadastrada tem menos de 6 caracteres. Troque o valor de ADMIN_PASSWORD por uma senha de pelo menos 6 caracteres. ${ONDE_DEFINIR}`,
     });
   }
 
@@ -136,16 +151,79 @@ export function pendenciasDeConfiguracao(): PendenciaDeConfiguracao[] {
 export const adminDisponivel = () => pendenciasDeConfiguracao().length === 0;
 
 /**
- * Aviso (não bloqueio) quando a senha é curta.
+ * Quantos usuários existem, em leitura síncrona.
  *
- * O limite de tentativas do login já torna a força bruta lenta, então não faz
- * sentido impedir o acesso por causa do tamanho. Mas vale registrar a
- * recomendação, porque quem escolheu a senha pode não ter considerado isso.
+ * `adminDisponivel()` é síncrono e chamado no começo de cada rota do painel —
+ * por isso a leitura direta, sem await. O arquivo é pequeno e o tráfego do
+ * painel é mínimo.
  */
-export function avisoDeSenhaCurta(): string | null {
-  if (!adminConfig.senha || adminConfig.senha.length >= 10) return null;
-  return (
-    "A senha do painel tem menos de 10 caracteres. Funciona, mas uma senha mais " +
-    `longa é recomendável: o painel tem acesso de escrita ao conteúdo do site. ${ONDE_DEFINIR}`
-  );
+export function usuariosCadastrados(): number {
+  try {
+    const bruto = readFileSync(path.join(process.cwd(), ARQUIVO_USUARIOS), "utf8");
+    const dados = JSON.parse(bruto) as { usuarios?: unknown };
+    return Array.isArray(dados.usuarios) ? dados.usuarios.length : 0;
+  } catch {
+    return 0;
+  }
 }
+
+/* ------------------------------------------------- segredo de sessão ------- */
+
+let segredoEmCache: string | null = null;
+
+/**
+ * Segredo que assina o cookie.
+ *
+ * No servidor próprio ele é gerado uma vez e guardado em `dados/segredo-sessao`
+ * (permissão 600). Assim a sessão sobrevive a reinícios e não depende de
+ * nenhuma variável configurada à mão. Na Vercel, onde o disco é somente leitura,
+ * cai para a senha antiga — que continua servindo de semente.
+ */
+function obterSegredoDeSessao(): string {
+  if (process.env.ADMIN_SESSION_SECRET) return process.env.ADMIN_SESSION_SECRET;
+  if (segredoEmCache) return segredoEmCache;
+
+  try {
+    // Leitura síncrona de propósito: o getter é usado em contexto síncrono e
+    // isto roda uma vez por processo, não a cada requisição.
+    const arquivo = path.join(process.cwd(), PASTA_DADOS, "segredo-sessao");
+
+    if (existsSync(arquivo)) {
+      const lido = readFileSync(arquivo, "utf8").trim();
+      if (lido.length >= 32) {
+        segredoEmCache = lido;
+        return lido;
+      }
+    }
+
+    const novo = randomBytes(48).toString("base64url");
+    mkdirSync(path.dirname(arquivo), { recursive: true });
+    writeFileSync(arquivo, novo, { mode: 0o600 });
+    segredoEmCache = novo;
+    return novo;
+  } catch {
+    // Ambiente sem disco gravável: mantém a compatibilidade com a Vercel.
+    segredoEmCache = `deeptax::${adminConfig.senha}`;
+    return segredoEmCache;
+  }
+}
+
+/* ------------------------------------------------------------- e-mail ------ */
+
+/**
+ * Envio de e-mail do painel (recuperação de senha).
+ *
+ * Sem estas variáveis a recuperação continua funcionando, mas entrega o link
+ * por outro caminho — ver `lib/admin/email.ts`. Nada quebra por falta delas.
+ */
+export const emailConfig = {
+  host: process.env.SMTP_HOST ?? "",
+  porta: Number(process.env.SMTP_PORT ?? 465),
+  usuario: process.env.SMTP_USER ?? "",
+  senha: process.env.SMTP_PASS ?? "",
+  remetente: process.env.SMTP_FROM ?? "Deeptax <contato@deeptax.com.br>",
+} as const;
+
+export const emailConfigurado = Boolean(
+  emailConfig.host && emailConfig.usuario && emailConfig.senha,
+);

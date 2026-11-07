@@ -35,16 +35,19 @@ Consequências úteis desse desenho:
 
 ---
 
-## Configuração (uma vez, ~2 minutos)
+## Configuração: contas de acesso
 
-Em servidor próprio o painel precisa de **uma única variável** — a senha. Abra
-`/opt/deeptax/deeptax.env` e confira:
+O painel é acessado por **conta de usuário** (e-mail e senha), e não mais por uma
+senha única compartilhada — é a conta que identifica quem alterou cada texto.
+
+Para criar, trocar senha ou remover conta, no servidor:
 
 ```bash
-ADMIN_PASSWORD=uma-senha-longa-aqui
+su -s /bin/bash deeptax -c "cd /opt/deeptax/app && node scripts/gerenciar-usuarios.mjs listar"
 ```
 
-Depois de alterar: `systemctl restart deeptax`. Só isso: sem token, sem deploy.
+Detalhes em [`ACESSO.md`](./ACESSO.md). A antiga variável `ADMIN_PASSWORD` não é
+mais usada para entrar.
 
 > As duas seções seguintes (token do GitHub e variáveis na Vercel) valem apenas
 > se algum dia o site voltar a rodar na Vercel. No servidor próprio o token é
