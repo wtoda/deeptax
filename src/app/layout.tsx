@@ -5,6 +5,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { imagemSocial, site } from "@/lib/site";
+import { jsonLdSeguro } from "@/lib/jsonld";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -142,7 +143,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdSeguro(organizationSchema) }}
         />
       </body>
     </html>

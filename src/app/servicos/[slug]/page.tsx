@@ -12,6 +12,7 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { FaqList, Section, SectionHeading } from "@/components/ui";
 import { getService, services } from "@/lib/services";
+import { jsonLdSeguro } from "@/lib/jsonld";
 import { materiaisDaArea } from "@/lib/portal-links";
 import { imagemSocial, site, whatsappLink } from "@/lib/site";
 
@@ -468,11 +469,11 @@ export default async function ServicePage({ params }: PageProps) {
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(serviceSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(faqSchema) }}
       />
     </>
   );

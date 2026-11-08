@@ -14,6 +14,7 @@ import {
   type Post,
 } from "@/lib/blog";
 import { imagemSocial, site } from "@/lib/site";
+import { jsonLdSeguro } from "@/lib/jsonld";
 
 /** Só existem as páginas geradas no build: qualquer outro endereço é 404. */
 export const dynamicParams = false;
@@ -108,11 +109,11 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       <script
         type="application/ld+json"
         // Conteúdo montado por nós a partir do JSON de conteúdo, sem entrada livre.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(dadosEstruturados) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(dadosEstruturados) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(migalhas) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdSeguro(migalhas) }}
       />
 
       {/* ============================================================== HERO == */}
