@@ -22,7 +22,10 @@ const sora = Sora({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} — ${site.tagline}`,
+    // A tagline completa tem 57 caracteres e, somada à marca, passava do ponto
+    // em que o Google corta o título. A frase curta mantém marca + especialidade;
+    // a tagline inteira continua aparecendo no hero, no rodapé e na descrição.
+    default: `${site.name} — Contabilidade, tributos e tecnologia`,
     template: `%s | ${site.name}`,
   },
   description: site.shortDescription,
@@ -48,13 +51,13 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: site.url,
     siteName: site.name,
-    title: `${site.name} — ${site.tagline}`,
+    title: `${site.name} — Contabilidade, tributos e tecnologia`,
     description: site.shortDescription,
     images: [imagemSocial],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${site.name} — ${site.tagline}`,
+    title: `${site.name} — Contabilidade, tributos e tecnologia`,
     description: site.shortDescription,
     images: [imagemSocial.url],
   },

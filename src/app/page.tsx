@@ -17,8 +17,14 @@ import { paginas } from "@/lib/paginas";
 import { defaultWhatsappMessage, site, whatsappLink } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: `${site.name} — ${site.tagline}`,
-  description: site.shortDescription,
+  // Título curto: marca + especialidade, dentro do que o Google exibe.
+  // A tagline completa segue no hero e no rodapé.
+  title: `${site.name} — Contabilidade, tributos e tecnologia`,
+  // Descrição própria para a busca: a `shortDescription` do conteúdo tem 182
+  // caracteres e o Google corta em ~160. O texto completo segue no rodapé e
+  // nos cards, onde não há corte.
+  description:
+    "Escritório de contabilidade com seis áreas — DeepCont, DeepTax, Deep Systems, DeepPericia, DeepConsult e DeepCompliance — em São Paulo.",
   alternates: { canonical: "/" },
 };
 

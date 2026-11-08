@@ -12,6 +12,7 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { FaqList, Section, SectionHeading } from "@/components/ui";
 import { getService, services } from "@/lib/services";
+import { materiaisDaArea } from "@/lib/portal-links";
 import { imagemSocial, site, whatsappLink } from "@/lib/site";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -52,6 +53,7 @@ export default async function ServicePage({ params }: PageProps) {
 
   const Icon = resolverIconeArea(service.icon);
   const others = services.filter((item) => item.slug !== service.slug);
+  const materiais = materiaisDaArea(service.slug);
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -414,6 +416,46 @@ export default async function ServicePage({ params }: PageProps) {
           </div>
         </div>
       </Section>
+
+      {/* ========================================================= MATERIAIS == */}
+      {materiais.length > 0 && (
+        <Section tone="light">
+          <div className="container-x">
+            <SectionHeading
+              eyebrow="Para se aprofundar"
+              title="Os temas desta área, explicados em detalhe"
+              description="Conteúdo técnico do nosso portal da reforma tributária — com base legal em cada afirmação."
+            />
+            {/* <a> e não <Link>: estas telas são servidas fora do app Next. */}
+            <ul className="mt-12 grid gap-5 md:grid-cols-3">
+              {materiais.map((material) => (
+                <li key={material.href}>
+                  <a
+                    href={material.href}
+                    className="group flex h-full flex-col rounded-2xl border border-brand-100 bg-white p-6 transition-all hover:border-accent-300 hover:shadow-[0_18px_48px_-28px_rgba(15,23,42,0.35)]"
+                  >
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-700">
+                      {material.tela}
+                    </span>
+                    <span className="mt-2.5 text-[0.95rem] leading-relaxed text-brand-900/75">
+                      {material.descricao}
+                    </span>
+                    <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-brand-950">
+                      Abrir
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform group-hover:translate-x-0.5"
+                      >
+                        →
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+      )}
 
       {/* =============================================================== CTA == */}
       <CtaSection

@@ -8,8 +8,8 @@ import { blogTemPosts, posts, tagsEmUso } from "@/lib/blog";
 import { imagemSocial, site } from "@/lib/site";
 
 const DESCRICAO =
-  "Artigos da Deeptax sobre reforma tributária, IBS e CBS, apuração, créditos fiscais, " +
-  "folha de pagamento e gestão contábil — escritos por quem faz a apuração todos os meses.";
+  "Artigos da Deeptax sobre reforma tributária, IBS e CBS, apuração, créditos fiscais e " +
+  "gestão contábil — escritos por quem faz a apuração todos os meses.";
 
 export const metadata: Metadata = {
   // Até ~50 caracteres: o layout soma " | Deeptax" e o Google corta ~60.

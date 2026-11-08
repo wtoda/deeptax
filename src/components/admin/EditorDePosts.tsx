@@ -726,8 +726,19 @@ export function EditorDePosts() {
                   placeholder="Uma ou duas frases que resumem o artigo. É o texto que aparece na lista e na busca do Google."
                   className={entrada}
                 />
-                <p className="mt-1 text-right text-xs text-brand-900/40">
+                {/* O resumo vira a descrição no Google. Acima de ~155 o buscador
+                    corta, então o contador avisa em vez de só truncar no limite. */}
+                <p
+                  className={`mt-1 text-right text-xs ${
+                    form.resumo.length > 160 ? "font-semibold text-amber-700" : "text-brand-900/40"
+                  }`}
+                >
                   {form.resumo.length}/300
+                  {form.resumo.length === 0
+                    ? " · ideal até 155 para a busca"
+                    : form.resumo.length > 160
+                      ? " · acima de 155 o Google corta a descrição"
+                      : " · bom para a busca"}
                 </p>
               </div>
 
