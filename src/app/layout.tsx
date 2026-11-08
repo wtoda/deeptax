@@ -4,7 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
-import { site } from "@/lib/site";
+import { imagemSocial, site } from "@/lib/site";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,11 +50,13 @@ export const metadata: Metadata = {
     siteName: site.name,
     title: `${site.name} — ${site.tagline}`,
     description: site.shortDescription,
+    images: [imagemSocial],
   },
   twitter: {
     card: "summary_large_image",
     title: `${site.name} — ${site.tagline}`,
     description: site.shortDescription,
+    images: [imagemSocial.url],
   },
   robots: {
     index: true,

@@ -25,6 +25,8 @@ const DIST = path.join(RAIZ, "dist");
 const BASE = "/reforma-tributaria";
 const SITE = "https://www.deeptax.com.br";
 const PORTA = 4187;
+/** Imagem de compartilhamento do portal (1200×630), servida junto com o dist. */
+const IMAGEM_SOCIAL = `${SITE}${BASE}/assets/img/og-reforma-tributaria.png`;
 
 const EXECUTAVEL =
   process.env.CHROME_PATH ??
@@ -122,6 +124,17 @@ for (const rota of rotas) {
     .replace(
       /<meta property="og:url"[^>]*>/,
       () => `<meta property="og:url" content="${SITE}${meta.canonico}">`,
+    )
+    // Card social: sem imagem, o compartilhamento sai como retângulo vazio.
+    .replace(
+      /<meta name="twitter:card"[^>]*>/,
+      () =>
+        `<meta name="twitter:card" content="summary_large_image">` +
+        `<meta property="og:image" content="${IMAGEM_SOCIAL}">` +
+        `<meta property="og:image:width" content="1200">` +
+        `<meta property="og:image:height" content="630">` +
+        `<meta property="og:image:alt" content="${escHtml(meta.titulo)}">` +
+        `<meta name="twitter:image" content="${IMAGEM_SOCIAL}">`,
     )
     // conteúdo pré-renderizado entra no lugar do <main> vazio
     .replace(

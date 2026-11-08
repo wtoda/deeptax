@@ -186,3 +186,17 @@ export const whatsappLink = (message?: string) =>
 
 export const defaultWhatsappMessage =
   `Olá! Vim pelo site da ${site.name} e gostaria de falar sobre os serviços contábeis.`;
+
+/**
+ * Imagem de compartilhamento (Open Graph / cartão do Twitter).
+ *
+ * Mora em `src/app/opengraph-image.png`, e o Next a publica em
+ * /opengraph-image.png. A URL é montada a partir de `site.url` para o card
+ * funcionar em qualquer rede social — elas exigem endereço absoluto.
+ */
+export const imagemSocial = {
+  url: `${site.url}/opengraph-image.png`,
+  width: 1200,
+  height: 630,
+  alt: `${site.name} — ${site.tagline}`,
+};

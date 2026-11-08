@@ -13,9 +13,11 @@ import { paginas } from "@/lib/paginas";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "As seis áreas da DeepTax: contabilidade, tributos, tecnologia, perícia, consultoria e compliance",
+  // Até ~50 caracteres: o layout acrescenta " | Deeptax" e o Google corta
+  // por volta de 60. O título anterior tinha 96 e aparecia truncado.
+  title: "Contabilidade, tributos e compliance em seis áreas",
   description:
-    "Conheça as seis áreas do escritório: DeepCont (contabilidade), DeepTax (tributário), Deep Systems (tecnologia fiscal), DeepPericia (perícia contábil), DeepConsult (consultoria) e DeepCompliance (compliance). Escopo, metodologia e entregáveis de cada uma.",
+    "As seis áreas do escritório — contabilidade, tributos, tecnologia fiscal, perícia, consultoria e compliance — com escopo, metodologia e entregáveis de cada uma.",
   alternates: { canonical: "/servicos" },
 };
 

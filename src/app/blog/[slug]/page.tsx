@@ -13,7 +13,7 @@ import {
   urlDoPost,
   type Post,
 } from "@/lib/blog";
-import { site } from "@/lib/site";
+import { imagemSocial, site } from "@/lib/site";
 
 /** Só existem as páginas geradas no build: qualquer outro endereço é 404. */
 export const dynamicParams = false;
@@ -47,7 +47,13 @@ export async function generateMetadata({
       modifiedTime: post.atualizadoEm ?? post.data,
       authors: [post.autor],
       tags: post.tags,
-      ...(post.capa ? { images: [{ url: post.capa.src, alt: post.capa.alt }] } : {}),
+      // A capa do artigo é melhor que a imagem padrão — mas sem capa, a marca
+      // entra no lugar (declarar `openGraph` aqui descarta a imagem herdada).
+      images: [
+        post.capa
+          ? { url: `${site.url}${post.capa.src}`, alt: post.capa.alt, width: 1200, height: 630 }
+          : imagemSocial,
+      ],
     },
     twitter: {
       card: post.capa ? "summary_large_image" : "summary",

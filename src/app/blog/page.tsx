@@ -5,14 +5,15 @@ import { CtaSection } from "@/components/CtaSection";
 import { IconArrowRight } from "@/components/Icons";
 import { Section } from "@/components/ui";
 import { blogTemPosts, posts, tagsEmUso } from "@/lib/blog";
-import { site } from "@/lib/site";
+import { imagemSocial, site } from "@/lib/site";
 
 const DESCRICAO =
   "Artigos da Deeptax sobre reforma tributária, IBS e CBS, apuração, créditos fiscais, " +
   "folha de pagamento e gestão contábil — escritos por quem faz a apuração todos os meses.";
 
 export const metadata: Metadata = {
-  title: "Blog: tributos, contabilidade e reforma tributária na prática",
+  // Até ~50 caracteres: o layout soma " | Deeptax" e o Google corta ~60.
+  title: "Blog: tributos, contabilidade e reforma na prática",
   description: DESCRICAO,
   alternates: { canonical: "/blog" },
   openGraph: {
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
     url: `${site.url}/blog`,
     title: "Blog da Deeptax",
     description: DESCRICAO,
+    images: [imagemSocial],
   },
   // Um blog sem posts é uma página vazia — não deve ser indexada nem entrar no
   // sitemap. Passa a ser indexável no instante em que o primeiro post é

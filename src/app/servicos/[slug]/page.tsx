@@ -12,7 +12,7 @@ import {
 import { Reveal } from "@/components/Reveal";
 import { FaqList, Section, SectionHeading } from "@/components/ui";
 import { getService, services } from "@/lib/services";
-import { site, whatsappLink } from "@/lib/site";
+import { imagemSocial, site, whatsappLink } from "@/lib/site";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -38,6 +38,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${service.seo.title} | ${site.name}`,
       description: service.seo.description,
       url: `${site.url}/servicos/${service.slug}`,
+      // Declarar `openGraph` aqui descarta a imagem herdada do layout.
+      images: [imagemSocial],
     },
   };
 }

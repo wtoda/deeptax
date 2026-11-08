@@ -1,69 +1,68 @@
 {
   "_leiaMe": "Metadados de SEO de cada tela do portal. O título e a descrição viram o HTML estático de cada rota — é o que o Google lê.",
-
   "painel": {
-    "titulo": "Reforma Tributária em 2026: o que muda agora e o que ainda falta",
-    "descricao": "Panorama da Reforma Tributária do Consumo: em que fase estamos, o que já vale em 2026, o que entra em 2027 e quais pontos ainda dependem de regulamentação. Base: EC 132/2023 e LC 214/2025.",
+    "titulo": "Reforma Tributária: o que muda em 2026",
+    "descricao": "Panorama da reforma do consumo: o que já vale em 2026, o que entra em 2027 e o que ainda depende de regulamentação.",
     "canonico": "/reforma-tributaria/"
   },
   "cronograma": {
-    "titulo": "Cronograma da Reforma Tributária 2026 a 2033: alíquotas e marcos",
-    "descricao": "Linha do tempo ano a ano da transição: 2026 de teste, 2027 com CBS, 2029 a 2032 com redução gradual do ICMS e ISS, 2033 com IBS e CBS plenos. Alíquotas e base legal de cada etapa.",
+    "titulo": "Cronograma da reforma: 2026 a 2033",
+    "descricao": "Linha do tempo ano a ano: 2026 de teste, 2027 com CBS, 2029 a 2032 com redução do ICMS e ISS, 2033 com IBS e CBS plenos.",
     "canonico": "/reforma-tributaria/cronograma/"
   },
   "entenda": {
-    "titulo": "IBS, CBS e Imposto Seletivo: entenda a reforma do consumo",
-    "descricao": "Como funcionam os três tributos que substituem PIS, COFINS, ICMS, ISS e IPI: fato gerador, não cumulatividade plena, creditamento, regimes diferenciados e Imposto Seletivo.",
+    "titulo": "IBS, CBS e Imposto Seletivo: como funcionam",
+    "descricao": "Como funcionam os três tributos que substituem PIS, COFINS, ICMS, ISS e IPI: fato gerador, crédito amplo e regimes diferenciados.",
     "canonico": "/reforma-tributaria/entenda/"
   },
   "comparativo": {
-    "titulo": "Antes e depois da Reforma Tributária: o que muda na prática",
-    "descricao": "Comparativo entre o modelo atual e o novo: quais tributos deixam de existir, o que entra no lugar, o efeito da cobrança por fora do preço e o impacto na cadeia e no consumidor final.",
+    "titulo": "Antes e depois da reforma: o que muda",
+    "descricao": "Modelo atual e novo lado a lado: quais tributos saem, quais entram, cobrança por fora do preço e efeito na cadeia.",
     "canonico": "/reforma-tributaria/comparativo/"
   },
   "legislacao": {
-    "titulo": "Legislação da Reforma Tributária: EC 132/2023 e LC 214/2025",
-    "descricao": "Catálogo das normas da reforma com pirâmide normativa, filtros e link oficial: emenda constitucional, lei complementar, decretos, resoluções do Senado e notas técnicas, com análise de impacto por setor.",
+    "titulo": "Legislação da reforma: EC 132 e LC 214",
+    "descricao": "Catálogo das normas com pirâmide normativa, filtros e link oficial — emenda, lei complementar, decretos e resoluções, com impacto por setor.",
     "canonico": "/reforma-tributaria/legislacao/"
   },
   "glossario": {
-    "titulo": "Glossário da Reforma Tributária: 24 termos com base legal",
-    "descricao": "Dicionário dos termos da reforma — split payment, cClassTrib, regime específico, crédito vinculado, DeRE, imposto seletivo — cada definição com a norma que a sustenta.",
+    "titulo": "Glossário da reforma: 24 termos com base legal",
+    "descricao": "Split payment, cClassTrib, regime específico, crédito vinculado, DeRE: cada termo com a definição e a norma que a sustenta.",
     "canonico": "/reforma-tributaria/glossario/"
   },
   "aprender": {
-    "titulo": "Quiz da Reforma Tributária: teste seu conhecimento",
+    "titulo": "Quiz da reforma: teste seu conhecimento",
     "descricao": "Oito perguntas sobre IBS, CBS, imposto seletivo, cronograma e documentos fiscais, com explicação e fundamento legal em cada resposta.",
     "canonico": "/reforma-tributaria/aprender/"
   },
   "calculadora": {
-    "titulo": "Calculadora de IBS e CBS: simule a carga do novo regime",
-    "descricao": "Calculadora de IBS, CBS e Imposto Seletivo com memória de cálculo linha a linha, base legal por operação, comparação com o modelo atual e simulação de cadeia com aproveitamento de crédito.",
+    "titulo": "Calculadora de IBS e CBS: simule a carga",
+    "descricao": "Simule IBS, CBS e Imposto Seletivo com memória de cálculo linha a linha, base legal e comparação com o modelo atual.",
     "canonico": "/reforma-tributaria/calculadora/"
   },
   "documentos": {
-    "titulo": "Documentos fiscais da reforma: NF-e, NFS-e, split payment e DeRE",
-    "descricao": "O que muda nos documentos fiscais: NF-e, NFC-e, NFS-e, CT-e, NFCom, NF3-e, NF-e ABI e Duimp; campos de IBS e CBS, CST x cClassTrib, split payment, manuais e schemas para download.",
+    "titulo": "Documentos fiscais: NF-e, split payment e DeRE",
+    "descricao": "O que muda em NF-e, NFC-e, NFS-e e CT-e: campos de IBS e CBS, CST e cClassTrib, split payment e schemas para download.",
     "canonico": "/reforma-tributaria/documentos/"
   },
   "dere": {
-    "titulo": "DeRE: a declaração dos regimes específicos na prática",
-    "descricao": "O que é a Declaração de Regimes Específicos, quais setores são alcançados, o fluxo até o motor de cálculo, leiautes D-1000 e D-9000, XSD, anexos e checklist de implementação.",
+    "titulo": "DeRE: a declaração dos regimes específicos",
+    "descricao": "O que é a Declaração de Regimes Específicos, quem é alcançado, o fluxo até o cálculo, leiautes D-1000 e D-9000 e checklist.",
     "canonico": "/reforma-tributaria/dere/"
   },
   "conformidade": {
-    "titulo": "Checklist de conformidade para a Reforma Tributária",
-    "descricao": "Checklist por perfil — empresa, Simples Nacional e MEI, contador, cidadão — com etapas de adequação, progresso salvo no navegador e prioridades para o período de transição.",
+    "titulo": "Checklist de conformidade da reforma",
+    "descricao": "Checklist por perfil — empresa, Simples, contador e cidadão — com etapas de adequação e progresso salvo no navegador.",
     "canonico": "/reforma-tributaria/conformidade/"
   },
   "divulgacao": {
-    "titulo": "Como comunicar a Reforma Tributária sem risco",
-    "descricao": "Kit de divulgação com resumo pronto, frases seguras e frases de risco, e checklist antes de publicar — para comunicar a reforma sem afirmar o que ainda é estimativa.",
+    "titulo": "Como comunicar a reforma sem risco",
+    "descricao": "Resumo pronto, frases seguras e frases de risco, e checklist antes de publicar — sem afirmar o que ainda é estimativa.",
     "canonico": "/reforma-tributaria/divulgacao/"
   },
   "fontes": {
-    "titulo": "Fontes oficiais da Reforma Tributária e metodologia",
-    "descricao": "Mapa das normas oficiais (EC 132/2023, LC 214/2025, Receita Federal), como citar o conteúdo e a metodologia adotada pela calculadora, separando lei vigente de premissa.",
+    "titulo": "Fontes oficiais da reforma e metodologia",
+    "descricao": "Mapa das normas oficiais (EC 132/2023, LC 214/2025, Receita Federal), como citar o conteúdo e a metodologia da calculadora.",
     "canonico": "/reforma-tributaria/fontes/"
   }
 }

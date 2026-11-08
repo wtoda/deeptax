@@ -1,10 +1,34 @@
+import { readdirSync, statSync } from "node:fs";
+import path from "node:path";
 import type { MetadataRoute } from "next";
 import { blogTemPosts, posts, urlAbsolutaDoPost } from "@/lib/blog";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
 
+/**
+ * Data da última alteração de conteúdo.
+ *
+ * Antes, toda entrada saía com a hora do build. Como o sitemap é regerado a cada
+ * publicação, o `lastmod` mudava sempre — e o Google aprende a ignorar um
+ * `lastmod` que nunca é confiável. O `mtime` dos arquivos de `content/` reflete
+ * a última edição de verdade (o painel grava direto neles), então é isso que
+ * vale como sinal de atualização.
+ */
+function ultimaAlteracaoDoConteudo(): Date {
+  try {
+    const pasta = path.join(process.cwd(), "content");
+    const datas = readdirSync(pasta)
+      .filter((arquivo) => arquivo.endsWith(".json"))
+      .map((arquivo) => statSync(path.join(pasta, arquivo)).mtime.getTime());
+    if (datas.length) return new Date(Math.max(...datas));
+  } catch {
+    // Sem acesso ao disco (ambiente de build imutável): cai na data base.
+  }
+  return new Date("2026-11-01T12:00:00Z");
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  const now = ultimaAlteracaoDoConteudo();
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${site.url}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
